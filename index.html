@@ -4,109 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>万壑松风 · 雅集</title>
-    <style>
-        :root {
-            --paper: #f7f2e8;
-            --paper-light: #fdfaf3;
-            --ink: #2a2218;
-            --ink-light: #5c4f3a;
-            --ink-lighter: #8a7b65;
-            --vermillion: #c43d3d;
-            --gold: #b8944b;
-            --shadow-soft: 0 2px 16px rgba(40,20,10,0.07);
-            --shadow-medium: 0 6px 28px rgba(40,20,10,0.12);
-            --radius-card: 6px;
-            --font-body: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
-            --font-heading: "ZCOOL XiaoWei", "KaiTi", "STKaiti", "华文楷体", serif;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: var(--font-body);
-            background-color: var(--paper);
-            color: var(--ink);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image:
-                radial-gradient(ellipse at 18% 35%, rgba(180,150,120,0.06) 0%, transparent 55%),
-                radial-gradient(ellipse at 75% 20%, rgba(160,130,100,0.05) 0%, transparent 50%),
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,160,135,0.015) 2px, rgba(180,160,135,0.015) 3px);
-            background-attachment: fixed;
-            position: relative; overflow-x: hidden;
-        }
-        body::before {
-            content: ''; position: fixed; bottom:0; left:0; width:100%; height:55%;
-            background: radial-gradient(ellipse 140% 280px at 25% 95%, rgba(100,85,65,0.07) 0%, transparent 65%),
-                        radial-gradient(ellipse 110% 220px at 60% 90%, rgba(90,75,58,0.08) 0%, transparent 60%);
-            pointer-events: none; z-index:0; opacity:0.8;
-        }
-
-        .login-container {
-            position: relative; z-index:2;
-            width: 380px; max-width: 90%;
-            background: var(--paper-light);
-            border: 1px solid rgba(140,120,90,0.3);
-            border-radius: var(--radius-card);
-            padding: 40px 30px 30px;
-            box-shadow: var(--shadow-medium);
-            text-align: center;
-            animation: fadeIn 0.6s ease;
-        }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-        .login-title { font-family: var(--font-heading); font-size:2rem; margin-bottom:10px; }
-        .login-subtitle { font-size:0.85rem; color:var(--ink-lighter); margin-bottom:30px; }
-        .input-group { margin-bottom:18px; text-align:left; }
-        .input-group label { display:block; font-size:0.85rem; color:var(--ink-light); margin-bottom:6px; }
-        .input-group input {
-            width:100%; padding:10px 14px; border:1px solid rgba(140,120,90,0.4);
-            background:rgba(250,245,235,0.7); font-family:var(--font-body); border-radius:4px;
-        }
-        .btn {
-            width:100%; padding:12px; border:none; border-radius:4px; font-family:var(--font-heading);
-            font-size:1rem; cursor:pointer; transition:0.25s; margin-top:10px;
-        }
-        .btn-login { background:var(--vermillion); color:#fef8f0; }
-        .btn-login:hover { background:#b53535; }
-        .btn-guest { background:transparent; color:var(--ink-light); border:1px solid rgba(140,120,90,0.5); }
-        .btn-guest:hover { background:rgba(180,140,60,0.08); }
-        .error-msg { color:#c43d3d; font-size:0.8rem; margin-top:8px; min-height:20px; }
-
-        .main-app { display:none; width:100%; max-width:960px; margin:0 auto; padding:30px 24px 50px; position:relative; z-index:2; }
-        .header-plaque {
-            text-align:center; margin-bottom:20px;
-            background: linear-gradient(180deg, #4a3525, #3d2a1a 8%, #5c3d28 15%, #4a3020 30%, #3d2518 50%, #4a3020 70%, #5c3d28 85%, #3d2a1a);
-            padding:14px 40px; display:inline-block; border-radius:4px; border:3px solid #6b4d30; outline:2px solid #8b6d4a; outline-offset:-8px;
-            box-shadow: inset 0 2px 4px rgba(255,220,160,0.15), 0 6px 24px rgba(30,15,5,0.4);
-            color:#e8d5a3; font-size:2rem; font-family:var(--font-heading); letter-spacing:0.15em;
-        }
-        .toolbar {
-            display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:25px;
-        }
-        .role-badge { font-size:0.85rem; background:rgba(180,140,60,0.15); padding:6px 16px; border-radius:20px; color:var(--ink-light); }
-        .btn-sm {
-            background:none; border:1px solid var(--gold); color:var(--ink); padding:6px 18px; border-radius:4px;
-            cursor:pointer; font-family:var(--font-body); transition:0.2s;
-        }
-        .btn-sm:hover { background:rgba(180,140,60,0.15); }
-        .cards-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:20px; }
-        .card-link {
-            display:flex; align-items:center; gap:14px; background:var(--paper-light);
-            border:1px solid rgba(140,120,90,0.3); border-radius:var(--radius-card); padding:18px 16px;
-            text-decoration:none; color:var(--ink); box-shadow:var(--shadow-soft); transition:0.3s; overflow:hidden;
-            position:relative;
-        }
-        .card-link::before { content:''; position:absolute; left:0; top:12px; bottom:12px; width:3px; background:linear-gradient(180deg, #d46565, #c43d3d, #a83232); border-radius:0 2px 2px 0; opacity:0.7; }
-        .card-link:hover { transform:translateY(-4px); box-shadow:var(--shadow-medium); border-color:rgba(180,140,70,0.5); }
-        .card-seal { width:42px; height:42px; background:var(--vermillion); color:#fef8f0; display:flex; align-items:center; justify-content:center; font-family:var(--font-heading); font-size:1.3rem; border-radius:3px; transform:rotate(-3deg); box-shadow:0 3px 8px rgba(180,40,30,0.3); }
-        .card-content h3 { font-size:1rem; margin-bottom:3px; }
-        .card-content .card-desc { font-size:0.75rem; color:var(--ink-lighter); }
-        .admin-panel { background:rgba(250,245,235,0.7); border:1px solid rgba(180,140,60,0.3); border-radius:8px; padding:20px; margin-top:30px; }
-        .admin-panel h3 { font-family:var(--font-heading); margin-bottom:15px; }
-        .list-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed rgba(140,120,90,0.2); }
-        @media (max-width:768px) { .cards-grid { grid-template-columns: repeat(2,1fr); } }
-        @media (max-width:500px) { .cards-grid { grid-template-columns:1fr; } }
-    </style>
+    <!-- 引入独立 CSS 文件 -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -125,6 +24,7 @@
     <div class="error-msg" id="loginError"></div>
     <button class="btn btn-login" id="loginBtn">登 录</button>
     <button class="btn btn-guest" id="guestBtn">游客模式 · 直接进入</button>
+    <div style="margin-top:16px; font-size:0.7rem; color:var(--ink-lighter);">管理员演示: zlm / zlm20130503</div>
 </div>
 
 <!-- 主界面 -->
@@ -172,7 +72,7 @@
     const API_BASE = 'https://lock-laws-lightning-booking.trycloudflare.com';
 
     let token = localStorage.getItem('gufeng_token') || '';
-    let currentUser = null;   // 初始化必须为 null
+    let currentUser = null;
 
     // 通用请求函数
     async function api(url, options = {}) {
@@ -187,7 +87,6 @@
         return data;
     }
 
-    // 显示登录界面
     function showLoginScreen() {
         document.getElementById('loginScreen').style.display = 'block';
         document.getElementById('mainApp').style.display = 'none';
@@ -195,7 +94,6 @@
         document.body.style.alignItems = 'center';
     }
 
-    // 显示主界面
     function showMainApp() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
@@ -204,7 +102,6 @@
         renderMain();
     }
 
-    // 登录按钮
     document.getElementById('loginBtn').addEventListener('click', async () => {
         const username = document.getElementById('usernameInput').value.trim();
         const password = document.getElementById('passwordInput').value;
@@ -228,16 +125,13 @@
         }
     });
 
-    // 游客模式按钮
     document.getElementById('guestBtn').addEventListener('click', () => {
         token = '';
         localStorage.removeItem('gufeng_token');
-        // 明确设置 currentUser 为游客
         currentUser = { username: '游客', role: 'guest' };
         showMainApp();
     });
 
-    // 退出登录
     document.getElementById('logoutBtn').addEventListener('click', () => {
         token = '';
         localStorage.removeItem('gufeng_token');
@@ -245,29 +139,24 @@
         showLoginScreen();
     });
 
-    // 渲染主界面（防护 null currentUser）
     async function renderMain() {
-        // 防御性检查：如果 currentUser 意外为 null，返回登录页
         if (!currentUser) {
             console.warn('currentUser 为空，返回登录页');
             showLoginScreen();
             return;
         }
-
         document.getElementById('roleDisplay').textContent = currentUser.role === 'admin' ? '🔑 管理员' : '👤 游客';
         const adminPanel = document.getElementById('adminPanel');
         adminPanel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
 
-        // 加载网站卡片
         try {
             const sites = await api('/api/sites');
             renderCards(sites);
         } catch (err) {
-            console.error('加载网站失败:', err);
+            console.error(err);
             document.getElementById('cardsContainer').innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--vermillion);">加载失败，请检查网络</p>';
         }
 
-        // 如果是管理员，加载管理列表
         if (currentUser.role === 'admin') {
             try {
                 const users = await api('/api/users');
@@ -353,7 +242,6 @@
         });
     }
 
-    // 管理员添加账号
     document.getElementById('addUserBtn').addEventListener('click', async () => {
         const username = document.getElementById('newUser').value.trim();
         const password = document.getElementById('newPass').value;
@@ -368,7 +256,6 @@
         } catch (e) { alert(e.message); }
     });
 
-    // 管理员添加网站
     document.getElementById('addSiteBtn').addEventListener('click', async () => {
         const name = document.getElementById('newSiteName').value.trim();
         const url = document.getElementById('newSiteUrl').value.trim();
@@ -390,22 +277,18 @@
         return String(text).replace(/[&<>"']/g, m => map[m]);
     }
 
-    // 页面初始化：检查已保存的 token
     window.addEventListener('load', async () => {
         if (token) {
             try {
-                // 尝试获取网站列表，测试 token 是否有效
                 await api('/api/sites');
-                // token 有效，尝试判断角色
                 try {
-                    await api('/api/users');  // 管理员可获取用户列表
+                    await api('/api/users');
                     currentUser = { username: 'zlm', role: 'admin' };
                 } catch {
                     currentUser = { username: '用户', role: 'user' };
                 }
                 showMainApp();
             } catch (e) {
-                // token 无效，清除并显示登录
                 token = '';
                 localStorage.removeItem('gufeng_token');
                 showLoginScreen();
