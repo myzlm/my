@@ -4,299 +4,369 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>万壑松风 · 雅集</title>
-    <!-- 引入独立 CSS 文件 -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- 登录界面 -->
-<div id="loginScreen" class="login-container">
-    <div class="login-title">万壑松风</div>
-    <div class="login-subtitle">· 雅集 · 登入</div>
-    <div class="input-group">
-        <label>账号</label>
-        <input type="text" id="usernameInput" placeholder="输入账号" autocomplete="off">
-    </div>
-    <div class="input-group">
-        <label>密码</label>
-        <input type="password" id="passwordInput" placeholder="输入密码">
-    </div>
-    <div class="error-msg" id="loginError"></div>
-    <button class="btn btn-login" id="loginBtn">登 录</button>
-    <button class="btn btn-guest" id="guestBtn">游客模式 · 直接进入</button>
-    <div style="margin-top:16px; font-size:0.7rem; color:var(--ink-lighter);">管理员演示: zlm / zlm20130503</div>
-</div>
+    <!-- ==================== 仙鹤 SVG ==================== -->
+    <div class="cranes-container" aria-hidden="true">
+        <!-- 仙鹤1 - 较高，慢速 -->
+        <svg class="crane crane-1" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="crane-body">
+                <!-- 身体 -->
+                <ellipse cx="50" cy="55" rx="22" ry="10" fill="#f5f0e8" stroke="#c8bda8" stroke-width="1.2"/>
+                <!-- 脖子 -->
+                <path d="M38 50 Q30 25 48 12" fill="none" stroke="#c8bda8" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- 头部 -->
+                <circle cx="50" cy="10" r="4.5" fill="#f5f0e8" stroke="#c8bda8" stroke-width="1.2"/>
+                <!-- 头顶红冠 -->
+                <circle cx="53" cy="7" r="2" fill="#c43d3d"/>
+                <!-- 喙 -->
+                <path d="M54 10 L64 12 L54 14" fill="#3a2a18" stroke="#3a2a18" stroke-width="0.5"/>
+                <!-- 翅膀 -->
+                <g class="wing" transform-origin="48 50">
+                    <path d="M42 45 Q15 18 8 30 Q12 42 38 50" fill="#e8e0d0" stroke="#c8bda8" stroke-width="1" opacity="0.9"/>
+                    <path d="M42 48 Q18 25 10 35 Q14 46 38 52" fill="#f0e8d8" stroke="#c8bda8" stroke-width="0.8" opacity="0.7"/>
+                </g>
+                <!-- 腿 -->
+                <line x1="55" y1="62" x2="62" y2="82" stroke="#b8a080" stroke-width="1.2"/>
+                <line x1="50" y1="62" x2="46" y2="84" stroke="#b8a080" stroke-width="1.2"/>
+            </g>
+        </svg>
 
-<!-- 主界面 -->
-<div id="mainApp" class="main-app">
-    <div style="text-align:center;">
-        <div class="header-plaque">万壑松风 · 雅集</div>
-    </div>
-    <div class="toolbar">
-        <span class="role-badge" id="roleDisplay"></span>
-        <button class="btn-sm" id="logoutBtn">退出登录</button>
-    </div>
-    <div id="cardsContainer" class="cards-grid"></div>
+        <!-- 仙鹤2 - 中等高度 -->
+        <svg class="crane crane-2" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+            <g class="crane-body">
+                <ellipse cx="38" cy="44" rx="18" ry="8" fill="#f5f0e8" stroke="#c8bda8" stroke-width="1"/>
+                <path d="M28 40 Q22 20 38 10" fill="none" stroke="#c8bda8" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="40" cy="8" r="3.8" fill="#f5f0e8" stroke="#c8bda8" stroke-width="1"/>
+                <circle cx="42.5" cy="5.5" r="1.8" fill="#c43d3d"/>
+                <path d="M43 8 L52 10 L43 12" fill="#3a2a18" stroke="#3a2a18" stroke-width="0.4"/>
+                <g class="wing" transform-origin="36 40">
+                    <path d="M32 36 Q10 15 5 26 Q8 36 30 42" fill="#e8e0d0" stroke="#c8bda8" stroke-width="0.9" opacity="0.85"/>
+                </g>
+                <line x1="43" y1="50" x2="50" y2="68" stroke="#b8a080" stroke-width="1"/>
+                <line x1="38" y1="50" x2="34" y2="70" stroke="#b8a080" stroke-width="1"/>
+            </g>
+        </svg>
 
-    <!-- 管理员面板 -->
-    <div id="adminPanel" class="admin-panel" style="display:none;">
-        <h3>⚙️ 管理员设置</h3>
-        <div style="display:flex; gap:20px; flex-wrap:wrap;">
-            <div style="flex:1; min-width:200px;">
-                <h4>账号管理</h4>
-                <div style="display:flex; gap:6px; margin-bottom:10px;">
-                    <input type="text" id="newUser" placeholder="新账号" style="flex:1; padding:6px;">
-                    <input type="password" id="newPass" placeholder="密码" style="flex:1; padding:6px;">
-                    <button class="btn-sm" id="addUserBtn">添加</button>
-                </div>
-                <div id="userList" style="max-height:150px; overflow-y:auto;"></div>
+        <!-- 仙鹤3 - 较远，更小 -->
+        <svg class="crane crane-3" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+            <g class="crane-body">
+                <ellipse cx="28" cy="32" rx="14" ry="6" fill="#f0ebe0" stroke="#c8bda8" stroke-width="0.8" opacity="0.7"/>
+                <path d="M20 30 Q16 16 28 8" fill="none" stroke="#c8bda8" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>
+                <circle cx="30" cy="7" r="3" fill="#f0ebe0" stroke="#c8bda8" stroke-width="0.8" opacity="0.7"/>
+                <circle cx="32" cy="5" r="1.5" fill="#c43d3d" opacity="0.7"/>
+                <g class="wing" transform-origin="26 30">
+                    <path d="M24 28 Q8 14 4 22 Q6 30 22 32" fill="#e8e0d0" stroke="#c8bda8" stroke-width="0.7" opacity="0.6"/>
+                </g>
+                <line x1="32" y1="37" x2="38" y2="52" stroke="#b8a080" stroke-width="0.8" opacity="0.7"/>
+                <line x1="28" y1="37" x2="25" y2="53" stroke="#b8a080" stroke-width="0.8" opacity="0.7"/>
+            </g>
+        </svg>
+    </div>
+
+    <!-- ==================== 飘落花瓣容器 ==================== -->
+    <div class="petals" aria-hidden="true">
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+    </div>
+
+    <!-- ==================== 云雾层 ==================== -->
+    <div class="clouds-layer" aria-hidden="true">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+        <div class="cloud cloud-5"></div>
+        <div class="cloud cloud-6"></div>
+    </div>
+
+    <!-- ==================== 登录界面 ==================== -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-title">万壑松风</div>
+        <div class="login-subtitle">· 雅集 · 登入</div>
+        <div class="input-group">
+            <label>账号</label>
+            <input type="text" id="usernameInput" placeholder="输入账号" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>密码</label>
+            <input type="password" id="passwordInput" placeholder="输入密码">
+        </div>
+        <div class="error-msg" id="loginError"></div>
+        <button class="btn btn-login" id="loginBtn">登 录</button>
+        <button class="btn btn-guest" id="guestBtn">游客模式 · 直接进入</button>
+        <div style="margin-top:16px; font-size:0.7rem; color:var(--ink-lighter);">管理员演示: zlm / zlm20130503</div>
+    </div>
+
+    <!-- ==================== 主界面 ==================== -->
+    <div id="mainApp" class="main-app">
+        <div style="text-align:center;">
+            <div class="plaque-hangers" aria-hidden="true">
+                <span class="plaque-hanger"></span>
+                <span class="plaque-hanger"></span>
             </div>
-            <div style="flex:1; min-width:250px;">
-                <h4>网站列表管理</h4>
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <input type="text" id="newSiteName" placeholder="网站名称" style="padding:6px;">
-                    <input type="text" id="newSiteUrl" placeholder="网址 (https://...)" style="padding:6px;">
-                    <input type="text" id="newSiteDesc" placeholder="简短描述" style="padding:6px;">
-                    <input type="text" id="newSiteSeal" placeholder="印章文字 (1-2字)" maxlength="2" style="padding:6px;">
-                    <button class="btn-sm" id="addSiteBtn">添加网站</button>
+            <div class="header-plaque">万壑松风 · 雅集</div>
+        </div>
+        <div class="toolbar">
+            <span class="role-badge" id="roleDisplay"></span>
+            <button class="btn-sm" id="logoutBtn">退出登录</button>
+        </div>
+        <div id="cardsContainer" class="cards-grid"></div>
+
+        <!-- 管理员面板 -->
+        <div id="adminPanel" class="admin-panel" style="display:none;">
+            <h3>⚙️ 管理员设置</h3>
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:200px;">
+                    <h4>账号管理</h4>
+                    <div style="display:flex; gap:6px; margin-bottom:10px;">
+                        <input type="text" id="newUser" placeholder="新账号" style="flex:1; padding:6px;">
+                        <input type="password" id="newPass" placeholder="密码" style="flex:1; padding:6px;">
+                        <button class="btn-sm" id="addUserBtn">添加</button>
+                    </div>
+                    <div id="userList" style="max-height:150px; overflow-y:auto;"></div>
                 </div>
-                <div id="siteManageList" style="margin-top:14px; max-height:200px; overflow-y:auto;"></div>
+                <div style="flex:1; min-width:250px;">
+                    <h4>网站列表管理</h4>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <input type="text" id="newSiteName" placeholder="网站名称" style="padding:6px;">
+                        <input type="text" id="newSiteUrl" placeholder="网址 (https://...)" style="padding:6px;">
+                        <input type="text" id="newSiteDesc" placeholder="简短描述" style="padding:6px;">
+                        <input type="text" id="newSiteSeal" placeholder="印章文字 (1-2字)" maxlength="2" style="padding:6px;">
+                        <button class="btn-sm" id="addSiteBtn">添加网站</button>
+                    </div>
+                    <div id="siteManageList" style="margin-top:14px; max-height:200px; overflow-y:auto;"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // ================== 前端配置 ==================
-    // ⚠️ 请将下面地址改为你的 Cloudflare Tunnel 地址（末尾不要加 /）
-    const API_BASE = 'https://lock-laws-lightning-booking.trycloudflare.com';
+    <script>
+        // ================== 前端配置 ==================
+        const API_BASE = 'https://lock-laws-lightning-booking.trycloudflare.com';
 
-    let token = localStorage.getItem('gufeng_token') || '';
-    let currentUser = null;
+        let token = localStorage.getItem('gufeng_token') || '';
+        let currentUser = null;
 
-    // 通用请求函数
-    async function api(url, options = {}) {
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) headers['Authorization'] = `Bearer ${token}`;
-        const res = await fetch(`${API_BASE}${url}`, {
-            ...options,
-            headers: { ...headers, ...options.headers }
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '请求失败');
-        return data;
-    }
-
-    function showLoginScreen() {
-        document.getElementById('loginScreen').style.display = 'block';
-        document.getElementById('mainApp').style.display = 'none';
-        document.body.style.display = 'flex';
-        document.body.style.alignItems = 'center';
-    }
-
-    function showMainApp() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        document.body.style.display = 'block';
-        document.body.style.alignItems = 'unset';
-        renderMain();
-    }
-
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-        const username = document.getElementById('usernameInput').value.trim();
-        const password = document.getElementById('passwordInput').value;
-        const errorDiv = document.getElementById('loginError');
-        if (!username || !password) {
-            errorDiv.textContent = '请输入账号和密码';
-            return;
-        }
-        try {
-            const res = await api('/api/login', {
-                method: 'POST',
-                body: JSON.stringify({ username, password })
+        async function api(url, options = {}) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            const res = await fetch(`${API_BASE}${url}`, {
+                ...options,
+                headers: { ...headers, ...options.headers }
             });
-            token = res.token;
-            localStorage.setItem('gufeng_token', token);
-            currentUser = { username: res.username, role: res.role };
-            errorDiv.textContent = '';
-            showMainApp();
-        } catch (err) {
-            errorDiv.textContent = err.message;
-        }
-    });
-
-    document.getElementById('guestBtn').addEventListener('click', () => {
-        token = '';
-        localStorage.removeItem('gufeng_token');
-        currentUser = { username: '游客', role: 'guest' };
-        showMainApp();
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        token = '';
-        localStorage.removeItem('gufeng_token');
-        currentUser = null;
-        showLoginScreen();
-    });
-
-    async function renderMain() {
-        if (!currentUser) {
-            console.warn('currentUser 为空，返回登录页');
-            showLoginScreen();
-            return;
-        }
-        document.getElementById('roleDisplay').textContent = currentUser.role === 'admin' ? '🔑 管理员' : '👤 游客';
-        const adminPanel = document.getElementById('adminPanel');
-        adminPanel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
-
-        try {
-            const sites = await api('/api/sites');
-            renderCards(sites);
-        } catch (err) {
-            console.error(err);
-            document.getElementById('cardsContainer').innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--vermillion);">加载失败，请检查网络</p>';
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || '请求失败');
+            return data;
         }
 
-        if (currentUser.role === 'admin') {
+        function showLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+            document.body.style.display = 'flex';
+            document.body.style.alignItems = 'center';
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.body.style.display = 'block';
+            document.body.style.alignItems = 'unset';
+            renderMain();
+        }
+
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const username = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('loginError');
+            if (!username || !password) {
+                errorDiv.textContent = '请输入账号和密码';
+                return;
+            }
             try {
-                const users = await api('/api/users');
-                renderUserList(users);
-            } catch (e) { console.error(e); }
+                const res = await api('/api/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password })
+                });
+                token = res.token;
+                localStorage.setItem('gufeng_token', token);
+                currentUser = { username: res.username, role: res.role };
+                errorDiv.textContent = '';
+                showMainApp();
+            } catch (err) {
+                errorDiv.textContent = err.message;
+            }
+        });
+
+        document.getElementById('guestBtn').addEventListener('click', () => {
+            token = '';
+            localStorage.removeItem('gufeng_token');
+            currentUser = { username: '游客', role: 'guest' };
+            showMainApp();
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            token = '';
+            localStorage.removeItem('gufeng_token');
+            currentUser = null;
+            showLoginScreen();
+        });
+
+        async function renderMain() {
+            if (!currentUser) {
+                showLoginScreen();
+                return;
+            }
+            document.getElementById('roleDisplay').textContent = currentUser.role === 'admin' ? '🔑 管理员' : '👤 游客';
+            const adminPanel = document.getElementById('adminPanel');
+            adminPanel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+
             try {
                 const sites = await api('/api/sites');
-                renderSiteManageList(sites);
-            } catch (e) { console.error(e); }
-        }
-    }
+                renderCards(sites);
+            } catch (err) {
+                document.getElementById('cardsContainer').innerHTML =
+                    '<p style="grid-column:1/-1; text-align:center; color:var(--vermillion);">加载失败，请检查网络</p>';
+            }
 
-    function renderCards(sites) {
-        const container = document.getElementById('cardsContainer');
-        container.innerHTML = '';
-        if (!sites.length) {
-            container.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--ink-lighter);">暂无网站</p>';
-            return;
+            if (currentUser.role === 'admin') {
+                try { const users = await api('/api/users'); renderUserList(users); } catch (e) {}
+                try { const sites = await api('/api/sites'); renderSiteManageList(sites); } catch (e) {}
+            }
         }
-        sites.forEach(site => {
-            const a = document.createElement('a');
-            a.className = 'card-link';
-            a.href = site.url;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            a.innerHTML = `
-                <span class="card-seal">${escapeHtml(site.seal) || '🔗'}</span>
-                <span class="card-content">
-                    <h3>${escapeHtml(site.name)}</h3>
-                    <span class="card-desc">${escapeHtml(site.desc)}</span>
-                </span>
-            `;
-            container.appendChild(a);
-        });
-    }
 
-    function renderUserList(users) {
-        const div = document.getElementById('userList');
-        div.innerHTML = '';
-        users.forEach(user => {
-            const item = document.createElement('div');
-            item.className = 'list-item';
-            item.innerHTML = `
-                <span>${escapeHtml(user.username)} ${user.username==='zlm'?'(管理员)':''}</span>
-                ${user.username!=='zlm' ? '<button class="btn-sm del-user-btn">删除</button>' : ''}
-            `;
-            if (user.username !== 'zlm') {
-                item.querySelector('.del-user-btn').addEventListener('click', async () => {
-                    if (!confirm(`确定删除账号 ${user.username} 吗？`)) return;
+        function renderCards(sites) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            if (!sites.length) {
+                container.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--ink-lighter);">暂无网站</p>';
+                return;
+            }
+            sites.forEach(site => {
+                const a = document.createElement('a');
+                a.className = 'card-link';
+                a.href = site.url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.innerHTML = `
+                    <span class="card-seal">${escapeHtml(site.seal) || '🔗'}</span>
+                    <span class="card-content">
+                        <h3>${escapeHtml(site.name)}</h3>
+                        <span class="card-desc">${escapeHtml(site.desc)}</span>
+                    </span>
+                `;
+                container.appendChild(a);
+            });
+        }
+
+        function renderUserList(users) {
+            const div = document.getElementById('userList');
+            div.innerHTML = '';
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <span>${escapeHtml(user.username)} ${user.username==='zlm'?'(管理员)':''}</span>
+                    ${user.username!=='zlm' ? '<button class="btn-sm del-user-btn">删除</button>' : ''}
+                `;
+                if (user.username !== 'zlm') {
+                    item.querySelector('.del-user-btn').addEventListener('click', async () => {
+                        if (!confirm(`确定删除账号 ${user.username} 吗？`)) return;
+                        try {
+                            await api(`/api/users/${user.username}`, { method: 'DELETE' });
+                            alert('删除成功');
+                            const users = await api('/api/users');
+                            renderUserList(users);
+                        } catch (e) { alert(e.message); }
+                    });
+                }
+                div.appendChild(item);
+            });
+        }
+
+        function renderSiteManageList(sites) {
+            const div = document.getElementById('siteManageList');
+            div.innerHTML = '';
+            sites.forEach((site, idx) => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <span style="flex:1;">${escapeHtml(site.name)} (${escapeHtml(site.url)})</span>
+                    <button class="btn-sm del-site-btn">删除</button>
+                `;
+                item.querySelector('.del-site-btn').addEventListener('click', async () => {
+                    if (!confirm(`确定删除网站 "${site.name}" 吗？`)) return;
                     try {
-                        await api(`/api/users/${user.username}`, { method: 'DELETE' });
+                        await api(`/api/sites/${idx}`, { method: 'DELETE' });
                         alert('删除成功');
-                        const users = await api('/api/users');
-                        renderUserList(users);
+                        const newSites = await api('/api/sites');
+                        renderCards(newSites);
+                        renderSiteManageList(newSites);
                     } catch (e) { alert(e.message); }
                 });
-            }
-            div.appendChild(item);
-        });
-    }
-
-    function renderSiteManageList(sites) {
-        const div = document.getElementById('siteManageList');
-        div.innerHTML = '';
-        sites.forEach((site, idx) => {
-            const item = document.createElement('div');
-            item.className = 'list-item';
-            item.innerHTML = `
-                <span style="flex:1;">${escapeHtml(site.name)} (${escapeHtml(site.url)})</span>
-                <button class="btn-sm del-site-btn">删除</button>
-            `;
-            item.querySelector('.del-site-btn').addEventListener('click', async () => {
-                if (!confirm(`确定删除网站 "${site.name}" 吗？`)) return;
-                try {
-                    await api(`/api/sites/${idx}`, { method: 'DELETE' });
-                    alert('删除成功');
-                    const newSites = await api('/api/sites');
-                    renderCards(newSites);
-                    renderSiteManageList(newSites);
-                } catch (e) { alert(e.message); }
+                div.appendChild(item);
             });
-            div.appendChild(item);
-        });
-    }
+        }
 
-    document.getElementById('addUserBtn').addEventListener('click', async () => {
-        const username = document.getElementById('newUser').value.trim();
-        const password = document.getElementById('newPass').value;
-        if (!username || !password) return alert('账号密码不能为空');
-        try {
-            await api('/api/users', { method: 'POST', body: JSON.stringify({ username, password }) });
-            alert('添加成功');
-            document.getElementById('newUser').value = '';
-            document.getElementById('newPass').value = '';
-            const users = await api('/api/users');
-            renderUserList(users);
-        } catch (e) { alert(e.message); }
-    });
-
-    document.getElementById('addSiteBtn').addEventListener('click', async () => {
-        const name = document.getElementById('newSiteName').value.trim();
-        const url = document.getElementById('newSiteUrl').value.trim();
-        const desc = document.getElementById('newSiteDesc').value.trim();
-        const seal = document.getElementById('newSiteSeal').value.trim();
-        if (!name || !url) return alert('网站名称和网址必填');
-        try {
-            await api('/api/sites', { method: 'POST', body: JSON.stringify({ name, url, desc, seal }) });
-            alert('添加成功');
-            ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal'].forEach(id => document.getElementById(id).value = '');
-            const sites = await api('/api/sites');
-            renderCards(sites);
-            renderSiteManageList(sites);
-        } catch (e) { alert(e.message); }
-    });
-
-    function escapeHtml(text) {
-        const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' };
-        return String(text).replace(/[&<>"']/g, m => map[m]);
-    }
-
-    window.addEventListener('load', async () => {
-        if (token) {
+        document.getElementById('addUserBtn').addEventListener('click', async () => {
+            const username = document.getElementById('newUser').value.trim();
+            const password = document.getElementById('newPass').value;
+            if (!username || !password) return alert('账号密码不能为空');
             try {
-                await api('/api/sites');
+                await api('/api/users', { method: 'POST', body: JSON.stringify({ username, password }) });
+                alert('添加成功');
+                document.getElementById('newUser').value = '';
+                document.getElementById('newPass').value = '';
+                const users = await api('/api/users');
+                renderUserList(users);
+            } catch (e) { alert(e.message); }
+        });
+
+        document.getElementById('addSiteBtn').addEventListener('click', async () => {
+            const name = document.getElementById('newSiteName').value.trim();
+            const url = document.getElementById('newSiteUrl').value.trim();
+            const desc = document.getElementById('newSiteDesc').value.trim();
+            const seal = document.getElementById('newSiteSeal').value.trim();
+            if (!name || !url) return alert('网站名称和网址必填');
+            try {
+                await api('/api/sites', { method: 'POST', body: JSON.stringify({ name, url, desc, seal }) });
+                alert('添加成功');
+                ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal'].forEach(id => document.getElementById(id).value = '');
+                const sites = await api('/api/sites');
+                renderCards(sites);
+                renderSiteManageList(sites);
+            } catch (e) { alert(e.message); }
+        });
+
+        function escapeHtml(text) {
+            const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        window.addEventListener('load', async () => {
+            if (token) {
                 try {
-                    await api('/api/users');
-                    currentUser = { username: 'zlm', role: 'admin' };
-                } catch {
-                    currentUser = { username: '用户', role: 'user' };
+                    await api('/api/sites');
+                    try {
+                        await api('/api/users');
+                        currentUser = { username: 'zlm', role: 'admin' };
+                    } catch {
+                        currentUser = { username: '用户', role: 'user' };
+                    }
+                    showMainApp();
+                } catch (e) {
+                    token = '';
+                    localStorage.removeItem('gufeng_token');
+                    showLoginScreen();
                 }
-                showMainApp();
-            } catch (e) {
-                token = '';
-                localStorage.removeItem('gufeng_token');
+            } else {
                 showLoginScreen();
             }
-        } else {
-            showLoginScreen();
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
