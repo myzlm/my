@@ -94,6 +94,7 @@
             display:flex; align-items:center; gap:14px; background:var(--paper-light);
             border:1px solid rgba(140,120,90,0.3); border-radius:var(--radius-card); padding:18px 16px;
             text-decoration:none; color:var(--ink); box-shadow:var(--shadow-soft); transition:0.3s; overflow:hidden;
+            position:relative;
         }
         .card-link::before { content:''; position:absolute; left:0; top:12px; bottom:12px; width:3px; background:linear-gradient(180deg, #d46565, #c43d3d, #a83232); border-radius:0 2px 2px 0; opacity:0.7; }
         .card-link:hover { transform:translateY(-4px); box-shadow:var(--shadow-medium); border-color:rgba(180,140,70,0.5); }
@@ -167,24 +168,26 @@
 
 <script>
     // ================== 前端配置 ==================
-    // ⚠️ 请将下面地址改为你后端服务器的实际地址！
- // 例如：'http://123.123.123.123:3001' 或 'https://your-tunnel.trycloudflare.com'
-    const API_BASE = 'https://lock-laws-lightning-booking.trycloudflare.com';  // 本地测试，部署时改成公网地址
+    // ⚠️ 请将下面地址改为你的 Cloudflare Tunnel 地址（末尾不要加 /）
+    const API_BASE = 'https://lock-laws-lightning-booking.trycloudflare.com';
 
     let token = localStorage.getItem('gufeng_token') || '';
-    let currentUser = null;
+    let currentUser = null;   // 初始化必须为 null
 
     // 通用请求函数
     async function api(url, options = {}) {
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
-        const res = await fetch(`${API_BASE}${url}`, { ...options, headers: { ...headers, ...options.headers } });
+        const res = await fetch(`${API_BASE}${url}`, {
+            ...options,
+            headers: { ...headers, ...options.headers }
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '请求失败');
         return data;
     }
 
-    // 显示/隐藏视图
+    // 显示登录界面
     function showLoginScreen() {
         document.getElementById('loginScreen').style.display = 'block';
         document.getElementById('mainApp').style.display = 'none';
@@ -192,6 +195,7 @@
         document.body.style.alignItems = 'center';
     }
 
+    // 显示主界面
     function showMainApp() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
@@ -200,7 +204,7 @@
         renderMain();
     }
 
-    // 登录
+    // 登录按钮
     document.getElementById('loginBtn').addEventListener('click', async () => {
         const username = document.getElementById('usernameInput').value.trim();
         const password = document.getElementById('passwordInput').value;
@@ -224,10 +228,11 @@
         }
     });
 
-    // 游客模式
+    // 游客模式按钮
     document.getElementById('guestBtn').addEventListener('click', () => {
-        token = ''; // 游客无 token
+        token = '';
         localStorage.removeItem('gufeng_token');
+        // 明确设置 currentUser 为游客
         currentUser = { username: '游客', role: 'guest' };
         showMainApp();
     });
@@ -240,8 +245,15 @@
         showLoginScreen();
     });
 
-    // 渲染主界面
+    // 渲染主界面（防护 null currentUser）
     async function renderMain() {
+        // 防御性检查：如果 currentUser 意外为 null，返回登录页
+        if (!currentUser) {
+            console.warn('currentUser 为空，返回登录页');
+            showLoginScreen();
+            return;
+        }
+
         document.getElementById('roleDisplay').textContent = currentUser.role === 'admin' ? '🔑 管理员' : '👤 游客';
         const adminPanel = document.getElementById('adminPanel');
         adminPanel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
@@ -251,10 +263,11 @@
             const sites = await api('/api/sites');
             renderCards(sites);
         } catch (err) {
-            console.error(err);
+            console.error('加载网站失败:', err);
+            document.getElementById('cardsContainer').innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--vermillion);">加载失败，请检查网络</p>';
         }
 
-        // 如果是管理员，加载账号和网站管理列表
+        // 如果是管理员，加载管理列表
         if (currentUser.role === 'admin') {
             try {
                 const users = await api('/api/users');
@@ -377,20 +390,18 @@
         return String(text).replace(/[&<>"']/g, m => map[m]);
     }
 
-    // 页面初始化：检查是否有已保存的 token
+    // 页面初始化：检查已保存的 token
     window.addEventListener('load', async () => {
         if (token) {
-            // 尝试验证 token 有效性（通过获取网站列表）
             try {
+                // 尝试获取网站列表，测试 token 是否有效
                 await api('/api/sites');
-                // token 有效，解析出用户信息（简单从token解，或从接口获取）
-                // 这里简单用管理员判断：如果能拿到用户列表就是管理员（但不严谨，后端已保护）
-                // 偷懒方法：直接尝试获取用户列表，成功则管理员
+                // token 有效，尝试判断角色
                 try {
-                    await api('/api/users');
+                    await api('/api/users');  // 管理员可获取用户列表
                     currentUser = { username: 'zlm', role: 'admin' };
                 } catch {
-                    currentUser = { username: '普通用户', role: 'user' };
+                    currentUser = { username: '用户', role: 'user' };
                 }
                 showMainApp();
             } catch (e) {
