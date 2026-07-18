@@ -237,18 +237,17 @@
         </div>
     </div>
 
-    <!-- ======== 完整 JavaScript 安全优化版（新地址已编码） ======== -->
+    <!-- ======== 修复后的 JavaScript（所有 endpoint 加上 /api 前缀） ======== -->
     <script>
         (function() {
             'use strict';
 
-            // ===== 1. 安全获取后端地址（Base64 编码，避免明文暴露） =====
+            // ===== 1. 安全获取后端地址（Base64 编码） =====
             // 当前新隧道地址：https://fifteen-bright-smaller-earthquake.trycloudflare.com
             const ENCODED_API = 'aHR0cHM6Ly9maWZ0ZWVuLWJyaWdodC1zbWFsbGVyLWVhcnRocXVha2UudHJ5Y2xvdWRmbGFyZS5jb20=';
             let API_BASE;
             try {
                 API_BASE = atob(ENCODED_API);
-                // 安全校验：只允许 HTTPS 且包含 trycloudflare.com（可根据实际调整）
                 if (!API_BASE.startsWith('https://') || !API_BASE.includes('trycloudflare.com')) {
                     throw new Error('Invalid API base');
                 }
@@ -284,12 +283,7 @@
             const newSiteSeal = document.getElementById('newSiteSeal');
             const addSiteBtn = document.getElementById('addSiteBtn');
 
-            // ===== 4. 安全工具函数（使用 textContent 防止 XSS） =====
-            function safeText(text) {
-                return document.createTextNode(String(text));
-            }
-
-            // ===== 5. API 请求封装 =====
+            // ===== 4. API 请求封装 =====
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -305,7 +299,7 @@
                 return data;
             }
 
-            // ===== 6. 界面切换 =====
+            // ===== 5. 界面切换 =====
             function showLoginScreen() {
                 loginScreen.style.display = 'block';
                 mainApp.style.display = 'none';
@@ -321,7 +315,7 @@
                 renderMain();
             }
 
-            // ===== 7. 登录逻辑 =====
+            // ===== 6. 登录逻辑 =====
             loginBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value;
@@ -330,7 +324,8 @@
                     return;
                 }
                 try {
-                    const res = await apiRequest('/login', {
+                    // ★ 关键修改：改为 /api/login
+                    const res = await apiRequest('/api/login', {
                         method: 'POST',
                         body: JSON.stringify({ username, password })
                     });
@@ -358,7 +353,7 @@
                 showLoginScreen();
             });
 
-            // ===== 8. 主渲染 =====
+            // ===== 7. 主渲染 =====
             async function renderMain() {
                 if (!currentUser) {
                     showLoginScreen();
@@ -368,7 +363,8 @@
                 adminPanel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
 
                 try {
-                    const sites = await apiRequest('/sites');
+                    // ★ 关键修改：改为 /api/sites
+                    const sites = await apiRequest('/api/sites');
                     renderCards(sites);
                 } catch (err) {
                     cardsContainer.innerHTML = '';
@@ -380,17 +376,18 @@
 
                 if (currentUser.role === 'admin') {
                     try {
-                        const users = await apiRequest('/users');
+                        // ★ 关键修改：改为 /api/users
+                        const users = await apiRequest('/api/users');
                         renderUserList(users);
                     } catch (e) { /* ignore */ }
                     try {
-                        const sites = await apiRequest('/sites');
+                        const sites = await apiRequest('/api/sites');
                         renderSiteManageList(sites);
                     } catch (e) { /* ignore */ }
                 }
             }
 
-            // ===== 9. 渲染卡片（安全：纯 DOM 操作） =====
+            // ===== 8. 渲染卡片（安全：纯 DOM 操作） =====
             function renderCards(sites) {
                 cardsContainer.innerHTML = '';
                 if (!sites || sites.length === 0) {
@@ -429,7 +426,7 @@
                 });
             }
 
-            // ===== 10. 渲染用户列表（安全） =====
+            // ===== 9. 渲染用户列表 =====
             function renderUserList(users) {
                 userListEl.innerHTML = '';
                 if (!users) return;
@@ -448,9 +445,10 @@
                         delBtn.addEventListener('click', async () => {
                             if (!confirm(`确定删除账号 ${user.username} 吗？`)) return;
                             try {
-                                await apiRequest(`/users/${user.username}`, { method: 'DELETE' });
+                                // ★ 关键修改：改为 /api/users/${username}
+                                await apiRequest(`/api/users/${user.username}`, { method: 'DELETE' });
                                 alert('删除成功');
-                                const updated = await apiRequest('/users');
+                                const updated = await apiRequest('/api/users');
                                 renderUserList(updated);
                             } catch (e) {
                                 alert(e.message);
@@ -462,7 +460,7 @@
                 });
             }
 
-            // ===== 11. 渲染网站管理列表（安全） =====
+            // ===== 10. 渲染网站管理列表 =====
             function renderSiteManageList(sites) {
                 siteManageListEl.innerHTML = '';
                 if (!sites) return;
@@ -481,9 +479,10 @@
                     delBtn.addEventListener('click', async () => {
                         if (!confirm(`确定删除网站 "${site.name}" 吗？`)) return;
                         try {
-                            await apiRequest(`/sites/${idx}`, { method: 'DELETE' });
+                            // ★ 关键修改：改为 /api/sites/${idx}
+                            await apiRequest(`/api/sites/${idx}`, { method: 'DELETE' });
                             alert('删除成功');
-                            const updated = await apiRequest('/sites');
+                            const updated = await apiRequest('/api/sites');
                             renderCards(updated);
                             renderSiteManageList(updated);
                         } catch (e) {
@@ -495,7 +494,7 @@
                 });
             }
 
-            // ===== 12. 管理员操作：添加用户 =====
+            // ===== 11. 管理员操作：添加用户 =====
             addUserBtn.addEventListener('click', async () => {
                 const username = newUserInput.value.trim();
                 const password = newPassInput.value;
@@ -504,21 +503,22 @@
                     return;
                 }
                 try {
-                    await apiRequest('/users', {
+                    // ★ 关键修改：改为 /api/users
+                    await apiRequest('/api/users', {
                         method: 'POST',
                         body: JSON.stringify({ username, password })
                     });
                     alert('添加成功');
                     newUserInput.value = '';
                     newPassInput.value = '';
-                    const users = await apiRequest('/users');
+                    const users = await apiRequest('/api/users');
                     renderUserList(users);
                 } catch (e) {
                     alert(e.message);
                 }
             });
 
-            // ===== 13. 管理员操作：添加网站 =====
+            // ===== 12. 管理员操作：添加网站 =====
             addSiteBtn.addEventListener('click', async () => {
                 const name = newSiteName.value.trim();
                 const url = newSiteUrl.value.trim();
@@ -529,7 +529,8 @@
                     return;
                 }
                 try {
-                    await apiRequest('/sites', {
+                    // ★ 关键修改：改为 /api/sites
+                    await apiRequest('/api/sites', {
                         method: 'POST',
                         body: JSON.stringify({ name, url, desc, seal })
                     });
@@ -538,7 +539,7 @@
                     newSiteUrl.value = '';
                     newSiteDesc.value = '';
                     newSiteSeal.value = '';
-                    const sites = await apiRequest('/sites');
+                    const sites = await apiRequest('/api/sites');
                     renderCards(sites);
                     renderSiteManageList(sites);
                 } catch (e) {
@@ -546,13 +547,13 @@
                 }
             });
 
-            // ===== 14. 启动：页面加载时尝试恢复会话 =====
+            // ===== 13. 启动：页面加载时尝试恢复会话 =====
             window.addEventListener('load', async () => {
                 if (token) {
                     try {
-                        await apiRequest('/sites');
+                        await apiRequest('/api/sites');
                         try {
-                            await apiRequest('/users');
+                            await apiRequest('/api/users');
                             currentUser = { username: 'zlm', role: 'admin' };
                         } catch {
                             currentUser = { username: '用户', role: 'user' };
