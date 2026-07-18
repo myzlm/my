@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>万壑松风 · 雅集</title>
-    <!-- CSP：connect-src 已更新为新隧道域名 -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src https://fifteen-bright-smaller-earthquake.trycloudflare.com;">
+    <!-- CSP：更新 connect-src 为新隧道域名 -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src https://requirement-response-dropped-shares.trycloudflare.com;">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
 
@@ -237,14 +237,14 @@
         </div>
     </div>
 
-    <!-- ======== 修复后的 JavaScript（所有 endpoint 加上 /api 前缀） ======== -->
+    <!-- ======== JavaScript（已更新新隧道地址） ======== -->
     <script>
         (function() {
             'use strict';
 
-            // ===== 1. 安全获取后端地址（Base64 编码） =====
-            // 当前新隧道地址：https://fifteen-bright-smaller-earthquake.trycloudflare.com
-            const ENCODED_API = 'aHR0cHM6Ly9maWZ0ZWVuLWJyaWdodC1zbWFsbGVyLWVhcnRocXVha2UudHJ5Y2xvdWRmbGFyZS5jb20=';
+            // ===== 1. 新隧道地址（Base64 编码） =====
+            // 地址：https://requirement-response-dropped-shares.trycloudflare.com
+            const ENCODED_API = 'aHR0cHM6Ly9yZXF1aXJlbWVudC1yZXNwb25zZS1kcm9wcGVkLXNoYXJlcy50cnljbG91ZGZsYXJlLmNvbQ==';
             let API_BASE;
             try {
                 API_BASE = atob(ENCODED_API);
@@ -324,7 +324,6 @@
                     return;
                 }
                 try {
-                    // ★ 关键修改：改为 /api/login
                     const res = await apiRequest('/api/login', {
                         method: 'POST',
                         body: JSON.stringify({ username, password })
@@ -363,7 +362,6 @@
                 adminPanel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
 
                 try {
-                    // ★ 关键修改：改为 /api/sites
                     const sites = await apiRequest('/api/sites');
                     renderCards(sites);
                 } catch (err) {
@@ -376,7 +374,6 @@
 
                 if (currentUser.role === 'admin') {
                     try {
-                        // ★ 关键修改：改为 /api/users
                         const users = await apiRequest('/api/users');
                         renderUserList(users);
                     } catch (e) { /* ignore */ }
@@ -445,7 +442,6 @@
                         delBtn.addEventListener('click', async () => {
                             if (!confirm(`确定删除账号 ${user.username} 吗？`)) return;
                             try {
-                                // ★ 关键修改：改为 /api/users/${username}
                                 await apiRequest(`/api/users/${user.username}`, { method: 'DELETE' });
                                 alert('删除成功');
                                 const updated = await apiRequest('/api/users');
@@ -479,7 +475,6 @@
                     delBtn.addEventListener('click', async () => {
                         if (!confirm(`确定删除网站 "${site.name}" 吗？`)) return;
                         try {
-                            // ★ 关键修改：改为 /api/sites/${idx}
                             await apiRequest(`/api/sites/${idx}`, { method: 'DELETE' });
                             alert('删除成功');
                             const updated = await apiRequest('/api/sites');
@@ -503,7 +498,6 @@
                     return;
                 }
                 try {
-                    // ★ 关键修改：改为 /api/users
                     await apiRequest('/api/users', {
                         method: 'POST',
                         body: JSON.stringify({ username, password })
@@ -529,7 +523,6 @@
                     return;
                 }
                 try {
-                    // ★ 关键修改：改为 /api/sites
                     await apiRequest('/api/sites', {
                         method: 'POST',
                         body: JSON.stringify({ name, url, desc, seal })
