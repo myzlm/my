@@ -97,7 +97,7 @@
             width: 380px; max-width: 90%;
             background: var(--paper-light);
             border: 1px solid rgba(140, 120, 90, 0.4);
-            border-radius: var(--radius-card);
+ border-radius: var(--radius-card);
             padding: 40px 30px 30px;
             box-shadow: var(--shadow-medium), inset 0 0 20px rgba(255, 250, 240, 0.5);
             text-align: center; animation: fadeIn 0.8s ease; backdrop-filter: blur(8px);
@@ -439,7 +439,7 @@
         window.addEventListener('load', async () => {
             try {
                 // 先去读取 api_url.txt
-                const response = await fetch('/api_url.txt');
+                const response = await fetch('api_url.txt');
                 if (!response.ok) {
                     throw new Error('无法找到 api_url.txt 文件');
                 }
