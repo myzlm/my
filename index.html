@@ -6,9 +6,15 @@
     <title>万壑松风 · 雅集</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
-    <script src="config.js"></script>
+
+    <!-- ========== 核心修改：直接在此处定义 API 地址 ========== -->
+    <script>
+        // 这个变量不再依赖 config.js 或 GitHub Secrets，前端直接读取
+        const API_BASE = 'https://apnic-mine-thoroughly-attended.trycloudflare.com';
+    </script>
 
     <style>
+        /* ==================== 万壑松风 · 雅集 古风动态样式 ==================== */
         :root {
             --paper: rgba(247, 242, 232, 0.4);
             --paper-light: rgba(253, 250, 243, 0.45);
@@ -34,6 +40,7 @@
 
         body {
             font-family: var(--font-body);
+            /* ========== 电脑端背景图 (直接放在根目录) ========== */
             background-image: url('bg-pc.png');
             background-size: cover;
             background-position: center bottom;
@@ -41,6 +48,7 @@
             background-attachment: fixed;
             background-color: rgba(247, 242, 232, 0.25);
             background-blend-mode: overlay;
+
             color: var(--ink);
             min-height: 100vh;
             display: flex;
@@ -50,6 +58,7 @@
             overflow-x: hidden;
         }
 
+        /* ========== 手机端背景替换 ========== */
         @media (max-width: 600px) {
             body {
                 background-image: url('bg-mobile.png');
@@ -57,7 +66,9 @@
             }
         }
 
-        body::before { content: none; }
+        body::before {
+            content: none;
+        }
 
         /* ========== 云雾层 ========== */
         .clouds-layer {
@@ -69,6 +80,7 @@
             pointer-events: none;
             z-index: 1;
         }
+
         .cloud {
             position: absolute;
             background: radial-gradient(ellipse at center,
@@ -309,10 +321,10 @@
 
     <!-- JavaScript -->
     <script>
-        // ================== 前端配置 (从 config.js 获取) ==================
-        // 确保 config.js 中定义了 const API_BASE
+        // ================== 前端核心逻辑 ==================
+        // 依靠 head 中定义的 API_BASE，不再依赖 config.js
         if (typeof API_BASE === 'undefined') {
-            alert('错误：config.js 加载失败或未定义 API_BASE！');
+            alert('错误：API_BASE 变量未定义，请检查 HTML 头部！');
             throw new Error('API_BASE is undefined');
         }
 
