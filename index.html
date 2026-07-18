@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>万壑松风 · 雅集</title>
-    <!-- CSP：允许内联样式和脚本，方便单文件部署 -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src https://observed-messaging-wind-affiliation.trycloudflare.com;">
+    <!-- CSP 已更新为新隧道地址 -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src https://ceiling-negotiation-mountain-removing.trycloudflare.com;">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
 
@@ -187,11 +187,11 @@
         <form id="loginForm" onsubmit="return false;">
             <div class="input-group">
                 <label>账号</label>
-                <input type="text" id="usernameInput" placeholder="输入账号" autocomplete="off" />
+                <input type="text" id="usernameInput" placeholder="输入账号" autocomplete="username" />
             </div>
             <div class="input-group">
                 <label>密码</label>
-                <input type="password" id="passwordInput" placeholder="输入密码" />
+                <input type="password" id="passwordInput" placeholder="输入密码" autocomplete="current-password" />
             </div>
         </form>
         <div class="error-msg" id="loginError"></div>
@@ -222,8 +222,8 @@
                     <h4>账号管理</h4>
                     <form id="addUserForm" onsubmit="return false;">
                         <div style="display:flex; gap:6px; margin-bottom:10px;">
-                            <input type="text" id="newUser" placeholder="新账号" style="flex:1; padding:6px;" />
-                            <input type="password" id="newPass" placeholder="密码" style="flex:1; padding:6px;" />
+                            <input type="text" id="newUser" placeholder="新账号" style="flex:1; padding:6px;" autocomplete="username" />
+                            <input type="password" id="newPass" placeholder="密码" style="flex:1; padding:6px;" autocomplete="new-password" />
                             <button class="btn-sm" id="addUserBtn">添加</button>
                         </div>
                     </form>
@@ -246,14 +246,12 @@
         </div>
     </div>
 
-    <!-- ======== 完整 JavaScript ======== -->
     <script>
         (function() {
             'use strict';
 
-            // ===== 1. 新隧道地址（Base64 编码） =====
-            // 地址：https://observed-messaging-wind-affiliation.trycloudflare.com
-            const ENCODED_API = 'aHR0cHM6Ly9vYnNlcnZlZC1tZXNzYWdpbmctd2luZC1hZmZpbGlhdGlvbi50cnljbG91ZGZsYXJlLmNvbQ==';
+            // ===== 新地址 Base64 =====
+            const ENCODED_API = 'aHR0cHM6Ly9jZWlsaW5nLW5lZ290aWF0aW9uLW1vdW50YWluLXJlbW92aW5nLnRyeWNsb3VkZmxhcmUuY29t';
             let API_BASE;
             try {
                 API_BASE = atob(ENCODED_API);
@@ -265,11 +263,11 @@
                 return;
             }
 
-            // ===== 2. 全局状态 =====
+            // ===== 全局状态 =====
             let token = sessionStorage.getItem('gufeng_token') || '';
             let currentUser = null;
 
-            // ===== 3. DOM 引用 =====
+            // ===== DOM 引用 =====
             const loginScreen = document.getElementById('loginScreen');
             const mainApp = document.getElementById('mainApp');
             const usernameInput = document.getElementById('usernameInput');
@@ -292,7 +290,7 @@
             const newSiteSeal = document.getElementById('newSiteSeal');
             const addSiteBtn = document.getElementById('addSiteBtn');
 
-            // ===== 4. API 请求封装 =====
+            // ===== API 请求封装 =====
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -308,7 +306,7 @@
                 return data;
             }
 
-            // ===== 5. 界面切换 =====
+            // ===== 界面切换 =====
             function showLoginScreen() {
                 loginScreen.style.display = 'block';
                 mainApp.style.display = 'none';
@@ -324,7 +322,7 @@
                 renderMain();
             }
 
-            // ===== 6. 登录逻辑 =====
+            // ===== 登录逻辑 =====
             loginBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value;
@@ -361,7 +359,7 @@
                 showLoginScreen();
             });
 
-            // ===== 7. 主渲染 =====
+            // ===== 主渲染 =====
             async function renderMain() {
                 if (!currentUser) {
                     showLoginScreen();
@@ -393,7 +391,7 @@
                 }
             }
 
-            // ===== 8. 渲染卡片（安全：纯 DOM 操作） =====
+            // ===== 渲染卡片 =====
             function renderCards(sites) {
                 cardsContainer.innerHTML = '';
                 if (!sites || sites.length === 0) {
@@ -432,7 +430,7 @@
                 });
             }
 
-            // ===== 9. 渲染用户列表 =====
+            // ===== 渲染用户列表 =====
             function renderUserList(users) {
                 userListEl.innerHTML = '';
                 if (!users) return;
@@ -465,7 +463,7 @@
                 });
             }
 
-            // ===== 10. 渲染网站管理列表 =====
+            // ===== 渲染网站管理列表 =====
             function renderSiteManageList(sites) {
                 siteManageListEl.innerHTML = '';
                 if (!sites) return;
@@ -498,7 +496,7 @@
                 });
             }
 
-            // ===== 11. 管理员操作：添加用户 =====
+            // ===== 管理员操作：添加用户 =====
             addUserBtn.addEventListener('click', async () => {
                 const username = newUserInput.value.trim();
                 const password = newPassInput.value;
@@ -521,7 +519,7 @@
                 }
             });
 
-            // ===== 12. 管理员操作：添加网站 =====
+            // ===== 管理员操作：添加网站 =====
             addSiteBtn.addEventListener('click', async () => {
                 const name = newSiteName.value.trim();
                 const url = newSiteUrl.value.trim();
@@ -549,7 +547,7 @@
                 }
             });
 
-            // ===== 13. 启动：页面加载时尝试恢复会话 =====
+            // ===== 启动：页面加载时尝试恢复会话 =====
             window.addEventListener('load', async () => {
                 if (token) {
                     try {
