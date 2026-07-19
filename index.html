@@ -18,6 +18,14 @@
             align-items:center;
             justify-content:center;
             position:relative;
+            background-image: url('bg-pc.png');
+            background-size: cover;
+            background-position: center bottom;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
+        }
+        @media (max-width:600px) {
+            body { background-image: url('bg-mobile.png'); background-position: center center; }
         }
         /* 云雾 */
         .clouds-layer { position:fixed; bottom:0; left:0; width:100%; height:60%; pointer-events:none; z-index:1; }
@@ -177,12 +185,12 @@
         .form-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
         .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.3); color:#2a2218; min-width:70px; }
 
-        /* 底部诗词 & 涟漪（加浓版） */
+        /* 底部诗词 & 涟漪（加深版） */
         .footer-poem { margin-top:30px; text-align:center; font-family:'ZCOOL XiaoWei', cursive; font-size:0.85rem; color:#8a7b65; opacity:0.6; border-top:1px solid rgba(140,120,90,0.15); padding-top:16px; font-style:italic; }
         .ripple {
             position:fixed; border-radius:50%;
-            background:radial-gradient(circle, rgba(180,140,70,0.45) 0%, rgba(180,120,60,0.1) 50%, transparent 70%);
-            transform:scale(0); animation:rippleAnim 0.8s ease-out forwards;
+            background:radial-gradient(circle, rgba(180,140,70,0.5) 0%, rgba(180,120,60,0.2) 60%, transparent 80%);
+            transform:scale(0); animation:rippleAnim 0.9s ease-out forwards;
             pointer-events:none; z-index:999;
         }
         @keyframes rippleAnim { 0% { transform:scale(0); opacity:1; } 100% { transform:scale(4); opacity:0; } }
@@ -234,8 +242,8 @@
                     <h4 style="font-family:'ZCOOL XiaoWei',cursive; font-weight:normal; color:#5c4f3a; margin-bottom:8px;">账号管理</h4>
                     <form onsubmit="return false;">
                         <div class="form-row">
-                            <input type="text" id="newUser" placeholder="新账号" />
-                            <input type="password" id="newPass" placeholder="密码" />
+                            <input type="text" id="newUser" placeholder="新账号" autocomplete="username" />
+                            <input type="password" id="newPass" placeholder="密码" autocomplete="new-password" />
                             <button class="btn-sm" id="addUserBtn">添加</button>
                         </div>
                     </form>
@@ -269,6 +277,7 @@
             // ===== 配置 =====
             const API_BASE = 'https://endorsed-mariah-said-bags.trycloudflare.com';
             let currentUser = null;
+            let token = null;        // 存储 JWT
             let sitesData = [];
             let currentCategory = 'all';
             let searchKeyword = '';
@@ -314,13 +323,18 @@
                 }
             }
 
-            // ===== API =====
+            // ===== API（使用 Authorization 头） =====
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
+                // 从 sessionStorage 获取 token
+                const storedToken = sessionStorage.getItem('gufeng_token');
+                if (storedToken) {
+                    headers['Authorization'] = `Bearer ${storedToken}`;
+                }
                 const res = await fetch(`${API_BASE}${endpoint}`, {
                     ...options,
-                    headers,
-                    credentials: 'include'
+                    headers: { ...headers, ...options.headers },
+                    credentials: 'omit'   // 不再依赖 Cookie
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || `请求失败 (${res.status})`);
@@ -342,6 +356,9 @@
                         body: JSON.stringify({ username, password })
                     });
                     loginError.textContent = '';
+                    // ★ 保存 token
+                    token = res.token;
+                    sessionStorage.setItem('gufeng_token', token);
                     let role = res.role || 'user';
                     if (username === 'zlm' && role !== 'admin') role = 'admin';
                     currentUser = { username, role };
@@ -355,20 +372,31 @@
             guestBtn.addEventListener('click', () => {
                 currentUser = { username: '游客', role: 'guest' };
                 sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
+                sessionStorage.removeItem('gufeng_token');
                 showApp();
             });
 
             logoutBtn.addEventListener('click', async () => {
                 try { await apiRequest('/api/logout', { method: 'POST' }); } catch (e) {}
                 currentUser = null;
+                token = null;
                 sessionStorage.removeItem('gufeng_user');
+                sessionStorage.removeItem('gufeng_token');
                 showLogin();
             });
 
             function restoreSession() {
-                const stored = sessionStorage.getItem('gufeng_user');
-                if (stored) {
-                    try { const parsed = JSON.parse(stored); if (parsed && parsed.username) { currentUser = parsed; return true; } } catch (e) {}
+                const storedUser = sessionStorage.getItem('gufeng_user');
+                const storedToken = sessionStorage.getItem('gufeng_token');
+                if (storedUser && storedToken) {
+                    try {
+                        const parsed = JSON.parse(storedUser);
+                        if (parsed && parsed.username) {
+                            currentUser = parsed;
+                            token = storedToken;
+                            return true;
+                        }
+                    } catch (e) {}
                 }
                 return false;
             }
@@ -399,6 +427,7 @@
                     btn.textContent = cat;
                     btn.addEventListener('click', () => {
                         currentCategory = cat;
+                        // 重新渲染分类按钮和卡片
                         renderCategoryTabs(getCategories(sitesData));
                         renderCards();
                     });
@@ -406,7 +435,7 @@
                 });
             }
 
-            // ===== 涟漪特效 =====
+            // ===== 涟漪特效（使用 mousedown 触发，确保可见） =====
             function createRipple(x, y) {
                 const ripple = document.createElement('div');
                 ripple.className = 'ripple';
@@ -415,7 +444,7 @@
                 ripple.style.left = (x - size/2) + 'px';
                 ripple.style.top = (y - size/2) + 'px';
                 document.body.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 900);
+                setTimeout(() => ripple.remove(), 1000);
             }
 
             // ===== 渲染卡片 =====
@@ -438,6 +467,27 @@
                     a.target = '_blank';
                     a.rel = 'noopener noreferrer';
                     a.dataset.index = sitesData.indexOf(site);
+
+                    // ★ 使用 mousedown 触发涟漪，保证跳转前显示
+                    a.addEventListener('mousedown', function(e) {
+                        createRipple(e.clientX, e.clientY);
+                    });
+
+                    // click 事件处理统计（不阻塞跳转）
+                    a.addEventListener('click', function(e) {
+                        const idx = parseInt(this.dataset.index);
+                        if (!isNaN(idx) && idx >= 0 && idx < sitesData.length) {
+                            // 异步统计，不阻塞跳转
+                            apiRequest(`/api/sites/${idx}/visit`, { method: 'POST' })
+                                .then(() => {
+                                    sitesData[idx].visits = (sitesData[idx].visits || 0) + 1;
+                                    const v = this.querySelector('.visits');
+                                    if (v) v.textContent = `👁 ${sitesData[idx].visits}`;
+                                })
+                                .catch(e => console.warn('统计失败', e));
+                        }
+                        // 不阻止默认行为，让链接正常跳转
+                    });
 
                     const seal = document.createElement('div');
                     seal.className = 'card-seal';
@@ -467,20 +517,6 @@
                     a.appendChild(seal);
                     a.appendChild(content);
                     a.appendChild(meta);
-
-                    a.addEventListener('click', function(e) {
-                        createRipple(e.clientX, e.clientY);
-                        const idx = parseInt(this.dataset.index);
-                        if (!isNaN(idx) && idx >= 0 && idx < sitesData.length) {
-                            apiRequest(`/api/sites/${idx}/visit`, { method: 'POST' })
-                                .then(() => {
-                                    sitesData[idx].visits = (sitesData[idx].visits || 0) + 1;
-                                    const v = this.querySelector('.visits');
-                                    if (v) v.textContent = `👁 ${sitesData[idx].visits}`;
-                                })
-                                .catch(e => console.warn('统计失败', e));
-                        }
-                    });
 
                     cardsContainer.appendChild(a);
                 });
@@ -538,7 +574,7 @@
                 });
             }
 
-            // ★★★ 修正：只当管理员才请求 /api/users ★★★
+            // ===== 主渲染（只当管理员才请求用户列表） =====
             async function renderAll() {
                 if (!currentUser) {
                     showLogin();
@@ -550,13 +586,11 @@
                 roleDisplay.textContent = roleText;
                 adminPanel.style.display = (currentUser.role === 'admin') ? 'block' : 'none';
 
-                // 加载网站（所有人都加载）
                 await loadSites();
                 const cats = getCategories(sitesData);
                 renderCategoryTabs(cats);
                 renderCards();
 
-                // ★ 只有管理员才请求用户列表和显示网站管理列表 ★
                 if (currentUser.role === 'admin') {
                     try {
                         const users = await apiRequest('/api/users');
@@ -567,7 +601,6 @@
                         userListEl.innerHTML = '<p style="color:#c43d3d;">加载用户列表失败</p>';
                     }
                 } else {
-                    // 非管理员：清空管理面板内容
                     userListEl.innerHTML = '';
                     siteManageListEl.innerHTML = '';
                 }
