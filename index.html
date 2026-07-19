@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
-        /* ==================== 原版古风样式（保留） ==================== */
+        /* ==================== 万壑松风 · 雅集 古风增强版 ==================== */
         :root {
-            --paper: rgba(247, 242, 232, 0.4);
-            --paper-light: rgba(253, 250, 243, 0.45);
+            --paper: rgba(247, 242, 232, 0.35);
+            --paper-light: rgba(253, 250, 243, 0.5);
             --ink: #2a2218;
             --ink-light: #5c4f3a;
             --ink-lighter: #8a7b65;
@@ -19,24 +19,13 @@
             --vermillion-light: #d46565;
             --gold: #b8944b;
             --gold-light: #d4b66a;
-            --shadow-soft: 0 2px 16px rgba(40, 20, 10, 0.07);
-            --shadow-medium: 0 6px 28px rgba(40, 20, 10, 0.12);
+            --shadow-soft: 0 2px 16px rgba(40, 20, 10, 0.08);
+            --shadow-medium: 0 6px 28px rgba(40, 20, 10, 0.15);
             --radius-card: 6px;
             --font-body: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
             --font-heading: "ZCOOL XiaoWei", "KaiTi", "STKaiti", "华文楷体", serif;
         }
-        /* 暗色模式 */
-        [data-theme="dark"] {
-            --paper: rgba(30, 28, 25, 0.6);
-            --paper-light: rgba(40, 38, 35, 0.7);
-            --ink: #e8e0d6;
-            --ink-light: #b8ae9e;
-            --ink-lighter: #8a7b65;
-            --shadow-soft: 0 2px 16px rgba(0,0,0,0.3);
-            --shadow-medium: 0 6px 28px rgba(0,0,0,0.5);
-            --gold: #d4b66a;
-            --vermillion: #b53535;
-        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -55,14 +44,13 @@
             justify-content: center;
             position: relative;
             overflow-x: hidden;
-            transition: background 0.3s, color 0.3s;
         }
         @media (max-width: 600px) {
             body { background-image: url('bg-mobile.png'); background-position: center center; }
         }
         body::before { content: none; }
 
-        /* 云雾 */
+        /* ========== 云雾层（保留） ========== */
         .clouds-layer { position: fixed; bottom: 0; left: 0; width: 100%; height: 70%; pointer-events: none; z-index: 1; }
         .cloud { position: absolute; background: radial-gradient(ellipse at center, rgba(255, 252, 245, 0.6) 0%, rgba(245, 238, 225, 0.4) 25%, rgba(235, 225, 210, 0.15) 55%, transparent 75%); border-radius: 50%; filter: blur(24px); }
         .cloud-1 { width: 360px; height: 90px; bottom: 42%; left: -10%; animation: cloudDrift1 28s linear infinite; opacity: 0.45; }
@@ -75,7 +63,7 @@
         @keyframes cloudDrift2 { from { transform: translateX(-350px); } to { transform: translateX(calc(100vw + 400px)); } }
         @keyframes cloudDrift3 { from { transform: translateX(-480px); } to { transform: translateX(calc(100vw + 520px)); } }
 
-        /* 花瓣 */
+        /* ========== 飘落花瓣（保留） ========== */
         .petals { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; overflow: hidden; }
         .petal { position: absolute; top: -30px; width: 12px; height: 16px; background: radial-gradient(ellipse at 35% 30%, rgba(235, 175, 160, 0.7), rgba(220, 145, 130, 0.5) 40%, transparent 70%); border-radius: 45% 55% 50% 50%; animation: petalFall linear infinite; opacity: 0; }
         .petal:nth-child(1) { left: 5%; animation-duration: 7.2s; animation-delay: 0s; }
@@ -103,7 +91,7 @@
             100% { transform: translateY(105vh) translateX(8px) rotate(480deg) scale(0.3); opacity: 0; }
         }
 
-        /* ========== 登录卡片（原版） ========== */
+        /* ========== 登录卡片（古风增强） ========== */
         .login-container {
             position: relative; z-index: 10;
             width: 380px; max-width: 90%;
@@ -115,11 +103,46 @@
             text-align: center; animation: fadeIn 0.8s ease; backdrop-filter: blur(8px);
         }
         .login-container::before {
-            content: ''; position: absolute; top: 8px; left: 12px; right: 12px; bottom: 8px;
-            border: 1px solid rgba(180, 140, 70, 0.2); border-radius: 3px; pointer-events: none;
+            content: '';
+            position: absolute;
+            top: 6px; left: 6px; right: 6px; bottom: 6px;
+            border: 1px solid rgba(180, 140, 70, 0.2);
+            border-radius: 3px;
+            pointer-events: none;
+            background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(180,140,70,0.05) 8px, rgba(180,140,70,0.05) 9px);
+        }
+        .login-container::after {
+            content: '◆ ◇ ◆ ◇ ◆';
+            position: absolute;
+            bottom: 10px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            color: rgba(180,140,70,0.2);
+            letter-spacing: 4px;
+            white-space: nowrap;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .login-title { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700; margin-bottom: 6px; color: var(--ink); letter-spacing: 0.12em; text-shadow: 0 1px 1px rgba(180, 150, 100, 0.3); }
+
+        .login-title {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--ink);
+            letter-spacing: 0.12em;
+            text-shadow: 0 1px 1px rgba(180, 150, 100, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+        .login-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.5;
+        }
         .login-subtitle { font-size: 0.9rem; color: var(--ink-lighter); margin-bottom: 28px; letter-spacing: 0.2em; }
         .input-group { margin-bottom: 18px; text-align: left; }
         .input-group label { display: block; font-size: 0.85rem; color: var(--ink-light); margin-bottom: 6px; letter-spacing: 0.05em; font-family: var(--font-heading); }
@@ -132,11 +155,13 @@
         .btn-guest:hover { background: rgba(180, 140, 60, 0.2); border-color: var(--gold); }
         .error-msg { color: var(--vermillion); font-size: 0.8rem; margin-top: 8px; min-height: 20px; }
 
-        /* ========== 主界面（原版框架 + 新功能） ========== */
+        /* ========== 主界面 ========== */
         .main-app { display: none; width: 100%; max-width: 960px; margin: 0 auto; padding: 30px 24px 50px; position: relative; z-index: 10; }
         .plaque-hangers { display: flex; justify-content: center; gap: 50px; margin-bottom: -5px; position: relative; z-index: 1; }
         .plaque-hanger { width: 3px; height: 22px; background: linear-gradient(180deg, #8b6d4a, #c4a870, #8b6d4a); border-radius: 2px; position: relative; }
         .plaque-hanger::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; background: radial-gradient(circle, #c4a870, #8b6d4a); border-radius: 50%; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+
+        /* 古风标题增强 */
         .header-plaque {
             text-align: center; margin: 0 auto 20px;
             background: linear-gradient(180deg, #4a3525 0%, #3d2a1a 8%, #5c3d28 15%, #4a3020 30%, #3d2518 50%, #4a3020 70%, #5c3d28 85%, #3d2a1a 95%, #4a3525 100%);
@@ -145,6 +170,11 @@
             box-shadow: inset 0 2px 4px rgba(255, 220, 160, 0.15), inset 0 -3px 4px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(30, 15, 5, 0.5), 0 2px 0 #7a5a3a, 0 4px 0 #5a3d25, 0 6px 0 #3d2518;
             color: #e8d5a3; font-size: 2rem; font-family: var(--font-heading); letter-spacing: 0.18em;
             position: relative; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 20px rgba(220, 180, 100, 0.4);
+            animation: titleGlow 4s ease-in-out infinite;
+        }
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 20px rgba(220,180,100,0.4); }
+            50% { text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 40px rgba(220,180,100,0.7); }
         }
         .header-plaque::before {
             content: ''; position: absolute; top: 8px; left: 14px; right: 14px; bottom: 8px;
@@ -155,6 +185,7 @@
             font-size: 10px; color: rgba(200, 160, 90, 0.3); letter-spacing: 80px; white-space: nowrap; text-indent: -30px;
         }
 
+        /* 工具栏 */
         .toolbar {
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
             gap: 12px; margin-bottom: 20px; padding: 0 5px;
@@ -164,14 +195,8 @@
             padding: 5px 18px; border-radius: 20px; color: var(--ink-light);
             font-family: var(--font-heading); letter-spacing: 0.05em;
             border: 1px solid rgba(180, 140, 60, 0.3); backdrop-filter: blur(4px);
+            box-shadow: 0 0 12px rgba(180,140,60,0.1);
         }
-        .icon-btn {
-            background: transparent; border: none;
-            font-size: 1.4rem; cursor: pointer;
-            color: var(--ink-light); transition: 0.2s;
-            padding: 4px 8px; border-radius: 4px;
-        }
-        .icon-btn:hover { background: rgba(180, 140, 60, 0.2); }
         .btn-sm {
             background: rgba(250, 245, 235, 0.5);
             border: 1px solid var(--gold); color: var(--ink);
@@ -179,9 +204,9 @@
             cursor: pointer; font-family: var(--font-body);
             transition: 0.2s; font-size: 0.85rem; backdrop-filter: blur(4px);
         }
-        .btn-sm:hover { background: rgba(180, 140, 60, 0.2); border-color: var(--gold-light); }
+        .btn-sm:hover { background: rgba(180, 140, 60, 0.2); border-color: var(--gold-light); box-shadow: 0 0 12px rgba(180,140,60,0.2); }
 
-        /* 搜索与分类栏（古风融入） */
+        /* 搜索与分类栏（古风纹样） */
         .filter-bar {
             display: flex; flex-wrap: wrap; gap: 12px;
             margin-bottom: 25px; align-items: center;
@@ -191,6 +216,15 @@
             border-radius: var(--radius-card);
             border: 1px solid rgba(140,120,90,0.3);
             box-shadow: var(--shadow-soft);
+            position: relative;
+        }
+        .filter-bar::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 20%; right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.4;
         }
         .filter-bar input {
             flex: 1; min-width: 140px;
@@ -201,6 +235,7 @@
             color: var(--ink);
             font-family: var(--font-body);
             outline: none;
+            transition: 0.3s;
         }
         .filter-bar input::placeholder { color: var(--ink-lighter); }
         .filter-bar input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(180,140,60,0.2); }
@@ -223,9 +258,10 @@
             background: var(--gold);
             color: #fef8f0;
             border-color: var(--gold);
+            box-shadow: 0 0 12px rgba(180,140,60,0.3);
         }
 
-        /* 卡片网格（原版卡片样式） */
+        /* ========== 卡片网格（古风悬浮光晕） ========== */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -256,9 +292,28 @@
             background: radial-gradient(ellipse at center, rgba(200, 160, 80, 0.4) 0%, transparent 70%);
             opacity: 0; transition: opacity 0.3s;
         }
-        .card-link:hover { transform: translateY(-5px); box-shadow: var(--shadow-medium), 0 8px 25px rgba(180, 140, 60, 0.15); border-color: rgba(180, 140, 70, 0.6); }
-        .card-link:hover::before { opacity: 1; box-shadow: 0 0 12px rgba(196, 61, 61, 0.3); }
+        .card-link:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium), 0 8px 25px rgba(180, 140, 60, 0.25);
+            border-color: rgba(180, 140, 70, 0.6);
+        }
+        .card-link:hover::before { opacity: 1; box-shadow: 0 0 12px rgba(196, 61, 61, 0.4); }
         .card-link:hover::after { opacity: 1; }
+
+        /* 卡片古风装饰 */
+        .card-link .card-decoration {
+            position: absolute;
+            top: -20px; right: -20px;
+            width: 60px; height: 60px;
+            border: 1px solid rgba(180,140,70,0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: all 0.5s;
+        }
+        .card-link:hover .card-decoration {
+            transform: scale(1.5);
+            opacity: 0;
+        }
 
         .card-seal {
             width: 44px; height: 44px;
@@ -311,7 +366,7 @@
         }
         .card-meta .visits { opacity: 0.7; }
 
-        /* 管理员面板（原版） */
+        /* ========== 管理员面板 ========== */
         .admin-panel {
             background: rgba(250, 245, 235, 0.6);
             border: 1px solid rgba(180, 140, 60, 0.4);
@@ -360,6 +415,38 @@
         }
         .form-row input:focus { border-color: var(--gold); outline: none; }
 
+        /* ========== 底部诗词 ========== */
+        .footer-poem {
+            margin-top: 40px;
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            color: var(--ink-lighter);
+            opacity: 0.7;
+            letter-spacing: 0.1em;
+            border-top: 1px solid rgba(140,120,90,0.2);
+            padding-top: 20px;
+            font-style: italic;
+            transition: opacity 0.3s;
+        }
+        .footer-poem:hover { opacity: 1; }
+
+        /* ========== 水墨涟漪点击特效 ========== */
+        .ripple {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(180,140,70,0.2) 0%, transparent 70%);
+            transform: scale(0);
+            animation: rippleAnim 0.8s ease-out forwards;
+            pointer-events: none;
+            z-index: 999;
+        }
+        @keyframes rippleAnim {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        /* ========== 响应式 ========== */
         @media (max-width: 900px) {
             .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
             .header-plaque { padding: 12px 30px; font-size: 1.6rem; }
@@ -377,18 +464,19 @@
             .card-link { padding: 14px 12px; }
             .card-seal { width: 38px; height: 38px; font-size: 1.2rem; }
             .filter-bar { flex-direction: column; align-items: stretch; }
+            .footer-poem { font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 云雾 -->
+    <!-- 云雾层 -->
     <div class="clouds-layer" aria-hidden="true">
         <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
         <div class="cloud cloud-4"></div><div class="cloud cloud-5"></div><div class="cloud cloud-6"></div>
     </div>
 
-    <!-- 花瓣 -->
+    <!-- 飘落花瓣 -->
     <div class="petals" aria-hidden="true">
         <span class="petal"></span><span class="petal"></span><span class="petal"></span>
         <span class="petal"></span><span class="petal"></span><span class="petal"></span>
@@ -427,13 +515,10 @@
 
         <div class="toolbar">
             <span class="role-badge" id="roleDisplay">👤 游客</span>
-            <div>
-                <button class="icon-btn" id="themeToggle" title="暗色模式">🌙</button>
-                <button class="btn-sm" id="logoutBtn">退出登录</button>
-            </div>
+            <button class="btn-sm" id="logoutBtn">退出登录</button>
         </div>
 
-        <!-- 搜索与分类栏（古风融合） -->
+        <!-- 搜索与分类栏 -->
         <div class="filter-bar">
             <input type="text" id="searchInput" placeholder="搜索网站名称或描述..." />
             <div class="category-tabs" id="categoryTabs">
@@ -477,6 +562,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- 底部诗词 -->
+        <div class="footer-poem" id="poemDisplay"></div>
     </div>
 
     <script>
@@ -516,9 +604,30 @@
             const addSiteBtn = document.getElementById('addSiteBtn');
             const searchInput = document.getElementById('searchInput');
             const categoryTabs = document.getElementById('categoryTabs');
-            const themeToggle = document.getElementById('themeToggle');
+            const poemDisplay = document.getElementById('poemDisplay');
 
-            // ===== API 请求（使用 Cookie） =====
+            // ===== 古风诗词库 =====
+            const poems = [
+                '松风吹解带，山月照弹琴。',
+                '万壑树声满，千崖秋气高。',
+                '空山新雨后，天气晚来秋。',
+                '明月松间照，清泉石上流。',
+                '竹喧归浣女，莲动下渔舟。',
+                '随意春芳歇，王孙自可留。',
+                '山光悦鸟性，潭影空人心。',
+                '曲径通幽处，禅房花木深。',
+                '野芳发而幽香，佳木秀而繁阴。',
+                '风霜高洁，水落而石出者，山间之四时也。'
+            ];
+
+            function setRandomPoem() {
+                if (poemDisplay) {
+                    const idx = Math.floor(Math.random() * poems.length);
+                    poemDisplay.textContent = '『 ' + poems[idx] + ' 』';
+                }
+            }
+
+            // ===== API 请求 =====
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
                 const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -541,6 +650,7 @@
             function showApp() {
                 loginScreen.style.display = 'none';
                 mainApp.style.display = 'block';
+                setRandomPoem();
                 renderAll();
             }
 
@@ -581,7 +691,7 @@
             async function fetchUserInfo() {
                 try {
                     const res = await apiRequest('/api/me');
-                    currentUser = { username: res.username, role: res.role };
+                    currentUser = { username: res.username, role: res.role || 'user' };
                 } catch (e) {
                     currentUser = { username: '游客', role: 'guest' };
                 }
@@ -632,7 +742,10 @@
                 });
                 cardsContainer.innerHTML = '';
                 if (filtered.length === 0) {
-                    cardsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--ink-lighter);">未找到匹配的网站</p>';
+                    const p = document.createElement('p');
+                    p.textContent = '未找到匹配的网站';
+                    p.style.cssText = 'grid-column:1/-1; text-align:center; color:var(--ink-lighter);';
+                    cardsContainer.appendChild(p);
                     return;
                 }
                 filtered.forEach((site, idx) => {
@@ -642,6 +755,10 @@
                     a.target = '_blank';
                     a.rel = 'noopener noreferrer';
                     a.dataset.index = sitesData.indexOf(site);
+
+                    // 装饰元素
+                    const decor = document.createElement('div');
+                    decor.className = 'card-decoration';
 
                     const seal = document.createElement('div');
                     seal.className = 'card-seal';
@@ -668,27 +785,47 @@
                     meta.appendChild(catSpan);
                     meta.appendChild(visitsSpan);
 
+                    a.appendChild(decor);
                     a.appendChild(seal);
                     a.appendChild(content);
                     a.appendChild(meta);
 
-                    // 点击卡片时增加访问数
-                    a.addEventListener('click', (e) => {
-                        const idx = parseInt(a.dataset.index);
+                    // 点击涟漪特效
+                    a.addEventListener('click', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        createRipple(e.clientX, e.clientY);
+                        // 访问统计
+                        const idx = parseInt(this.dataset.index);
                         if (!isNaN(idx) && idx >= 0 && idx < sitesData.length) {
                             apiRequest(`/api/sites/${idx}/visit`, { method: 'POST' })
                                 .then(() => {
                                     sitesData[idx].visits = (sitesData[idx].visits || 0) + 1;
-                                    const visitsEl = a.querySelector('.visits');
+                                    const visitsEl = this.querySelector('.visits');
                                     if (visitsEl) visitsEl.textContent = `👁 ${sitesData[idx].visits}`;
                                 })
                                 .catch(e => console.warn('更新访问数失败', e));
                         }
                     });
+
                     cardsContainer.appendChild(a);
                 });
             }
 
+            // ===== 水墨涟漪特效 =====
+            function createRipple(x, y) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                const size = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (x - size/2) + 'px';
+                ripple.style.top = (y - size/2) + 'px';
+                document.body.appendChild(ripple);
+                setTimeout(() => { ripple.remove(); }, 900);
+            }
+
+            // ===== 渲染用户列表 =====
             function renderUserList(users) {
                 userListEl.innerHTML = '';
                 users.forEach(user => {
@@ -740,13 +877,23 @@
                 });
             }
 
+            // ===== 主渲染 =====
             async function renderAll() {
                 if (!currentUser) {
                     showLogin();
                     return;
                 }
-                roleDisplay.textContent = currentUser.role === 'admin' ? '🔑 管理员' : '👤 游客';
-                adminPanel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+
+                let roleText = '游客';
+                if (currentUser.role === 'admin') {
+                    roleText = '管理员';
+                } else if (currentUser.role === 'user') {
+                    roleText = '成员';
+                } else if (currentUser.username === '游客') {
+                    roleText = '游客';
+                }
+                roleDisplay.textContent = roleText;
+                adminPanel.style.display = (currentUser.role === 'admin') ? 'block' : 'none';
 
                 await loadSites();
                 const cats = getCategories(sitesData);
@@ -766,25 +913,6 @@
             searchInput.addEventListener('input', (e) => {
                 searchKeyword = e.target.value;
                 renderCards();
-            });
-
-            // ===== 暗色模式 =====
-            const storedTheme = localStorage.getItem('theme') || 'light';
-            if (storedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = '☀️';
-            }
-            themeToggle.addEventListener('click', () => {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                if (isDark) {
-                    document.documentElement.removeAttribute('data-theme');
-                    localStorage.setItem('theme', 'light');
-                    themeToggle.textContent = '🌙';
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('theme', 'dark');
-                    themeToggle.textContent = '☀️';
-                }
             });
 
             // ===== 管理员操作 =====
@@ -832,7 +960,10 @@
                 } else {
                     showLogin();
                 }
+                // 随机诗词
+                setRandomPoem();
             });
+
         })();
     </script>
 </body>
