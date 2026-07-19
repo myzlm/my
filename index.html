@@ -8,311 +8,197 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
-        /* ==================== 万壑松风 · 雅集 古风增强版 ==================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --paper: rgba(247,242,232,0.4);
-            --paper-light: rgba(253,250,243,0.5);
-            --ink: #2a2218;
-            --ink-light: #5c4f3a;
-            --ink-lighter: #8a7b65;
-            --vermillion: #c43d3d;
-            --gold: #b8944b;
-            --gold-light: #d4b66a;
-            --shadow-soft: 0 2px 16px rgba(40,20,10,0.07);
-            --shadow-medium: 0 6px 28px rgba(40,20,10,0.15);
-            --font-body: "Noto Serif SC", "Songti SC", serif;
-            --font-heading: "ZCOOL XiaoWei", "KaiTi", serif;
-        }
+        /* ====== 古风样式（精简版） ====== */
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: var(--font-body);
-            background-image: url('bg-pc.png');
-            background-size: cover;
-            background-position: center bottom;
-            background-attachment: fixed;
-            background-color: rgba(247,242,232,0.2);
-            background-blend-mode: overlay;
-            color: var(--ink);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            font-family: 'Noto Serif SC', serif;
+            background: #f7f2e8;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            position:relative;
         }
-        @media (max-width:600px) { body { background-image: url('bg-mobile.png'); } }
-
-        /* ===== 云雾 ===== */
-        .clouds-layer { position: fixed; bottom:0; left:0; width:100%; height:70%; pointer-events:none; z-index:1; }
+        /* 云雾 */
+        .clouds-layer { position:fixed; bottom:0; left:0; width:100%; height:60%; pointer-events:none; z-index:1; }
         .cloud { position:absolute; background:radial-gradient(ellipse at center, rgba(255,252,245,0.5) 0%, transparent 70%); border-radius:50%; filter:blur(24px); }
-        .cloud-1 { width:360px; height:90px; bottom:42%; left:-10%; animation:cloudDrift1 28s linear infinite; opacity:0.45; }
-        .cloud-2 { width:280px; height:70px; bottom:35%; left:55%; animation:cloudDrift2 32s linear infinite; animation-delay:-8s; opacity:0.4; }
-        .cloud-3 { width:420px; height:100px; bottom:26%; left:25%; animation:cloudDrift3 36s linear infinite; animation-delay:-16s; opacity:0.5; }
-        .cloud-4 { width:220px; height:60px; bottom:46%; left:70%; animation:cloudDrift1 24s linear infinite; animation-delay:-5s; opacity:0.35; }
-        .cloud-5 { width:300px; height:80px; bottom:30%; left:-15%; animation:cloudDrift2 30s linear infinite; animation-delay:-20s; opacity:0.4; }
-        .cloud-6 { width:380px; height:95px; bottom:22%; left:45%; animation:cloudDrift3 38s linear infinite; animation-delay:-12s; opacity:0.5; }
-        @keyframes cloudDrift1 { from { transform:translateX(-400px); } to { transform:translateX(calc(100vw + 450px)); } }
-        @keyframes cloudDrift2 { from { transform:translateX(-350px); } to { transform:translateX(calc(100vw + 400px)); } }
-        @keyframes cloudDrift3 { from { transform:translateX(-480px); } to { transform:translateX(calc(100vw + 520px)); } }
+        .cloud-1 { width:300px; height:80px; bottom:40%; left:-5%; animation:cloudDrift 25s linear infinite; opacity:0.4; }
+        .cloud-2 { width:250px; height:60px; bottom:30%; left:60%; animation:cloudDrift 30s linear infinite; animation-delay:-10s; opacity:0.35; }
+        .cloud-3 { width:350px; height:90px; bottom:20%; left:20%; animation:cloudDrift 35s linear infinite; animation-delay:-18s; opacity:0.4; }
+        @keyframes cloudDrift { from { transform:translateX(-400px); } to { transform:translateX(calc(100vw + 450px)); } }
 
-        /* ===== 花瓣 ===== */
+        /* 花瓣 */
         .petals { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:3; overflow:hidden; }
-        .petal { position:absolute; top:-30px; width:12px; height:16px; background:radial-gradient(ellipse at 35% 30%, rgba(235,175,160,0.7), rgba(220,145,130,0.4) 40%, transparent 70%); border-radius:45% 55% 50% 50%; animation:petalFall linear infinite; opacity:0; }
-        .petal:nth-child(1) { left:5%; animation-duration:7.2s; animation-delay:0s; }
-        .petal:nth-child(2) { left:12%; animation-duration:8.5s; animation-delay:1.2s; width:10px; height:14px; }
-        .petal:nth-child(3) { left:22%; animation-duration:6.8s; animation-delay:3s; width:14px; height:18px; }
-        .petal:nth-child(4) { left:30%; animation-duration:9s; animation-delay:0.6s; }
-        .petal:nth-child(5) { left:40%; animation-duration:7.6s; animation-delay:4.2s; width:16px; height:20px; }
-        .petal:nth-child(6) { left:48%; animation-duration:8.1s; animation-delay:2s; }
-        .petal:nth-child(7) { left:56%; animation-duration:6.5s; animation-delay:5s; width:13px; height:17px; }
-        .petal:nth-child(8) { left:65%; animation-duration:8.8s; animation-delay:1.8s; }
-        .petal:nth-child(9) { left:72%; animation-duration:7s; animation-delay:3.6s; width:15px; height:19px; }
-        .petal:nth-child(10) { left:80%; animation-duration:9.2s; animation-delay:0.3s; }
-        .petal:nth-child(11) { left:88%; animation-duration:7.9s; animation-delay:4.8s; }
-        .petal:nth-child(12) { left:94%; animation-duration:8.3s; animation-delay:2.5s; width:11px; height:15px; }
+        .petal { position:absolute; top:-30px; width:12px; height:16px; background:radial-gradient(ellipse at 35% 30%, rgba(235,175,160,0.7), rgba(220,145,130,0.4) 40%, transparent 70%); border-radius:45% 55% 50% 50%; animation:petalFall 8s linear infinite; opacity:0; }
+        .petal:nth-child(1) { left:10%; animation-duration:7.2s; animation-delay:0s; }
+        .petal:nth-child(2) { left:30%; animation-duration:8.5s; animation-delay:1.5s; }
+        .petal:nth-child(3) { left:50%; animation-duration:6.8s; animation-delay:3s; }
+        .petal:nth-child(4) { left:70%; animation-duration:9s; animation-delay:0.6s; }
+        .petal:nth-child(5) { left:90%; animation-duration:7.6s; animation-delay:4.2s; }
         @keyframes petalFall {
             0% { transform:translateY(-60px) rotate(0deg) scale(0.6); opacity:0; }
-            4% { opacity:0.75; }
-            12% { transform:translateY(12vh) rotate(55deg) scale(0.85); opacity:0.7; }
-            25% { transform:translateY(25vh) rotate(120deg) scale(0.95); opacity:0.6; }
-            40% { transform:translateY(40vh) rotate(190deg) scale(0.8); opacity:0.55; }
-            55% { transform:translateY(55vh) rotate(260deg) scale(0.9); opacity:0.5; }
-            70% { transform:translateY(70vh) rotate(330deg) scale(0.75); opacity:0.4; }
-            85% { transform:translateY(85vh) rotate(400deg) scale(0.55); opacity:0.2; }
-            96% { opacity:0.05; }
-            100% { transform:translateY(105vh) rotate(480deg) scale(0.3); opacity:0; }
+            10% { opacity:0.7; }
+            50% { transform:translateY(50vh) rotate(180deg) scale(0.9); opacity:0.6; }
+            90% { opacity:0.2; }
+            100% { transform:translateY(105vh) rotate(360deg) scale(0.3); opacity:0; }
         }
 
-        /* ===== 登录卡片 ===== */
+        /* 登录卡片 */
         .login-container {
             position:relative; z-index:10;
             width:380px; max-width:90%;
-            background:var(--paper-light);
+            background:rgba(253,250,243,0.5);
             border:1px solid rgba(140,120,90,0.4);
             border-radius:6px;
-            padding:40px 30px 30px;
-            box-shadow:var(--shadow-medium);
-            text-align:center; backdrop-filter:blur(8px);
+            padding:40px 30px;
+            box-shadow:0 6px 28px rgba(40,20,10,0.12);
+            text-align:center;
+            backdrop-filter:blur(8px);
         }
         .login-container::before {
             content:''; position:absolute; top:6px; left:6px; right:6px; bottom:6px;
-            border:1px solid rgba(180,140,70,0.2); border-radius:3px;
-            background:repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(180,140,70,0.05) 8px, rgba(180,140,70,0.05) 9px);
+            border:1px solid rgba(180,140,70,0.15);
+            border-radius:3px;
             pointer-events:none;
+            background:repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(180,140,70,0.04) 8px, rgba(180,140,70,0.04) 9px);
         }
         .login-container::after {
             content:'◆ ◇ ◆ ◇ ◆';
-            position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
-            font-size:0.6rem; color:rgba(180,140,70,0.2); letter-spacing:4px;
+            position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+            font-size:0.5rem; color:rgba(180,140,70,0.15);
+            letter-spacing:4px;
             white-space:nowrap;
         }
-        .login-title {
-            font-family:var(--font-heading); font-size:2.2rem;
-            color:var(--ink); letter-spacing:0.12em;
-            position:relative; display:inline-block;
-        }
+        .login-title { font-family:'ZCOOL XiaoWei', cursive; font-size:2.2rem; color:#2a2218; }
         .login-title::after {
-            content:''; position:absolute; bottom:-4px; left:10%; width:80%; height:2px;
-            background:linear-gradient(90deg, transparent, var(--gold), transparent);
-            opacity:0.5;
+            content:''; display:block; width:60%; height:2px; margin:6px auto 0;
+            background:linear-gradient(90deg, transparent, #b8944b, transparent);
+            opacity:0.4;
         }
-        .login-subtitle { font-size:0.9rem; color:var(--ink-lighter); margin-bottom:28px; letter-spacing:0.2em; }
+        .login-subtitle { font-size:0.9rem; color:#8a7b65; margin-bottom:28px; letter-spacing:0.2em; }
         .input-group { margin-bottom:18px; text-align:left; }
-        .input-group label { display:block; font-size:0.85rem; color:var(--ink-light); margin-bottom:4px; font-family:var(--font-heading); }
-        .input-group input { width:100%; padding:10px 14px; border:1px solid rgba(140,120,90,0.5); background:rgba(250,245,235,0.6); border-radius:4px; font-family:var(--font-body); color:var(--ink); outline:none; }
-        .input-group input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(180,140,60,0.25); }
-        .btn { width:100%; padding:12px; border:none; border-radius:4px; font-family:var(--font-heading); font-size:1.1rem; cursor:pointer; transition:0.3s; margin-top:8px; }
-        .btn-login { background:var(--vermillion); color:#fef8f0; box-shadow:0 4px 12px rgba(180,40,30,0.3); }
+        .input-group label { display:block; font-size:0.85rem; color:#5c4f3a; margin-bottom:4px; font-family:'ZCOOL XiaoWei', cursive; }
+        .input-group input { width:100%; padding:10px 14px; border:1px solid rgba(140,120,90,0.5); background:rgba(250,245,235,0.6); border-radius:4px; font-family:'Noto Serif SC', serif; color:#2a2218; outline:none; }
+        .input-group input:focus { border-color:#b8944b; box-shadow:0 0 0 3px rgba(180,140,60,0.2); }
+        .btn { width:100%; padding:12px; border:none; border-radius:4px; font-family:'ZCOOL XiaoWei', cursive; font-size:1.1rem; cursor:pointer; transition:0.3s; margin-top:8px; }
+        .btn-login { background:#c43d3d; color:#fef8f0; }
         .btn-login:hover { background:#b53535; transform:translateY(-1px); }
-        .btn-guest { background:rgba(255,255,255,0.2); color:var(--ink-light); border:1px solid rgba(140,120,90,0.5); }
-        .btn-guest:hover { background:rgba(180,140,60,0.15); border-color:var(--gold); }
-        .error-msg { color:var(--vermillion); font-size:0.8rem; min-height:20px; margin-top:6px; }
+        .btn-guest { background:rgba(255,255,255,0.2); color:#5c4f3a; border:1px solid rgba(140,120,90,0.5); }
+        .btn-guest:hover { background:rgba(180,140,60,0.15); border-color:#b8944b; }
+        .error-msg { color:#c43d3d; font-size:0.8rem; min-height:20px; margin-top:6px; }
 
-        /* ===== 主界面 ===== */
-        .main-app { display:none; width:100%; max-width:960px; margin:0 auto; padding:30px 24px; position:relative; z-index:10; }
+        /* 主界面 */
+        .main-app { display:none; width:100%; max-width:900px; margin:0 auto; padding:20px; position:relative; z-index:10; }
         .header-plaque {
             text-align:center; margin:0 auto 20px;
-            background:linear-gradient(180deg, #4a3525 0%, #3d2a1a 8%, #5c3d28 15%, #4a3020 30%, #3d2518 50%, #4a3020 70%, #5c3d28 85%, #3d2a1a 95%, #4a3525 100%);
-            padding:14px 50px; display:inline-block; border-radius:6px;
+            background:linear-gradient(180deg, #4a3525, #3d2a1a, #5c3d28, #4a3020, #3d2518, #4a3020, #5c3d28, #3d2a1a, #4a3525);
+            padding:14px 40px; display:inline-block; border-radius:6px;
             border:3px solid #6b4d30; outline:2px solid #8b6d4a; outline-offset:-8px;
-            box-shadow:inset 0 2px 4px rgba(255,220,160,0.15), inset 0 -3px 4px rgba(0,0,0,0.3), 0 6px 24px rgba(30,15,5,0.5);
-            color:#e8d5a3; font-size:2rem; font-family:var(--font-heading); letter-spacing:0.18em;
-            text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 20px rgba(220,180,100,0.4);
-            animation:titleGlow 4s ease-in-out infinite;
+            color:#e8d5a3; font-size:1.8rem; font-family:'ZCOOL XiaoWei', cursive; letter-spacing:0.18em;
+            box-shadow:inset 0 2px 4px rgba(255,220,160,0.1), inset 0 -3px 4px rgba(0,0,0,0.3), 0 6px 24px rgba(30,15,5,0.4);
+            text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 20px rgba(220,180,100,0.3);
+            animation:glow 4s ease-in-out infinite;
         }
-        @keyframes titleGlow {
-            0%,100% { text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 20px rgba(220,180,100,0.4); }
-            50% { text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 40px rgba(220,180,100,0.7); }
-        }
-        .header-plaque::before {
-            content:''; position:absolute; top:8px; left:14px; right:14px; bottom:8px;
-            border:1px solid rgba(200,160,90,0.4); border-radius:3px; pointer-events:none;
-        }
+        @keyframes glow { 50% { text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 40px rgba(220,180,100,0.5); } }
         .header-plaque::after {
             content:'❖'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-            font-size:10px; color:rgba(200,160,90,0.3); letter-spacing:80px;
-            white-space:nowrap; text-indent:-30px;
+            font-size:8px; color:rgba(200,160,90,0.2); letter-spacing:60px;
+            white-space:nowrap; text-indent:-20px;
         }
 
         .toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
-        .role-badge {
-            font-size:0.9rem; background:rgba(180,140,60,0.2); padding:5px 18px; border-radius:20px;
-            color:var(--ink-light); font-family:var(--font-heading);
-            border:1px solid rgba(180,140,60,0.3); backdrop-filter:blur(4px);
-        }
-        .btn-sm {
-            background:rgba(250,245,235,0.5); border:1px solid var(--gold); color:var(--ink);
-            padding:6px 18px; border-radius:4px; cursor:pointer;
-            font-family:var(--font-body); transition:0.2s; font-size:0.85rem;
-        }
-        .btn-sm:hover { background:rgba(180,140,60,0.2); border-color:var(--gold-light); box-shadow:0 0 12px rgba(180,140,60,0.2); }
+        .role-badge { font-size:0.9rem; background:rgba(180,140,60,0.15); padding:4px 16px; border-radius:20px; color:#5c4f3a; font-family:'ZCOOL XiaoWei', cursive; border:1px solid rgba(180,140,60,0.2); }
+        .btn-sm { background:rgba(250,245,235,0.5); border:1px solid #b8944b; color:#2a2218; padding:6px 18px; border-radius:4px; cursor:pointer; font-family:'Noto Serif SC', serif; transition:0.2s; font-size:0.85rem; }
+        .btn-sm:hover { background:rgba(180,140,60,0.2); box-shadow:0 0 12px rgba(180,140,60,0.15); }
 
         .filter-bar {
             display:flex; flex-wrap:wrap; gap:12px; margin-bottom:25px; align-items:center;
-            background:var(--paper-light); backdrop-filter:blur(4px);
-            padding:12px 18px; border-radius:6px; border:1px solid rgba(140,120,90,0.3);
-            position:relative;
+            background:rgba(253,250,243,0.4); backdrop-filter:blur(4px);
+            padding:10px 16px; border-radius:6px; border:1px solid rgba(140,120,90,0.2);
         }
-        .filter-bar::before {
-            content:''; position:absolute; top:-1px; left:20%; right:20%; height:2px;
-            background:linear-gradient(90deg, transparent, var(--gold), transparent); opacity:0.4;
-        }
-        .filter-bar input {
-            flex:1; min-width:140px; padding:8px 14px; border:1px solid rgba(140,120,90,0.4);
-            border-radius:4px; background:rgba(250,245,235,0.4); color:var(--ink); outline:none;
-        }
-        .filter-bar input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(180,140,60,0.2); }
+        .filter-bar input { flex:1; min-width:140px; padding:8px 14px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.3); color:#2a2218; outline:none; }
+        .filter-bar input:focus { border-color:#b8944b; }
         .category-tabs { display:flex; flex-wrap:wrap; gap:6px; }
-        .category-tab {
-            padding:4px 16px; border-radius:20px; border:1px solid rgba(140,120,90,0.4);
-            background:transparent; color:var(--ink-light); cursor:pointer;
-            font-size:0.8rem; transition:0.2s; font-family:var(--font-body);
-        }
-        .category-tab:hover, .category-tab.active {
-            background:var(--gold); color:#fef8f0; border-color:var(--gold); box-shadow:0 0 12px rgba(180,140,60,0.3);
-        }
+        .category-tab { padding:4px 14px; border-radius:20px; border:1px solid rgba(140,120,90,0.3); background:transparent; color:#5c4f3a; cursor:pointer; font-size:0.8rem; transition:0.2s; }
+        .category-tab:hover, .category-tab.active { background:#b8944b; color:#fff; border-color:#b8944b; }
 
-        /* ===== 卡片网格 ===== */
-        .cards-grid {
-            display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
-        }
+        /* 卡片网格 */
+        .cards-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:20px; }
         .card-link {
             display:flex; flex-direction:column;
-            background:var(--paper-light); border:1px solid rgba(140,120,90,0.35);
-            border-radius:6px; padding:18px 16px;
-            text-decoration:none; color:var(--ink);
-            box-shadow:var(--shadow-soft);
-            transition:all 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
-            position:relative; backdrop-filter:blur(8px);
+            background:rgba(253,250,243,0.5); border:1px solid rgba(140,120,90,0.25);
+            border-radius:6px; padding:16px;
+            text-decoration:none; color:#2a2218;
+            box-shadow:0 2px 12px rgba(40,20,10,0.05);
+            transition:all 0.3s;
+            position:relative;
+            backdrop-filter:blur(4px);
             overflow:hidden;
         }
+        .card-link:hover {
+            transform:translateY(-4px);
+            box-shadow:0 6px 24px rgba(180,140,60,0.2);
+            border-color:rgba(180,140,70,0.5);
+        }
         .card-link::before {
-            content:''; position:absolute; left:0; top:12px; bottom:12px; width:3px;
+            content:''; position:absolute; left:0; top:10px; bottom:10px; width:3px;
             background:linear-gradient(180deg, #d46565, #c43d3d, #d46565);
-            border-radius:0 2px 2px 0; opacity:0.8; transition:0.3s;
+            opacity:0.7;
         }
         .card-link::after {
             content:''; position:absolute; bottom:0; left:20%; right:20%; height:2px;
-            background:radial-gradient(ellipse at center, rgba(200,160,80,0.4) 0%, transparent 70%);
+            background:radial-gradient(ellipse at center, rgba(200,160,80,0.3) 0%, transparent 70%);
             opacity:0; transition:0.3s;
         }
-        .card-link:hover {
-            transform:translateY(-5px);
-            box-shadow:var(--shadow-medium), 0 8px 25px rgba(180,140,60,0.25);
-            border-color:rgba(180,140,70,0.6);
-        }
-        .card-link:hover::before { opacity:1; box-shadow:0 0 12px rgba(196,61,61,0.4); }
         .card-link:hover::after { opacity:1; }
 
-        .card-decoration {
-            position:absolute; top:-20px; right:-20px; width:60px; height:60px;
-            border:1px solid rgba(180,140,70,0.1); border-radius:50%;
-            pointer-events:none; transition:0.5s;
-        }
-        .card-link:hover .card-decoration { transform:scale(1.5); opacity:0; }
-
         .card-seal {
-            width:44px; height:44px; background:var(--vermillion); color:#fef8f0;
+            width:40px; height:40px; background:#c43d3d; color:#fef8f0;
             display:flex; align-items:center; justify-content:center;
-            font-family:var(--font-heading); font-size:1.4rem;
+            font-family:'ZCOOL XiaoWei', cursive; font-size:1.2rem;
             border-radius:3px; transform:rotate(-3deg);
-            box-shadow:inset 0 1px 3px rgba(255,180,150,0.3), inset 0 -1px 3px rgba(0,0,0,0.25), 0 3px 8px rgba(180,40,30,0.35);
-            transition:0.3s; position:relative;
+            box-shadow:0 3px 8px rgba(180,40,30,0.25);
             animation:sealBreathe 4s ease-in-out infinite;
-            margin-bottom:12px;
+            margin-bottom:10px;
         }
-        @keyframes sealBreathe { 0%,100% { transform:rotate(-3deg) scale(1); } 50% { transform:rotate(-2deg) scale(1.03); } }
-        .card-seal::after {
-            content:''; position:absolute; inset:3px;
-            border:1px solid rgba(255,220,200,0.4); border-radius:1px; pointer-events:none;
-        }
-        .card-link:hover .card-seal { transform:rotate(-1deg) scale(1.08); box-shadow:0 6px 18px rgba(180,40,30,0.5); animation:none; }
+        @keyframes sealBreathe { 50% { transform:rotate(-2deg) scale(1.03); } }
+        .card-content h3 { font-family:'ZCOOL XiaoWei', cursive; font-size:1rem; margin-bottom:2px; }
+        .card-desc { font-size:0.75rem; color:#8a7b65; }
+        .card-meta { margin-top:10px; display:flex; justify-content:space-between; font-size:0.65rem; color:#8a7b65; border-top:1px dashed rgba(140,120,90,0.2); padding-top:6px; }
+        .card-meta .category { background:rgba(180,140,60,0.1); padding:0 8px; border-radius:10px; }
+        .card-meta .visits { opacity:0.6; }
 
-        .card-content h3 {
-            font-family:var(--font-heading); font-size:1.05rem; margin-bottom:4px;
-            letter-spacing:0.06em; transition:0.3s;
-        }
-        .card-link:hover .card-content h3 { color:#1a1008; }
-        .card-desc { font-size:0.78rem; color:var(--ink-lighter); line-height:1.4; }
-        .card-meta {
-            margin-top:12px; display:flex; justify-content:space-between; align-items:center;
-            font-size:0.7rem; color:var(--ink-lighter);
-            border-top:1px dashed rgba(140,120,90,0.3); padding-top:8px;
-        }
-        .card-meta .category { background:rgba(180,140,60,0.15); padding:0 10px; border-radius:12px; }
-        .card-meta .visits { opacity:0.7; }
+        /* 管理员面板 */
+        .admin-panel { background:rgba(250,245,235,0.5); border:1px solid rgba(180,140,60,0.3); border-radius:8px; padding:18px; margin-top:30px; backdrop-filter:blur(4px); }
+        .admin-panel h3 { font-family:'ZCOOL XiaoWei', cursive; margin-bottom:14px; border-bottom:1px solid rgba(180,140,60,0.2); padding-bottom:6px; }
+        .list-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed rgba(140,120,90,0.15); font-size:0.85rem; }
+        .list-item button { font-size:0.75rem; padding:2px 10px; }
+        .form-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+        .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.3); color:#2a2218; min-width:70px; }
 
-        /* ===== 管理员面板 ===== */
-        .admin-panel {
-            background:rgba(250,245,235,0.6); border:1px solid rgba(180,140,60,0.4);
-            border-radius:8px; padding:20px; margin-top:35px; backdrop-filter:blur(8px);
-        }
-        .admin-panel h3 { font-family:var(--font-heading); margin-bottom:18px; border-bottom:1px solid rgba(180,140,60,0.3); padding-bottom:8px; }
-        .admin-panel h4 { font-family:var(--font-heading); font-weight:normal; color:var(--ink-light); margin-bottom:10px; }
-        .list-item { display:flex; justify-content:space-between; align-items:center; padding:8px 4px; border-bottom:1px dashed rgba(140,120,90,0.25); font-size:0.9rem; }
-        .list-item button { font-size:0.8rem; padding:4px 12px; }
-        .form-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-        .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.4); border-radius:4px; background:rgba(250,245,235,0.4); color:var(--ink); min-width:80px; }
-        .form-row input:focus { border-color:var(--gold); outline:none; }
-
-        /* ===== 底部诗词 ===== */
-        .footer-poem {
-            margin-top:40px; text-align:center; font-family:var(--font-heading);
-            font-size:0.9rem; color:var(--ink-lighter); opacity:0.7;
-            letter-spacing:0.1em; border-top:1px solid rgba(140,120,90,0.2);
-            padding-top:20px; font-style:italic; transition:0.3s;
-        }
-        .footer-poem:hover { opacity:1; }
-
-        /* ===== 涟漪特效 ===== */
+        /* 底部诗词 & 涟漪 */
+        .footer-poem { margin-top:30px; text-align:center; font-family:'ZCOOL XiaoWei', cursive; font-size:0.85rem; color:#8a7b65; opacity:0.6; border-top:1px solid rgba(140,120,90,0.15); padding-top:16px; font-style:italic; }
         .ripple {
             position:fixed; border-radius:50%;
-            background:radial-gradient(circle, rgba(180,140,70,0.25) 0%, transparent 70%);
+            background:radial-gradient(circle, rgba(180,140,70,0.2) 0%, transparent 70%);
             transform:scale(0); animation:rippleAnim 0.8s ease-out forwards;
             pointer-events:none; z-index:999;
         }
-        @keyframes rippleAnim {
-            0% { transform:scale(0); opacity:1; }
-            100% { transform:scale(4); opacity:0; }
-        }
+        @keyframes rippleAnim { 0% { transform:scale(0); opacity:1; } 100% { transform:scale(4); opacity:0; } }
 
-        /* ===== 响应式 ===== */
-        @media (max-width:900px) { .cards-grid { grid-template-columns:repeat(2,1fr); } }
-        @media (max-width:600px) { .cards-grid { grid-template-columns:1fr; } .login-container { padding:30px 20px; } .header-plaque { font-size:1.4rem; } }
+        @media (max-width:600px) { .cards-grid { grid-template-columns:1fr; } }
     </style>
 </head>
 <body>
 
     <!-- 云雾 -->
-    <div class="clouds-layer" aria-hidden="true">
+    <div class="clouds-layer">
         <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
-        <div class="cloud cloud-4"></div><div class="cloud cloud-5"></div><div class="cloud cloud-6"></div>
     </div>
     <!-- 花瓣 -->
-    <div class="petals" aria-hidden="true">
+    <div class="petals">
         <span class="petal"></span><span class="petal"></span><span class="petal"></span>
-        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
-        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
-        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span>
     </div>
 
     <!-- 登录 -->
@@ -320,14 +206,8 @@
         <div class="login-title">万壑松风</div>
         <div class="login-subtitle">· 雅集 · 登入</div>
         <form onsubmit="return false;">
-            <div class="input-group">
-                <label>账号</label>
-                <input type="text" id="usernameInput" autocomplete="username" />
-            </div>
-            <div class="input-group">
-                <label>密码</label>
-                <input type="password" id="passwordInput" autocomplete="current-password" />
-            </div>
+            <div class="input-group"><label>账号</label><input type="text" id="usernameInput" autocomplete="username" /></div>
+            <div class="input-group"><label>密码</label><input type="password" id="passwordInput" autocomplete="current-password" /></div>
         </form>
         <div class="error-msg" id="loginError"></div>
         <button class="btn btn-login" id="loginBtn">登 录</button>
@@ -336,34 +216,32 @@
 
     <!-- 主界面 -->
     <div id="mainApp" class="main-app">
-        <div style="text-align:center;">
-            <div class="header-plaque">万壑松风 · 雅集</div>
-        </div>
+        <div style="text-align:center;"><div class="header-plaque">万壑松风 · 雅集</div></div>
         <div class="toolbar">
             <span class="role-badge" id="roleDisplay">👤 游客</span>
             <button class="btn-sm" id="logoutBtn">退出登录</button>
         </div>
         <div class="filter-bar">
-            <input type="text" id="searchInput" placeholder="搜索网站名称或描述..." />
+            <input type="text" id="searchInput" placeholder="搜索网站..." />
             <div class="category-tabs" id="categoryTabs"><button class="category-tab active" data-category="all">全部</button></div>
         </div>
         <div id="cardsContainer" class="cards-grid"></div>
         <div id="adminPanel" class="admin-panel" style="display:none;">
             <h3>⚙️ 管理员设置</h3>
-            <div style="display:flex; gap:20px; flex-wrap:wrap;">
-                <div style="flex:1; min-width:200px;">
-                    <h4>账号管理</h4>
+            <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:180px;">
+                    <h4 style="font-family:'ZCOOL XiaoWei',cursive; font-weight:normal; color:#5c4f3a; margin-bottom:8px;">账号管理</h4>
                     <form onsubmit="return false;">
                         <div class="form-row">
-                            <input type="text" id="newUser" placeholder="新账号" autocomplete="username" />
-                            <input type="password" id="newPass" placeholder="密码" autocomplete="new-password" />
+                            <input type="text" id="newUser" placeholder="新账号" />
+                            <input type="password" id="newPass" placeholder="密码" />
                             <button class="btn-sm" id="addUserBtn">添加</button>
                         </div>
                     </form>
-                    <div id="userList" style="max-height:150px; overflow-y:auto;"></div>
+                    <div id="userList" style="max-height:140px; overflow-y:auto;"></div>
                 </div>
-                <div style="flex:1; min-width:250px;">
-                    <h4>网站列表管理</h4>
+                <div style="flex:1; min-width:220px;">
+                    <h4 style="font-family:'ZCOOL XiaoWei',cursive; font-weight:normal; color:#5c4f3a; margin-bottom:8px;">网站列表管理</h4>
                     <form onsubmit="return false;">
                         <div class="form-row">
                             <input type="text" id="newSiteName" placeholder="名称" />
@@ -371,12 +249,12 @@
                         </div>
                         <div class="form-row">
                             <input type="text" id="newSiteDesc" placeholder="描述" />
-                            <input type="text" id="newSiteSeal" placeholder="印章(1-2字)" maxlength="2" style="max-width:80px;" />
+                            <input type="text" id="newSiteSeal" placeholder="印章" maxlength="2" style="max-width:70px;" />
                             <input type="text" id="newSiteCategory" placeholder="分类" />
                             <button class="btn-sm" id="addSiteBtn">添加</button>
                         </div>
                     </form>
-                    <div id="siteManageList" style="max-height:200px; overflow-y:auto;"></div>
+                    <div id="siteManageList" style="max-height:180px; overflow-y:auto;"></div>
                 </div>
             </div>
         </div>
@@ -421,27 +299,21 @@
             const categoryTabs = document.getElementById('categoryTabs');
             const poemDisplay = document.getElementById('poemDisplay');
 
-            // ===== 诗词库 =====
+            // ===== 诗词 =====
             const poems = [
-                '松风吹解带，山月照弹琴。',
-                '万壑树声满，千崖秋气高。',
-                '空山新雨后，天气晚来秋。',
-                '明月松间照，清泉石上流。',
-                '竹喧归浣女，莲动下渔舟。',
-                '随意春芳歇，王孙自可留。',
-                '山光悦鸟性，潭影空人心。',
-                '曲径通幽处，禅房花木深。',
-                '野芳发而幽香，佳木秀而繁阴。',
-                '风霜高洁，水落而石出者，山间之四时也。'
+                '松风吹解带，山月照弹琴。', '万壑树声满，千崖秋气高。',
+                '空山新雨后，天气晚来秋。', '明月松间照，清泉石上流。',
+                '竹喧归浣女，莲动下渔舟。', '随意春芳歇，王孙自可留。',
+                '山光悦鸟性，潭影空人心。', '曲径通幽处，禅房花木深。'
             ];
-            function setRandomPoem() {
+            function setPoem() {
                 if (poemDisplay) {
                     const idx = Math.floor(Math.random() * poems.length);
                     poemDisplay.textContent = '『 ' + poems[idx] + ' 』';
                 }
             }
 
-            // ===== API（携带 Cookie） =====
+            // ===== API =====
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
                 const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -455,25 +327,14 @@
             }
 
             // ===== 界面切换 =====
-            function showLogin() {
-                loginScreen.style.display = 'block';
-                mainApp.style.display = 'none';
-            }
-            function showApp() {
-                loginScreen.style.display = 'none';
-                mainApp.style.display = 'block';
-                setRandomPoem();
-                renderAll();
-            }
+            function showLogin() { loginScreen.style.display = 'block'; mainApp.style.display = 'none'; }
+            function showApp() { loginScreen.style.display = 'none'; mainApp.style.display = 'block'; setPoem(); renderAll(); }
 
-            // ===== 登录 / 登出 =====
+            // ===== 登录 =====
             loginBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value;
-                if (!username || !password) {
-                    loginError.textContent = '请输入账号和密码';
-                    return;
-                }
+                if (!username || !password) { loginError.textContent = '请输入账号和密码'; return; }
                 try {
                     const res = await apiRequest('/api/login', {
                         method: 'POST',
@@ -506,25 +367,19 @@
             function restoreSession() {
                 const stored = sessionStorage.getItem('gufeng_user');
                 if (stored) {
-                    try {
-                        const parsed = JSON.parse(stored);
-                        if (parsed && parsed.username) {
-                            currentUser = parsed;
-                            return true;
-                        }
-                    } catch (e) {}
+                    try { const parsed = JSON.parse(stored); if (parsed && parsed.username) { currentUser = parsed; return true; } } catch (e) {}
                 }
                 return false;
             }
 
-            // ===== 数据加载 =====
+            // ===== 加载数据 =====
             async function loadSites() {
                 try {
                     const sites = await apiRequest('/api/sites');
                     sitesData = sites;
                     return sites;
                 } catch (e) {
-                    console.error('加载网站失败', e);
+                    console.error('加载失败', e);
                     sitesData = [];
                     return [];
                 }
@@ -535,13 +390,11 @@
                 return ['全部', ...Array.from(cats)];
             }
 
-            // ===== 渲染分类 =====
             function renderCategoryTabs(cats) {
                 categoryTabs.innerHTML = '';
                 cats.forEach(cat => {
                     const btn = document.createElement('button');
                     btn.className = 'category-tab' + (cat === currentCategory ? ' active' : '');
-                    btn.dataset.category = cat;
                     btn.textContent = cat;
                     btn.addEventListener('click', () => {
                         currentCategory = cat;
@@ -556,7 +409,7 @@
             function createRipple(x, y) {
                 const ripple = document.createElement('div');
                 ripple.className = 'ripple';
-                const size = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                const size = Math.min(window.innerWidth, window.innerHeight) * 0.35;
                 ripple.style.width = ripple.style.height = size + 'px';
                 ripple.style.left = (x - size/2) + 'px';
                 ripple.style.top = (y - size/2) + 'px';
@@ -574,7 +427,7 @@
                 });
                 cardsContainer.innerHTML = '';
                 if (filtered.length === 0) {
-                    cardsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--ink-lighter);">暂无网站</p>';
+                    cardsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#8a7b65;">暂无网站</p>';
                     return;
                 }
                 filtered.forEach((site, idx) => {
@@ -584,9 +437,6 @@
                     a.target = '_blank';
                     a.rel = 'noopener noreferrer';
                     a.dataset.index = sitesData.indexOf(site);
-
-                    const decor = document.createElement('div');
-                    decor.className = 'card-decoration';
 
                     const seal = document.createElement('div');
                     seal.className = 'card-seal';
@@ -613,12 +463,10 @@
                     meta.appendChild(catSpan);
                     meta.appendChild(visitsSpan);
 
-                    a.appendChild(decor);
                     a.appendChild(seal);
                     a.appendChild(content);
                     a.appendChild(meta);
 
-                    // 点击涟漪 + 统计
                     a.addEventListener('click', function(e) {
                         createRipple(e.clientX, e.clientY);
                         const idx = parseInt(this.dataset.index);
@@ -626,8 +474,8 @@
                             apiRequest(`/api/sites/${idx}/visit`, { method: 'POST' })
                                 .then(() => {
                                     sitesData[idx].visits = (sitesData[idx].visits || 0) + 1;
-                                    const visitsEl = this.querySelector('.visits');
-                                    if (visitsEl) visitsEl.textContent = `👁 ${sitesData[idx].visits}`;
+                                    const v = this.querySelector('.visits');
+                                    if (v) v.textContent = `👁 ${sitesData[idx].visits}`;
                                 })
                                 .catch(e => console.warn('统计失败', e));
                         }
@@ -691,10 +539,7 @@
 
             // ===== 主渲染 =====
             async function renderAll() {
-                if (!currentUser) {
-                    showLogin();
-                    return;
-                }
+                if (!currentUser) { showLogin(); return; }
                 let roleText = '游客';
                 if (currentUser.role === 'admin') roleText = '管理员';
                 else if (currentUser.role === 'user') roleText = '成员';
@@ -711,39 +556,31 @@
                         const users = await apiRequest('/api/users');
                         renderUserList(users);
                     } catch (e) {
-                        console.warn('获取用户列表失败', e);
-                        userListEl.innerHTML = '<p style="color:var(--vermillion);">加载用户列表失败</p>';
+                        userListEl.innerHTML = '<p style="color:#c43d3d;">加载失败</p>';
                     }
                     renderSiteManageList(sitesData);
                 }
             }
 
             // ===== 搜索 =====
-            searchInput.addEventListener('input', (e) => {
-                searchKeyword = e.target.value;
-                renderCards();
-            });
+            searchInput.addEventListener('input', (e) => { searchKeyword = e.target.value; renderCards(); });
 
             // ===== 管理员操作 =====
             addUserBtn.addEventListener('click', async () => {
-                const username = newUserInput.value.trim();
-                const password = newPassInput.value;
-                if (!username || !password) return alert('账号密码不能为空');
+                const u = newUserInput.value.trim(), p = newPassInput.value;
+                if (!u || !p) return alert('账号密码不能为空');
                 try {
-                    await apiRequest('/api/users', { method: 'POST', body: JSON.stringify({ username, password }) });
+                    await apiRequest('/api/users', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
                     alert('添加成功');
-                    newUserInput.value = '';
-                    newPassInput.value = '';
+                    newUserInput.value = ''; newPassInput.value = '';
                     const users = await apiRequest('/api/users');
                     renderUserList(users);
                 } catch (e) { alert(e.message); }
             });
 
             addSiteBtn.addEventListener('click', async () => {
-                const name = newSiteName.value.trim();
-                const url = newSiteUrl.value.trim();
-                const desc = newSiteDesc.value.trim();
-                const seal = newSiteSeal.value.trim();
+                const name = newSiteName.value.trim(), url = newSiteUrl.value.trim();
+                const desc = newSiteDesc.value.trim(), seal = newSiteSeal.value.trim();
                 const category = newSiteCategory.value.trim() || '其他';
                 if (!name || !url) return alert('名称和网址必填');
                 try {
@@ -763,7 +600,7 @@
                 } else {
                     showLogin();
                 }
-                setRandomPoem();
+                setPoem();
             });
 
         })();
