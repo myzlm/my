@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
-        /* ====== 基础 ====== */
+        /* ==================== 万壑松风 · 雅集 古风增强版 ==================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --paper: rgba(247,242,232,0.4);
@@ -21,7 +21,7 @@
             --gold-light: #d4b66a;
             --shadow-soft: 0 2px 16px rgba(40,20,10,0.07);
             --shadow-medium: 0 6px 28px rgba(40,20,10,0.15);
-            --font-body: "Noto Serif SC", serif;
+            --font-body: "Noto Serif SC", "Songti SC", serif;
             --font-heading: "ZCOOL XiaoWei", "KaiTi", serif;
         }
         body {
@@ -41,7 +41,7 @@
         }
         @media (max-width:600px) { body { background-image: url('bg-mobile.png'); } }
 
-        /* ====== 云雾 ====== */
+        /* ===== 云雾 ===== */
         .clouds-layer { position: fixed; bottom:0; left:0; width:100%; height:70%; pointer-events:none; z-index:1; }
         .cloud { position:absolute; background:radial-gradient(ellipse at center, rgba(255,252,245,0.5) 0%, transparent 70%); border-radius:50%; filter:blur(24px); }
         .cloud-1 { width:360px; height:90px; bottom:42%; left:-10%; animation:cloudDrift1 28s linear infinite; opacity:0.45; }
@@ -54,7 +54,7 @@
         @keyframes cloudDrift2 { from { transform:translateX(-350px); } to { transform:translateX(calc(100vw + 400px)); } }
         @keyframes cloudDrift3 { from { transform:translateX(-480px); } to { transform:translateX(calc(100vw + 520px)); } }
 
-        /* ====== 花瓣 ====== */
+        /* ===== 花瓣 ===== */
         .petals { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:3; overflow:hidden; }
         .petal { position:absolute; top:-30px; width:12px; height:16px; background:radial-gradient(ellipse at 35% 30%, rgba(235,175,160,0.7), rgba(220,145,130,0.4) 40%, transparent 70%); border-radius:45% 55% 50% 50%; animation:petalFall linear infinite; opacity:0; }
         .petal:nth-child(1) { left:5%; animation-duration:7.2s; animation-delay:0s; }
@@ -82,7 +82,7 @@
             100% { transform:translateY(105vh) rotate(480deg) scale(0.3); opacity:0; }
         }
 
-        /* ====== 登录卡片 ====== */
+        /* ===== 登录卡片 ===== */
         .login-container {
             position:relative; z-index:10;
             width:380px; max-width:90%;
@@ -127,7 +127,7 @@
         .btn-guest:hover { background:rgba(180,140,60,0.15); border-color:var(--gold); }
         .error-msg { color:var(--vermillion); font-size:0.8rem; min-height:20px; margin-top:6px; }
 
-        /* ====== 主界面 ====== */
+        /* ===== 主界面 ===== */
         .main-app { display:none; width:100%; max-width:960px; margin:0 auto; padding:30px 24px; position:relative; z-index:10; }
         .header-plaque {
             text-align:center; margin:0 auto 20px;
@@ -191,7 +191,7 @@
             background:var(--gold); color:#fef8f0; border-color:var(--gold); box-shadow:0 0 12px rgba(180,140,60,0.3);
         }
 
-        /* ====== 卡片网格 ====== */
+        /* ===== 卡片网格 ===== */
         .cards-grid {
             display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
         }
@@ -261,7 +261,7 @@
         .card-meta .category { background:rgba(180,140,60,0.15); padding:0 10px; border-radius:12px; }
         .card-meta .visits { opacity:0.7; }
 
-        /* ====== 管理员面板 ====== */
+        /* ===== 管理员面板 ===== */
         .admin-panel {
             background:rgba(250,245,235,0.6); border:1px solid rgba(180,140,60,0.4);
             border-radius:8px; padding:20px; margin-top:35px; backdrop-filter:blur(8px);
@@ -274,7 +274,7 @@
         .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.4); border-radius:4px; background:rgba(250,245,235,0.4); color:var(--ink); min-width:80px; }
         .form-row input:focus { border-color:var(--gold); outline:none; }
 
-        /* ====== 底部诗词 ====== */
+        /* ===== 底部诗词 ===== */
         .footer-poem {
             margin-top:40px; text-align:center; font-family:var(--font-heading);
             font-size:0.9rem; color:var(--ink-lighter); opacity:0.7;
@@ -283,7 +283,7 @@
         }
         .footer-poem:hover { opacity:1; }
 
-        /* ====== 涟漪特效 ====== */
+        /* ===== 涟漪特效 ===== */
         .ripple {
             position:fixed; border-radius:50%;
             background:radial-gradient(circle, rgba(180,140,70,0.25) 0%, transparent 70%);
@@ -295,7 +295,7 @@
             100% { transform:scale(4); opacity:0; }
         }
 
-        /* ====== 响应式 ====== */
+        /* ===== 响应式 ===== */
         @media (max-width:900px) { .cards-grid { grid-template-columns:repeat(2,1fr); } }
         @media (max-width:600px) { .cards-grid { grid-template-columns:1fr; } .login-container { padding:30px 20px; } .header-plaque { font-size:1.4rem; } }
     </style>
@@ -344,7 +344,7 @@
             <button class="btn-sm" id="logoutBtn">退出登录</button>
         </div>
         <div class="filter-bar">
-            <input type="text" id="searchInput" placeholder="搜索网站..." />
+            <input type="text" id="searchInput" placeholder="搜索网站名称或描述..." />
             <div class="category-tabs" id="categoryTabs"><button class="category-tab active" data-category="all">全部</button></div>
         </div>
         <div id="cardsContainer" class="cards-grid"></div>
@@ -371,7 +371,7 @@
                         </div>
                         <div class="form-row">
                             <input type="text" id="newSiteDesc" placeholder="描述" />
-                            <input type="text" id="newSiteSeal" placeholder="印章" maxlength="2" style="max-width:80px;" />
+                            <input type="text" id="newSiteSeal" placeholder="印章(1-2字)" maxlength="2" style="max-width:80px;" />
                             <input type="text" id="newSiteCategory" placeholder="分类" />
                             <button class="btn-sm" id="addSiteBtn">添加</button>
                         </div>
@@ -450,7 +450,7 @@
                     credentials: 'include'
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error || '请求失败');
+                if (!res.ok) throw new Error(data.error || `请求失败 (${res.status})`);
                 return data;
             }
 
@@ -517,13 +517,17 @@
                 return false;
             }
 
-            // ===== 数据与渲染 =====
+            // ===== 数据加载 =====
             async function loadSites() {
                 try {
                     const sites = await apiRequest('/api/sites');
                     sitesData = sites;
                     return sites;
-                } catch (e) { console.error('加载网站失败', e); return []; }
+                } catch (e) {
+                    console.error('加载网站失败', e);
+                    sitesData = [];
+                    return [];
+                }
             }
 
             function getCategories(sites) {
@@ -531,6 +535,7 @@
                 return ['全部', ...Array.from(cats)];
             }
 
+            // ===== 渲染分类 =====
             function renderCategoryTabs(cats) {
                 categoryTabs.innerHTML = '';
                 cats.forEach(cat => {
@@ -547,6 +552,19 @@
                 });
             }
 
+            // ===== 涟漪特效 =====
+            function createRipple(x, y) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                const size = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (x - size/2) + 'px';
+                ripple.style.top = (y - size/2) + 'px';
+                document.body.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 900);
+            }
+
+            // ===== 渲染卡片 =====
             function renderCards() {
                 const filtered = sitesData.filter(site => {
                     const matchCat = currentCategory === '全部' || site.category === currentCategory;
@@ -556,7 +574,7 @@
                 });
                 cardsContainer.innerHTML = '';
                 if (filtered.length === 0) {
-                    cardsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--ink-lighter);">未找到匹配的网站</p>';
+                    cardsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--ink-lighter);">暂无网站</p>';
                     return;
                 }
                 filtered.forEach((site, idx) => {
@@ -600,14 +618,9 @@
                     a.appendChild(content);
                     a.appendChild(meta);
 
-                    // 点击事件：涟漪 + 统计
+                    // 点击涟漪 + 统计
                     a.addEventListener('click', function(e) {
-                        // 涟漪
-                        const rect = this.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
                         createRipple(e.clientX, e.clientY);
-                        // 统计
                         const idx = parseInt(this.dataset.index);
                         if (!isNaN(idx) && idx >= 0 && idx < sitesData.length) {
                             apiRequest(`/api/sites/${idx}/visit`, { method: 'POST' })
@@ -622,18 +635,6 @@
 
                     cardsContainer.appendChild(a);
                 });
-            }
-
-            // ===== 涟漪特效函数 =====
-            function createRipple(x, y) {
-                const ripple = document.createElement('div');
-                ripple.className = 'ripple';
-                const size = Math.min(window.innerWidth, window.innerHeight) * 0.4;
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = (x - size/2) + 'px';
-                ripple.style.top = (y - size/2) + 'px';
-                document.body.appendChild(ripple);
-                setTimeout(() => { ripple.remove(); }, 900);
             }
 
             // ===== 管理面板 =====
@@ -688,6 +689,7 @@
                 });
             }
 
+            // ===== 主渲染 =====
             async function renderAll() {
                 if (!currentUser) {
                     showLogin();
@@ -708,7 +710,10 @@
                     try {
                         const users = await apiRequest('/api/users');
                         renderUserList(users);
-                    } catch (e) {}
+                    } catch (e) {
+                        console.warn('获取用户列表失败', e);
+                        userListEl.innerHTML = '<p style="color:var(--vermillion);">加载用户列表失败</p>';
+                    }
                     renderSiteManageList(sitesData);
                 }
             }
