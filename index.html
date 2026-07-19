@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>万壑松风 · 雅集</title>
-    <!-- 修复 CSP：显式允许同源图片和 data: 图片 -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src https://endorsed-mariah-said-bags.trycloudflare.com;">
+    <!-- 宽松的 CSP，允许连接任意后端（生产环境建议指定具体域名） -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src *;">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
@@ -19,7 +19,6 @@
             align-items:center;
             justify-content:center;
             position:relative;
-            /* 恢复您的原版背景图片 */
             background-image: url('bg-pc.png');
             background-size: cover;
             background-position: center bottom;
@@ -54,7 +53,7 @@
             100% { transform:translateY(105vh) rotate(360deg) scale(0.3); opacity:0; }
         }
 
-        /* 登录卡片（回形纹+水波纹） */
+        /* 登录卡片 */
         .login-container {
             position:relative; z-index:10;
             width:380px; max-width:90%;
@@ -279,13 +278,17 @@
     <script>
         (function() {
             'use strict';
-            const API_BASE = 'https://endorsed-mariah-said-bags.trycloudflare.com';
+
+            // ★★★ 在这里替换为您的后端 API 地址（末尾不要加斜杠） ★★★
+            const API_BASE = 'https://your-api-domain.com';
+
             let currentUser = null;
             let token = null;
             let sitesData = [];
             let currentCategory = '全部';
             let searchKeyword = '';
 
+            // DOM 元素
             const loginScreen = document.getElementById('loginScreen');
             const mainApp = document.getElementById('mainApp');
             const usernameInput = document.getElementById('usernameInput');
@@ -305,6 +308,7 @@
             const categoryTabs = document.getElementById('categoryTabs');
             const poemDisplay = document.getElementById('poemDisplay');
 
+            // 诗词库
             const poems = [
                 '松风吹解带，山月照弹琴。', '万壑树声满，千崖秋气高。',
                 '空山新雨后，天气晚来秋。', '明月松间照，清泉石上流。',
@@ -315,10 +319,13 @@
                 if (poemDisplay) poemDisplay.textContent = '『 ' + poems[Math.floor(Math.random() * poems.length)] + ' 』';
             }
 
+            // 封装 API 请求（游客模式不传 token）
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
-                const storedToken = sessionStorage.getItem('gufeng_token');
-                if (storedToken) headers['Authorization'] = `Bearer ${storedToken}`;
+                if (currentUser && currentUser.role !== 'guest') {
+                    const storedToken = sessionStorage.getItem('gufeng_token');
+                    if (storedToken) headers['Authorization'] = `Bearer ${storedToken}`;
+                }
                 const res = await fetch(`${API_BASE}${endpoint}`, {
                     ...options,
                     headers: { ...headers, ...options.headers },
@@ -329,22 +336,40 @@
                     sessionStorage.removeItem('gufeng_user');
                     currentUser = null; token = null;
                     showLogin();
-                    throw new Error('登录已过期');
+                    throw new Error('登录已过期，请重新登录');
                 }
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || '请求失败');
                 return data;
             }
 
-            function showLogin() { loginScreen.style.display = 'block'; mainApp.style.display = 'none'; }
-            function showApp() { loginScreen.style.display = 'none'; mainApp.style.display = 'block'; renderAll(); }
+            // 显示登录界面
+            function showLogin() {
+                loginScreen.style.display = 'block';
+                mainApp.style.display = 'none';
+            }
 
+            // 显示主应用
+            function showApp() {
+                loginScreen.style.display = 'none';
+                mainApp.style.display = 'block';
+                setPoem();          // 显示随机诗词
+                renderAll();
+            }
+
+            // 登录按钮
             loginBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value;
-                if (!username || !password) { loginError.textContent = '请输入账号和密码'; return; }
+                if (!username || !password) {
+                    loginError.textContent = '请输入账号和密码';
+                    return;
+                }
                 try {
-                    const res = await apiRequest('/api/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+                    const res = await apiRequest('/api/login', {
+                        method: 'POST',
+                        body: JSON.stringify({ username, password })
+                    });
                     loginError.textContent = '';
                     token = res.token;
                     sessionStorage.setItem('gufeng_token', token);
@@ -353,9 +378,12 @@
                     currentUser = { username, role };
                     sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
                     showApp();
-                } catch (err) { loginError.textContent = err.message; }
+                } catch (err) {
+                    loginError.textContent = err.message;
+                }
             });
 
+            // 游客按钮
             guestBtn.addEventListener('click', () => {
                 currentUser = { username: '游客', role: 'guest' };
                 sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
@@ -363,6 +391,7 @@
                 showApp();
             });
 
+            // 退出按钮
             logoutBtn.addEventListener('click', async () => {
                 try { await apiRequest('/api/logout', { method: 'POST' }); } catch (e) {}
                 currentUser = null; token = null;
@@ -371,15 +400,19 @@
                 showLogin();
             });
 
+            // 验证 token
             async function validateToken() {
                 try {
                     const res = await apiRequest('/api/me');
                     currentUser = { username: res.username, role: res.role };
                     sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
                     return true;
-                } catch (e) { return false; }
+                } catch (e) {
+                    return false;
+                }
             }
 
+            // 恢复会话
             async function restoreSession() {
                 const storedToken = sessionStorage.getItem('gufeng_token');
                 const storedUser = sessionStorage.getItem('gufeng_user');
@@ -388,21 +421,46 @@
                     const user = JSON.parse(storedUser);
                     if (!user || !user.username) return false;
                     token = storedToken;
-                    const valid = await validateToken();
-                    return valid;
-                } catch (e) { return false; }
+                    return await validateToken();
+                } catch (e) {
+                    return false;
+                }
             }
 
+            // 加载网站列表（游客优先使用缓存）
             async function loadSites() {
-                try { sitesData = await apiRequest('/api/sites'); } catch (e) { sitesData = []; }
+                if (currentUser && currentUser.role === 'guest') {
+                    const cached = localStorage.getItem('gufeng_sites_cache');
+                    if (cached) {
+                        try {
+                            sitesData = JSON.parse(cached);
+                            return sitesData;
+                        } catch (e) {}
+                    }
+                    try {
+                        sitesData = await apiRequest('/api/sites');
+                        localStorage.setItem('gufeng_sites_cache', JSON.stringify(sitesData));
+                    } catch (e) {
+                        sitesData = [];
+                    }
+                    return sitesData;
+                }
+                // 普通用户/管理员
+                try {
+                    sitesData = await apiRequest('/api/sites');
+                } catch (e) {
+                    sitesData = [];
+                }
                 return sitesData;
             }
 
+            // 获取所有分类
             function getCategories(sites) {
                 const cats = new Set(sites.map(s => s.category || '其他'));
                 return ['全部', ...Array.from(cats)];
             }
 
+            // 渲染分类标签
             function renderCategoryTabs(cats) {
                 categoryTabs.innerHTML = '';
                 cats.forEach(cat => {
@@ -418,6 +476,7 @@
                 });
             }
 
+            // 涟漪效果
             function createRipple(x, y) {
                 const ripple = document.createElement('div');
                 ripple.className = 'ripple';
@@ -429,11 +488,13 @@
                 setTimeout(() => ripple.remove(), 1000);
             }
 
+            // 渲染卡片
             function renderCards() {
                 const filtered = sitesData.filter(site => {
                     const matchCat = currentCategory === '全部' || site.category === currentCategory;
                     const keyword = searchKeyword.toLowerCase().trim();
-                    const matchSearch = !keyword || site.name.toLowerCase().includes(keyword) || (site.desc && site.desc.toLowerCase().includes(keyword));
+                    const matchSearch = !keyword || site.name.toLowerCase().includes(keyword) ||
+                                        (site.desc && site.desc.toLowerCase().includes(keyword));
                     return matchCat && matchSearch;
                 });
                 cardsContainer.innerHTML = '';
@@ -441,25 +502,26 @@
                     cardsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#8a7b65;">暂无网站</p>';
                     return;
                 }
-                filtered.forEach((site, idx) => {
+                filtered.forEach((site) => {
                     const a = document.createElement('a');
                     a.className = 'card-link';
                     a.href = site.url || '#';
                     a.target = '_blank';
                     a.rel = 'noopener noreferrer';
-                    a.dataset.index = sitesData.indexOf(site);
 
-                    a.addEventListener('mousedown', function(e) { createRipple(e.clientX, e.clientY); });
+                    // 点击统计（使用 site.id）
+                    a.addEventListener('mousedown', function(e) {
+                        createRipple(e.clientX, e.clientY);
+                    });
                     a.addEventListener('click', function(e) {
-                        const index = parseInt(this.dataset.index);
-                        if (!isNaN(index) && index >= 0 && index < sitesData.length) {
-                            apiRequest(`/api/sites/${index}/visit`, { method: 'POST' })
-                                .then(() => {
-                                    sitesData[index].visits = (sitesData[index].visits || 0) + 1;
-                                    const v = this.querySelector('.visits');
-                                    if (v) v.textContent = `👁 ${sitesData[index].visits}`;
-                                }).catch(e => console.warn('统计失败', e));
-                        }
+                        if (!site.id) return;
+                        apiRequest(`/api/sites/${site.id}/visit`, { method: 'POST' })
+                            .then(() => {
+                                site.visits = (site.visits || 0) + 1;
+                                const visitsSpan = this.querySelector('.visits');
+                                if (visitsSpan) visitsSpan.textContent = `👁 ${site.visits}`;
+                            })
+                            .catch(e => console.warn('统计失败', e));
                     });
 
                     const seal = document.createElement('div');
@@ -494,6 +556,7 @@
                 });
             }
 
+            // 渲染用户列表（管理员）
             function renderUserList(users) {
                 userListEl.innerHTML = '';
                 users.forEach(user => {
@@ -512,7 +575,9 @@
                                 await apiRequest(`/api/users/${user.username}`, { method: 'DELETE' });
                                 const updated = await apiRequest('/api/users');
                                 renderUserList(updated);
-                            } catch (e) { alert(e.message); }
+                            } catch (e) {
+                                alert(e.message);
+                            }
                         });
                         div.appendChild(delBtn);
                     }
@@ -520,9 +585,10 @@
                 });
             }
 
+            // 渲染网站管理列表（管理员）
             function renderSiteManageList(sites) {
                 siteManageListEl.innerHTML = '';
-                sites.forEach((site, idx) => {
+                sites.forEach(site => {
                     const div = document.createElement('div');
                     div.className = 'list-item';
                     const span = document.createElement('span');
@@ -534,18 +600,25 @@
                     delBtn.addEventListener('click', async () => {
                         if (!confirm(`确定删除 ${site.name} 吗？`)) return;
                         try {
-                            await apiRequest(`/api/sites/${idx}`, { method: 'DELETE' });
+                            // 使用 site.id 删除
+                            await apiRequest(`/api/sites/${site.id}`, { method: 'DELETE' });
                             sitesData = await apiRequest('/api/sites');
                             renderAll();
-                        } catch (e) { alert(e.message); }
+                        } catch (e) {
+                            alert(e.message);
+                        }
                     });
                     div.appendChild(delBtn);
                     siteManageListEl.appendChild(div);
                 });
             }
 
+            // 渲染所有
             async function renderAll() {
-                if (!currentUser) { showLogin(); return; }
+                if (!currentUser) {
+                    showLogin();
+                    return;
+                }
                 let roleText = '游客';
                 if (currentUser.role === 'admin') roleText = '管理员';
                 else if (currentUser.role === 'user') roleText = '成员';
@@ -564,27 +637,40 @@
                             const users = await apiRequest('/api/users');
                             renderUserList(users);
                             renderSiteManageList(sitesData);
-                        } catch (e) { userListEl.innerHTML = '<p style="color:#c43d3d;">加载失败：' + e.message + '</p>'; }
+                        } catch (e) {
+                            userListEl.innerHTML = '<p style="color:#c43d3d;">加载失败：' + e.message + '</p>';
+                        }
                     }
                 }
             }
 
-            searchInput.addEventListener('input', (e) => { searchKeyword = e.target.value; renderCards(); });
+            // 搜索输入
+            searchInput.addEventListener('input', (e) => {
+                searchKeyword = e.target.value;
+                renderCards();
+            });
 
+            // 添加用户
             addUserBtn.addEventListener('click', async () => {
                 const u = document.getElementById('newUser').value.trim();
                 const p = document.getElementById('newPass').value;
                 if (!u || !p) return alert('账号密码不能为空');
                 try {
-                    await apiRequest('/api/users', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
+                    await apiRequest('/api/users', {
+                        method: 'POST',
+                        body: JSON.stringify({ username: u, password: p })
+                    });
                     alert('添加成功');
                     document.getElementById('newUser').value = '';
                     document.getElementById('newPass').value = '';
                     const users = await apiRequest('/api/users');
                     renderUserList(users);
-                } catch (e) { alert(e.message); }
+                } catch (e) {
+                    alert(e.message);
+                }
             });
 
+            // 添加网站
             addSiteBtn.addEventListener('click', async () => {
                 const name = document.getElementById('newSiteName').value.trim();
                 const url = document.getElementById('newSiteUrl').value.trim();
@@ -593,14 +679,22 @@
                 const category = document.getElementById('newSiteCategory').value.trim() || '其他';
                 if (!name || !url) return alert('名称和网址必填');
                 try {
-                    await apiRequest('/api/sites', { method: 'POST', body: JSON.stringify({ name, url, desc, seal, category }) });
+                    await apiRequest('/api/sites', {
+                        method: 'POST',
+                        body: JSON.stringify({ name, url, desc, seal, category })
+                    });
                     alert('添加成功');
-                    ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCategory'].forEach(id => document.getElementById(id).value = '');
+                    ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCategory'].forEach(id =>
+                        document.getElementById(id).value = ''
+                    );
                     await loadSites();
                     renderAll();
-                } catch (e) { alert(e.message); }
+                } catch (e) {
+                    alert(e.message);
+                }
             });
 
+            // 启动：恢复会话
             window.addEventListener('load', async () => {
                 const restored = await restoreSession();
                 if (restored && currentUser && currentUser.username !== '游客') {
