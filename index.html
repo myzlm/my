@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
-        /* ====== 古风样式（精简版） ====== */
+        /* ====== 古风样式 ====== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Noto Serif SC', serif;
@@ -98,6 +98,7 @@
             box-shadow:inset 0 2px 4px rgba(255,220,160,0.1), inset 0 -3px 4px rgba(0,0,0,0.3), 0 6px 24px rgba(30,15,5,0.4);
             text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 20px rgba(220,180,100,0.3);
             animation:glow 4s ease-in-out infinite;
+            position:relative;
         }
         @keyframes glow { 50% { text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 40px rgba(220,180,100,0.5); } }
         .header-plaque::after {
@@ -176,11 +177,11 @@
         .form-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
         .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.3); color:#2a2218; min-width:70px; }
 
-        /* 底部诗词 & 涟漪 */
+        /* 底部诗词 & 涟漪（加浓版） */
         .footer-poem { margin-top:30px; text-align:center; font-family:'ZCOOL XiaoWei', cursive; font-size:0.85rem; color:#8a7b65; opacity:0.6; border-top:1px solid rgba(140,120,90,0.15); padding-top:16px; font-style:italic; }
         .ripple {
             position:fixed; border-radius:50%;
-            background:radial-gradient(circle, rgba(180,140,70,0.2) 0%, transparent 70%);
+            background:radial-gradient(circle, rgba(180,140,70,0.45) 0%, rgba(180,120,60,0.1) 50%, transparent 70%);
             transform:scale(0); animation:rippleAnim 0.8s ease-out forwards;
             pointer-events:none; z-index:999;
         }
@@ -537,28 +538,38 @@
                 });
             }
 
-            // ===== 主渲染 =====
+            // ★★★ 修正：只当管理员才请求 /api/users ★★★
             async function renderAll() {
-                if (!currentUser) { showLogin(); return; }
+                if (!currentUser) {
+                    showLogin();
+                    return;
+                }
                 let roleText = '游客';
                 if (currentUser.role === 'admin') roleText = '管理员';
                 else if (currentUser.role === 'user') roleText = '成员';
                 roleDisplay.textContent = roleText;
                 adminPanel.style.display = (currentUser.role === 'admin') ? 'block' : 'none';
 
+                // 加载网站（所有人都加载）
                 await loadSites();
                 const cats = getCategories(sitesData);
                 renderCategoryTabs(cats);
                 renderCards();
 
+                // ★ 只有管理员才请求用户列表和显示网站管理列表 ★
                 if (currentUser.role === 'admin') {
                     try {
                         const users = await apiRequest('/api/users');
                         renderUserList(users);
+                        renderSiteManageList(sitesData);
                     } catch (e) {
-                        userListEl.innerHTML = '<p style="color:#c43d3d;">加载失败</p>';
+                        console.warn('获取用户列表失败', e);
+                        userListEl.innerHTML = '<p style="color:#c43d3d;">加载用户列表失败</p>';
                     }
-                    renderSiteManageList(sitesData);
+                } else {
+                    // 非管理员：清空管理面板内容
+                    userListEl.innerHTML = '';
+                    siteManageListEl.innerHTML = '';
                 }
             }
 
