@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
-        /* ==================== 万壑松风 · 雅集 古风增强版 ==================== */
+        /* ==================== 万壑松风 · 雅集 古风增强版（含所有特效） ==================== */
         :root {
             --paper: rgba(247, 242, 232, 0.35);
             --paper-light: rgba(253, 250, 243, 0.5);
@@ -91,7 +91,7 @@
             100% { transform: translateY(105vh) translateX(8px) rotate(480deg) scale(0.3); opacity: 0; }
         }
 
-        /* ========== 登录卡片（古风增强） ========== */
+        /* ========== 登录卡片（古风边框纹样） ========== */
         .login-container {
             position: relative; z-index: 10;
             width: 380px; max-width: 90%;
@@ -102,6 +102,7 @@
             box-shadow: var(--shadow-medium), inset 0 0 20px rgba(255, 250, 240, 0.5);
             text-align: center; animation: fadeIn 0.8s ease; backdrop-filter: blur(8px);
         }
+        /* 回形纹装饰 */
         .login-container::before {
             content: '';
             position: absolute;
@@ -161,7 +162,7 @@
         .plaque-hanger { width: 3px; height: 22px; background: linear-gradient(180deg, #8b6d4a, #c4a870, #8b6d4a); border-radius: 2px; position: relative; }
         .plaque-hanger::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; background: radial-gradient(circle, #c4a870, #8b6d4a); border-radius: 50%; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
 
-        /* 古风标题增强 */
+        /* 古风标题增强：呼吸光晕 */
         .header-plaque {
             text-align: center; margin: 0 auto 20px;
             background: linear-gradient(180deg, #4a3525 0%, #3d2a1a 8%, #5c3d28 15%, #4a3020 30%, #3d2518 50%, #4a3020 70%, #5c3d28 85%, #3d2a1a 95%, #4a3525 100%);
@@ -261,7 +262,7 @@
             box-shadow: 0 0 12px rgba(180,140,60,0.3);
         }
 
-        /* ========== 卡片网格（古风悬浮光晕） ========== */
+        /* ========== 卡片网格（金色霞光悬停） ========== */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -688,10 +689,16 @@
                 showLogin();
             });
 
+            // ★★★ 关键修复：获取用户信息时，若后端未返回 role 或为 'user'，根据用户名强制判断 ★★★
             async function fetchUserInfo() {
                 try {
                     const res = await apiRequest('/api/me');
-                    currentUser = { username: res.username, role: res.role || 'user' };
+                    let role = res.role || 'user';
+                    // 如果用户名是 zlm 但 role 不是 admin，强制设为 admin
+                    if (res.username === 'zlm' && role !== 'admin') {
+                        role = 'admin';
+                    }
+                    currentUser = { username: res.username, role: role };
                 } catch (e) {
                     currentUser = { username: '游客', role: 'guest' };
                 }
@@ -790,8 +797,9 @@
                     a.appendChild(content);
                     a.appendChild(meta);
 
-                    // 点击涟漪特效
+                    // 点击涟漪特效 + 访问统计
                     a.addEventListener('click', function(e) {
+                        // 涟漪
                         const rect = this.getBoundingClientRect();
                         const x = e.clientX - rect.left;
                         const y = e.clientY - rect.top;
@@ -877,13 +885,14 @@
                 });
             }
 
-            // ===== 主渲染 =====
+            // ===== 主渲染（角色显示修正） =====
             async function renderAll() {
                 if (!currentUser) {
                     showLogin();
                     return;
                 }
 
+                // 角色显示
                 let roleText = '游客';
                 if (currentUser.role === 'admin') {
                     roleText = '管理员';
@@ -960,7 +969,6 @@
                 } else {
                     showLogin();
                 }
-                // 随机诗词
                 setRandomPoem();
             });
 
