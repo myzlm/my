@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
-        /* ====== 古风样式 ====== */
+        /* ====== 基础 & 背景 ====== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Noto Serif SC', serif;
@@ -27,6 +27,7 @@
         @media (max-width:600px) {
             body { background-image: url('bg-mobile.png'); background-position: center center; }
         }
+
         /* 云雾 */
         .clouds-layer { position:fixed; bottom:0; left:0; width:100%; height:60%; pointer-events:none; z-index:1; }
         .cloud { position:absolute; background:radial-gradient(ellipse at center, rgba(255,252,245,0.5) 0%, transparent 70%); border-radius:50%; filter:blur(24px); }
@@ -51,31 +52,35 @@
             100% { transform:translateY(105vh) rotate(360deg) scale(0.3); opacity:0; }
         }
 
-        /* 登录卡片 */
+        /* ====== 登录卡片 ====== */
         .login-container {
             position:relative; z-index:10;
             width:380px; max-width:90%;
-            background:rgba(253,250,243,0.5);
-            border:1px solid rgba(140,120,90,0.4);
-            border-radius:6px;
+            background:rgba(253,250,243,0.55);
+            border:2px solid rgba(140,120,90,0.5);
+            border-radius:10px;
             padding:40px 30px;
-            box-shadow:0 6px 28px rgba(40,20,10,0.12);
+            box-shadow:0 6px 28px rgba(40,20,10,0.12), inset 0 0 20px rgba(255,245,220,0.3);
             text-align:center;
-            backdrop-filter:blur(8px);
+            backdrop-filter:blur(10px);
+            /* 回形纹角标 */
+            background-image:
+                linear-gradient(45deg, #c43d3d 2px, transparent 2px),
+                linear-gradient(135deg, #c43d3d 2px, transparent 2px),
+                linear-gradient(225deg, #c43d3d 2px, transparent 2px),
+                linear-gradient(315deg, #c43d3d 2px, transparent 2px);
+            background-size: 20px 20px;
+            background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+            background-repeat: no-repeat;
         }
         .login-container::before {
             content:''; position:absolute; top:6px; left:6px; right:6px; bottom:6px;
-            border:1px solid rgba(180,140,70,0.15);
-            border-radius:3px;
+            border:1px solid rgba(180,140,70,0.25);
+            border-radius:6px;
             pointer-events:none;
-            background:repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(180,140,70,0.04) 8px, rgba(180,140,70,0.04) 9px);
-        }
-        .login-container::after {
-            content:'◆ ◇ ◆ ◇ ◆';
-            position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
-            font-size:0.5rem; color:rgba(180,140,70,0.15);
-            letter-spacing:4px;
-            white-space:nowrap;
+            /* 水波纹底纹 */
+            background: repeating-linear-gradient(0deg, transparent, transparent 12px, rgba(180,140,70,0.05) 12px, rgba(180,140,70,0.05) 13px),
+                        repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(180,140,70,0.05) 12px, rgba(180,140,70,0.05) 13px);
         }
         .login-title { font-family:'ZCOOL XiaoWei', cursive; font-size:2.2rem; color:#2a2218; }
         .login-title::after {
@@ -86,17 +91,18 @@
         .login-subtitle { font-size:0.9rem; color:#8a7b65; margin-bottom:28px; letter-spacing:0.2em; }
         .input-group { margin-bottom:18px; text-align:left; }
         .input-group label { display:block; font-size:0.85rem; color:#5c4f3a; margin-bottom:4px; font-family:'ZCOOL XiaoWei', cursive; }
-        .input-group input { width:100%; padding:10px 14px; border:1px solid rgba(140,120,90,0.5); background:rgba(250,245,235,0.6); border-radius:4px; font-family:'Noto Serif SC', serif; color:#2a2218; outline:none; }
+        .input-group input { width:100%; padding:10px 14px; border:1px solid rgba(140,120,90,0.5); background:rgba(250,245,235,0.7); border-radius:4px; font-family:'Noto Serif SC', serif; color:#2a2218; outline:none; }
         .input-group input:focus { border-color:#b8944b; box-shadow:0 0 0 3px rgba(180,140,60,0.2); }
         .btn { width:100%; padding:12px; border:none; border-radius:4px; font-family:'ZCOOL XiaoWei', cursive; font-size:1.1rem; cursor:pointer; transition:0.3s; margin-top:8px; }
         .btn-login { background:#c43d3d; color:#fef8f0; }
-        .btn-login:hover { background:#b53535; transform:translateY(-1px); }
+        .btn-login:hover { background:#b53535; transform:translateY(-1px); box-shadow:0 4px 15px rgba(180,40,30,0.4); }
         .btn-guest { background:rgba(255,255,255,0.2); color:#5c4f3a; border:1px solid rgba(140,120,90,0.5); }
         .btn-guest:hover { background:rgba(180,140,60,0.15); border-color:#b8944b; }
         .error-msg { color:#c43d3d; font-size:0.8rem; min-height:20px; margin-top:6px; }
 
-        /* 主界面 */
+        /* ====== 主界面 ====== */
         .main-app { display:none; width:100%; max-width:900px; margin:0 auto; padding:20px; position:relative; z-index:10; }
+        /* 动态书法标题 */
         .header-plaque {
             text-align:center; margin:0 auto 20px;
             background:linear-gradient(180deg, #4a3525, #3d2a1a, #5c3d28, #4a3020, #3d2518, #4a3020, #5c3d28, #3d2a1a, #4a3525);
@@ -104,11 +110,17 @@
             border:3px solid #6b4d30; outline:2px solid #8b6d4a; outline-offset:-8px;
             color:#e8d5a3; font-size:1.8rem; font-family:'ZCOOL XiaoWei', cursive; letter-spacing:0.18em;
             box-shadow:inset 0 2px 4px rgba(255,220,160,0.1), inset 0 -3px 4px rgba(0,0,0,0.3), 0 6px 24px rgba(30,15,5,0.4);
-            text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 20px rgba(220,180,100,0.3);
-            animation:glow 4s ease-in-out infinite;
+            text-shadow:
+                -2px -2px 0 rgba(0,0,0,0.7),
+                2px -2px 0 rgba(0,0,0,0.7),
+                -2px 2px 0 rgba(0,0,0,0.7),
+                2px 2px 0 rgba(0,0,0,0.7),
+                0 0 20px rgba(220,180,100,0.4);
+            animation:glow 3s ease-in-out infinite, titleBreath 4s ease-in-out infinite;
             position:relative;
         }
-        @keyframes glow { 50% { text-shadow:0 1px 2px rgba(0,0,0,0.6), 0 0 40px rgba(220,180,100,0.5); } }
+        @keyframes glow { 50% { text-shadow:-2px -2px 0 rgba(0,0,0,0.8), 2px -2px 0 rgba(0,0,0,0.8), -2px 2px 0 rgba(0,0,0,0.8), 2px 2px 0 rgba(0,0,0,0.8), 0 0 40px rgba(220,180,100,0.6); } }
+        @keyframes titleBreath { 50% { transform:scale(1.02); } }
         .header-plaque::after {
             content:'❖'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
             font-size:8px; color:rgba(200,160,90,0.2); letter-spacing:60px;
@@ -122,10 +134,10 @@
 
         .filter-bar {
             display:flex; flex-wrap:wrap; gap:12px; margin-bottom:25px; align-items:center;
-            background:rgba(253,250,243,0.4); backdrop-filter:blur(4px);
-            padding:10px 16px; border-radius:6px; border:1px solid rgba(140,120,90,0.2);
+            background:rgba(253,250,243,0.45); backdrop-filter:blur(6px);
+            padding:10px 16px; border-radius:6px; border:1px solid rgba(140,120,90,0.25);
         }
-        .filter-bar input { flex:1; min-width:140px; padding:8px 14px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.3); color:#2a2218; outline:none; }
+        .filter-bar input { flex:1; min-width:140px; padding:8px 14px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.4); color:#2a2218; outline:none; }
         .filter-bar input:focus { border-color:#b8944b; }
         .category-tabs { display:flex; flex-wrap:wrap; gap:6px; }
         .category-tab { padding:4px 14px; border-radius:20px; border:1px solid rgba(140,120,90,0.3); background:transparent; color:#5c4f3a; cursor:pointer; font-size:0.8rem; transition:0.2s; }
@@ -135,63 +147,70 @@
         .cards-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:20px; }
         .card-link {
             display:flex; flex-direction:column;
-            background:rgba(253,250,243,0.5); border:1px solid rgba(140,120,90,0.25);
-            border-radius:6px; padding:16px;
+            background:rgba(253,250,243,0.55);
+            border:1px solid rgba(140,120,90,0.35);
+            border-radius:8px;
+            padding:16px;
             text-decoration:none; color:#2a2218;
             box-shadow:0 2px 12px rgba(40,20,10,0.05);
-            transition:all 0.3s;
+            transition:all 0.35s ease;
             position:relative;
-            backdrop-filter:blur(4px);
+            backdrop-filter:blur(6px);
             overflow:hidden;
+            /* 回形纹底纹 */
+            background-image:
+                repeating-linear-gradient(45deg, rgba(200,160,80,0.05) 0px, rgba(200,160,80,0.05) 2px, transparent 2px, transparent 8px),
+                repeating-linear-gradient(-45deg, rgba(200,160,80,0.05) 0px, rgba(200,160,80,0.05) 2px, transparent 2px, transparent 8px);
         }
         .card-link:hover {
-            transform:translateY(-4px);
-            box-shadow:0 6px 24px rgba(180,140,60,0.2);
-            border-color:rgba(180,140,70,0.5);
+            transform:translateY(-5px);
+            box-shadow:0 0 25px rgba(220,170,40,0.5), 0 6px 20px rgba(180,140,60,0.25);
+            border-color:rgba(200,160,60,0.7);
+            /* 光晕动画 */
+            animation: cardGlow 1.2s ease-in-out infinite alternate;
+        }
+        @keyframes cardGlow {
+            0% { box-shadow:0 0 25px rgba(220,170,40,0.4), 0 6px 20px rgba(180,140,60,0.2); }
+            100% { box-shadow:0 0 40px rgba(255,200,50,0.7), 0 6px 25px rgba(180,140,60,0.35); }
         }
         .card-link::before {
-            content:''; position:absolute; left:0; top:10px; bottom:10px; width:3px;
+            content:''; position:absolute; left:5px; top:5px; bottom:5px; width:4px;
             background:linear-gradient(180deg, #d46565, #c43d3d, #d46565);
-            opacity:0.7;
+            opacity:0.8; border-radius:2px;
         }
-        .card-link::after {
-            content:''; position:absolute; bottom:0; left:20%; right:20%; height:2px;
-            background:radial-gradient(ellipse at center, rgba(200,160,80,0.3) 0%, transparent 70%);
-            opacity:0; transition:0.3s;
-        }
-        .card-link:hover::after { opacity:1; }
-
         .card-seal {
-            width:40px; height:40px; background:#c43d3d; color:#fef8f0;
+            width:42px; height:42px; background:#c43d3d; color:#fef8f0;
             display:flex; align-items:center; justify-content:center;
             font-family:'ZCOOL XiaoWei', cursive; font-size:1.2rem;
-            border-radius:3px; transform:rotate(-3deg);
-            box-shadow:0 3px 8px rgba(180,40,30,0.25);
+            border-radius:4px; transform:rotate(-3deg);
+            box-shadow:0 3px 10px rgba(180,40,30,0.3);
             animation:sealBreathe 4s ease-in-out infinite;
             margin-bottom:10px;
         }
-        @keyframes sealBreathe { 50% { transform:rotate(-2deg) scale(1.03); } }
+        @keyframes sealBreathe { 50% { transform:rotate(-1deg) scale(1.05); } }
         .card-content h3 { font-family:'ZCOOL XiaoWei', cursive; font-size:1rem; margin-bottom:2px; }
         .card-desc { font-size:0.75rem; color:#8a7b65; }
-        .card-meta { margin-top:10px; display:flex; justify-content:space-between; font-size:0.65rem; color:#8a7b65; border-top:1px dashed rgba(140,120,90,0.2); padding-top:6px; }
+        .card-meta { margin-top:10px; display:flex; justify-content:space-between; font-size:0.65rem; color:#8a7b65; border-top:1px dashed rgba(140,120,90,0.25); padding-top:6px; }
         .card-meta .category { background:rgba(180,140,60,0.1); padding:0 8px; border-radius:10px; }
         .card-meta .visits { opacity:0.6; }
 
         /* 管理员面板 */
-        .admin-panel { background:rgba(250,245,235,0.5); border:1px solid rgba(180,140,60,0.3); border-radius:8px; padding:18px; margin-top:30px; backdrop-filter:blur(4px); }
-        .admin-panel h3 { font-family:'ZCOOL XiaoWei', cursive; margin-bottom:14px; border-bottom:1px solid rgba(180,140,60,0.2); padding-bottom:6px; }
-        .list-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed rgba(140,120,90,0.15); font-size:0.85rem; }
+        .admin-panel { background:rgba(250,245,235,0.55); border:1px solid rgba(180,140,60,0.4); border-radius:8px; padding:18px; margin-top:30px; backdrop-filter:blur(6px); }
+        .admin-panel h3 { font-family:'ZCOOL XiaoWei', cursive; margin-bottom:14px; border-bottom:1px solid rgba(180,140,60,0.25); padding-bottom:6px; }
+        .list-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed rgba(140,120,90,0.2); font-size:0.85rem; }
         .list-item button { font-size:0.75rem; padding:2px 10px; }
         .form-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
-        .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.3); color:#2a2218; min-width:70px; }
+        .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.4); color:#2a2218; min-width:70px; }
 
-        /* 底部诗词 & 涟漪（加深版） */
-        .footer-poem { margin-top:30px; text-align:center; font-family:'ZCOOL XiaoWei', cursive; font-size:0.85rem; color:#8a7b65; opacity:0.6; border-top:1px solid rgba(140,120,90,0.15); padding-top:16px; font-style:italic; }
+        /* 底部诗词 */
+        .footer-poem { margin-top:30px; text-align:center; font-family:'ZCOOL XiaoWei', cursive; font-size:0.85rem; color:#8a7b65; opacity:0.65; border-top:1px solid rgba(140,120,90,0.2); padding-top:16px; font-style:italic; }
+
+        /* 水墨涟漪特效 */
         .ripple {
             position:fixed; border-radius:50%;
-            background:radial-gradient(circle, rgba(180,140,70,0.5) 0%, rgba(180,120,60,0.2) 60%, transparent 80%);
+            background:radial-gradient(circle, rgba(0,0,0,0.7) 0%, rgba(30,20,10,0.4) 50%, transparent 80%);
             transform:scale(0); animation:rippleAnim 0.9s ease-out forwards;
-            pointer-events:none; z-index:999;
+            pointer-events:none; z-index:999; mix-blend-mode: multiply;
         }
         @keyframes rippleAnim { 0% { transform:scale(0); opacity:1; } 100% { transform:scale(4); opacity:0; } }
 
@@ -200,17 +219,14 @@
 </head>
 <body>
 
-    <!-- 云雾 -->
     <div class="clouds-layer">
         <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
     </div>
-    <!-- 花瓣 -->
     <div class="petals">
         <span class="petal"></span><span class="petal"></span><span class="petal"></span>
         <span class="petal"></span><span class="petal"></span>
     </div>
 
-    <!-- 登录 -->
     <div id="loginScreen" class="login-container">
         <div class="login-title">万壑松风</div>
         <div class="login-subtitle">· 雅集 · 登入</div>
@@ -223,7 +239,6 @@
         <button class="btn btn-guest" id="guestBtn">游客模式 · 直接进入</button>
     </div>
 
-    <!-- 主界面 -->
     <div id="mainApp" class="main-app">
         <div style="text-align:center;"><div class="header-plaque">万壑松风 · 雅集</div></div>
         <div class="toolbar">
@@ -273,16 +288,13 @@
     <script>
         (function() {
             'use strict';
-
-            // ===== 配置 =====
             const API_BASE = 'https://endorsed-mariah-said-bags.trycloudflare.com';
             let currentUser = null;
-            let token = null;        // 存储 JWT
+            let token = null;
             let sitesData = [];
-            let currentCategory = 'all';
+            let currentCategory = '全部';
             let searchKeyword = '';
 
-            // ===== DOM 引用 =====
             const loginScreen = document.getElementById('loginScreen');
             const mainApp = document.getElementById('mainApp');
             const usernameInput = document.getElementById('usernameInput');
@@ -296,20 +308,12 @@
             const adminPanel = document.getElementById('adminPanel');
             const userListEl = document.getElementById('userList');
             const siteManageListEl = document.getElementById('siteManageList');
-            const newUserInput = document.getElementById('newUser');
-            const newPassInput = document.getElementById('newPass');
             const addUserBtn = document.getElementById('addUserBtn');
-            const newSiteName = document.getElementById('newSiteName');
-            const newSiteUrl = document.getElementById('newSiteUrl');
-            const newSiteDesc = document.getElementById('newSiteDesc');
-            const newSiteSeal = document.getElementById('newSiteSeal');
-            const newSiteCategory = document.getElementById('newSiteCategory');
             const addSiteBtn = document.getElementById('addSiteBtn');
             const searchInput = document.getElementById('searchInput');
             const categoryTabs = document.getElementById('categoryTabs');
             const poemDisplay = document.getElementById('poemDisplay');
 
-            // ===== 诗词 =====
             const poems = [
                 '松风吹解带，山月照弹琴。', '万壑树声满，千崖秋气高。',
                 '空山新雨后，天气晚来秋。', '明月松间照，清泉石上流。',
@@ -317,35 +321,26 @@
                 '山光悦鸟性，潭影空人心。', '曲径通幽处，禅房花木深。'
             ];
             function setPoem() {
-                if (poemDisplay) {
-                    const idx = Math.floor(Math.random() * poems.length);
-                    poemDisplay.textContent = '『 ' + poems[idx] + ' 』';
-                }
+                if (poemDisplay) poemDisplay.textContent = '『 ' + poems[Math.floor(Math.random() * poems.length)] + ' 』';
             }
 
-            // ===== API（使用 Authorization 头） =====
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
-                // 从 sessionStorage 获取 token
                 const storedToken = sessionStorage.getItem('gufeng_token');
-                if (storedToken) {
-                    headers['Authorization'] = `Bearer ${storedToken}`;
-                }
+                if (storedToken) headers['Authorization'] = `Bearer ${storedToken}`;
                 const res = await fetch(`${API_BASE}${endpoint}`, {
                     ...options,
                     headers: { ...headers, ...options.headers },
-                    credentials: 'omit'   // 不再依赖 Cookie
+                    credentials: 'omit'
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || `请求失败 (${res.status})`);
                 return data;
             }
 
-            // ===== 界面切换 =====
             function showLogin() { loginScreen.style.display = 'block'; mainApp.style.display = 'none'; }
             function showApp() { loginScreen.style.display = 'none'; mainApp.style.display = 'block'; setPoem(); renderAll(); }
 
-            // ===== 登录 =====
             loginBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value;
@@ -356,7 +351,6 @@
                         body: JSON.stringify({ username, password })
                     });
                     loginError.textContent = '';
-                    // ★ 保存 token
                     token = res.token;
                     sessionStorage.setItem('gufeng_token', token);
                     let role = res.role || 'user';
@@ -401,17 +395,9 @@
                 return false;
             }
 
-            // ===== 加载数据 =====
             async function loadSites() {
-                try {
-                    const sites = await apiRequest('/api/sites');
-                    sitesData = sites;
-                    return sites;
-                } catch (e) {
-                    console.error('加载失败', e);
-                    sitesData = [];
-                    return [];
-                }
+                try { sitesData = await apiRequest('/api/sites'); } catch (e) { sitesData = []; }
+                return sitesData;
             }
 
             function getCategories(sites) {
@@ -427,7 +413,6 @@
                     btn.textContent = cat;
                     btn.addEventListener('click', () => {
                         currentCategory = cat;
-                        // 重新渲染分类按钮和卡片
                         renderCategoryTabs(getCategories(sitesData));
                         renderCards();
                     });
@@ -435,7 +420,6 @@
                 });
             }
 
-            // ===== 涟漪特效（使用 mousedown 触发，确保可见） =====
             function createRipple(x, y) {
                 const ripple = document.createElement('div');
                 ripple.className = 'ripple';
@@ -447,7 +431,6 @@
                 setTimeout(() => ripple.remove(), 1000);
             }
 
-            // ===== 渲染卡片 =====
             function renderCards() {
                 const filtered = sitesData.filter(site => {
                     const matchCat = currentCategory === '全部' || site.category === currentCategory;
@@ -468,25 +451,21 @@
                     a.rel = 'noopener noreferrer';
                     a.dataset.index = sitesData.indexOf(site);
 
-                    // ★ 使用 mousedown 触发涟漪，保证跳转前显示
                     a.addEventListener('mousedown', function(e) {
                         createRipple(e.clientX, e.clientY);
                     });
 
-                    // click 事件处理统计（不阻塞跳转）
                     a.addEventListener('click', function(e) {
-                        const idx = parseInt(this.dataset.index);
-                        if (!isNaN(idx) && idx >= 0 && idx < sitesData.length) {
-                            // 异步统计，不阻塞跳转
-                            apiRequest(`/api/sites/${idx}/visit`, { method: 'POST' })
+                        const index = parseInt(this.dataset.index);
+                        if (!isNaN(index) && index >= 0 && index < sitesData.length) {
+                            apiRequest(`/api/sites/${index}/visit`, { method: 'POST' })
                                 .then(() => {
-                                    sitesData[idx].visits = (sitesData[idx].visits || 0) + 1;
+                                    sitesData[index].visits = (sitesData[index].visits || 0) + 1;
                                     const v = this.querySelector('.visits');
-                                    if (v) v.textContent = `👁 ${sitesData[idx].visits}`;
+                                    if (v) v.textContent = `👁 ${sitesData[index].visits}`;
                                 })
                                 .catch(e => console.warn('统计失败', e));
                         }
-                        // 不阻止默认行为，让链接正常跳转
                     });
 
                     const seal = document.createElement('div');
@@ -522,7 +501,6 @@
                 });
             }
 
-            // ===== 管理面板 =====
             function renderUserList(users) {
                 userListEl.innerHTML = '';
                 users.forEach(user => {
@@ -564,8 +542,7 @@
                         if (!confirm(`确定删除 ${site.name} 吗？`)) return;
                         try {
                             await apiRequest(`/api/sites/${idx}`, { method: 'DELETE' });
-                            const updated = await apiRequest('/api/sites');
-                            sitesData = updated;
+                            sitesData = await apiRequest('/api/sites');
                             renderAll();
                         } catch (e) { alert(e.message); }
                     });
@@ -574,12 +551,8 @@
                 });
             }
 
-            // ===== 主渲染（只当管理员才请求用户列表） =====
             async function renderAll() {
-                if (!currentUser) {
-                    showLogin();
-                    return;
-                }
+                if (!currentUser) { showLogin(); return; }
                 let roleText = '游客';
                 if (currentUser.role === 'admin') roleText = '管理员';
                 else if (currentUser.role === 'user') roleText = '成员';
@@ -596,36 +569,32 @@
                         const users = await apiRequest('/api/users');
                         renderUserList(users);
                         renderSiteManageList(sitesData);
-                    } catch (e) {
-                        console.warn('获取用户列表失败', e);
-                        userListEl.innerHTML = '<p style="color:#c43d3d;">加载用户列表失败</p>';
-                    }
-                } else {
-                    userListEl.innerHTML = '';
-                    siteManageListEl.innerHTML = '';
+                    } catch (e) { userListEl.innerHTML = '<p style="color:#c43d3d;">加载用户列表失败</p>'; }
                 }
             }
 
-            // ===== 搜索 =====
             searchInput.addEventListener('input', (e) => { searchKeyword = e.target.value; renderCards(); });
 
-            // ===== 管理员操作 =====
             addUserBtn.addEventListener('click', async () => {
-                const u = newUserInput.value.trim(), p = newPassInput.value;
+                const u = document.getElementById('newUser').value.trim();
+                const p = document.getElementById('newPass').value;
                 if (!u || !p) return alert('账号密码不能为空');
                 try {
                     await apiRequest('/api/users', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
                     alert('添加成功');
-                    newUserInput.value = ''; newPassInput.value = '';
+                    document.getElementById('newUser').value = '';
+                    document.getElementById('newPass').value = '';
                     const users = await apiRequest('/api/users');
                     renderUserList(users);
                 } catch (e) { alert(e.message); }
             });
 
             addSiteBtn.addEventListener('click', async () => {
-                const name = newSiteName.value.trim(), url = newSiteUrl.value.trim();
-                const desc = newSiteDesc.value.trim(), seal = newSiteSeal.value.trim();
-                const category = newSiteCategory.value.trim() || '其他';
+                const name = document.getElementById('newSiteName').value.trim();
+                const url = document.getElementById('newSiteUrl').value.trim();
+                const desc = document.getElementById('newSiteDesc').value.trim();
+                const seal = document.getElementById('newSiteSeal').value.trim();
+                const category = document.getElementById('newSiteCategory').value.trim() || '其他';
                 if (!name || !url) return alert('名称和网址必填');
                 try {
                     await apiRequest('/api/sites', { method: 'POST', body: JSON.stringify({ name, url, desc, seal, category }) });
@@ -636,7 +605,6 @@
                 } catch (e) { alert(e.message); }
             });
 
-            // ===== 启动 =====
             window.addEventListener('load', () => {
                 const restored = restoreSession();
                 if (restored && currentUser && currentUser.username !== '游客') {
@@ -646,7 +614,6 @@
                 }
                 setPoem();
             });
-
         })();
     </script>
 </body>
