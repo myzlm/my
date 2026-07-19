@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
     <style>
-        /* ========== 全局古风基底 ========== */
+        /* ====== 全局古风基底 ====== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Noto Serif SC', serif;
@@ -18,7 +18,7 @@
             align-items:center;
             justify-content:center;
             position:relative;
-            background-image: url('bg-pc.png'); /* 若没有图片可删除此行 */
+            background-image: url('bg-pc.png');
             background-size: cover;
             background-position: center bottom;
             background-attachment: fixed;
@@ -323,7 +323,7 @@
                 if (poemDisplay) poemDisplay.textContent = '『 ' + poems[Math.floor(Math.random() * poems.length)] + ' 』';
             }
 
-            // 通用请求（401 自动清理）
+            // 通用请求（401 自动清理并跳转）
             async function apiRequest(endpoint, options = {}) {
                 const headers = { 'Content-Type': 'application/json' };
                 const storedToken = sessionStorage.getItem('gufeng_token');
@@ -334,20 +334,20 @@
                     credentials: 'omit'
                 });
                 if (res.status === 401) {
-                    // token 失效，强制登出
+                    // Token 无效，立即清空并跳转登录
                     sessionStorage.removeItem('gufeng_token');
                     sessionStorage.removeItem('gufeng_user');
                     currentUser = null; token = null;
                     showLogin();
-                    throw new Error('登录已过期，请重新登录');
+                    throw new Error('登录已过期');
                 }
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error || `请求失败 (${res.status})`);
+                if (!res.ok) throw new Error(data.error || '请求失败');
                 return data;
             }
 
             function showLogin() { loginScreen.style.display = 'block'; mainApp.style.display = 'none'; }
-            function showApp() { loginScreen.style.display = 'none'; mainApp.style.display = 'block'; setPoem(); renderAll(); }
+            function showApp() { loginScreen.style.display = 'none'; mainApp.style.display = 'block'; renderAll(); }
 
             // 登录
             loginBtn.addEventListener('click', async () => {
@@ -389,21 +389,36 @@
                 showLogin();
             });
 
-            // 恢复会话
-            function restoreSession() {
-                const storedUser = sessionStorage.getItem('gufeng_user');
-                const storedToken = sessionStorage.getItem('gufeng_token');
-                if (storedUser && storedToken) {
-                    try {
-                        const parsed = JSON.parse(storedUser);
-                        if (parsed && parsed.username) {
-                            currentUser = parsed;
-                            token = storedToken;
-                            return true;
-                        }
-                    } catch (e) {}
+            // 验证 token 有效性
+            async function validateToken() {
+                try {
+                    const res = await apiRequest('/api/me');
+                    currentUser = { username: res.username, role: res.role };
+                    sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
+                    return true;
+                } catch (e) {
+                    sessionStorage.removeItem('gufeng_token');
+                    sessionStorage.removeItem('gufeng_user');
+                    return false;
                 }
-                return false;
+            }
+
+            // 恢复会话（带 token 验证）
+            async function restoreSession() {
+                const storedToken = sessionStorage.getItem('gufeng_token');
+                const storedUser = sessionStorage.getItem('gufeng_user');
+                if (!storedToken || !storedUser) return false;
+                try {
+                    const user = JSON.parse(storedUser);
+                    if (!user || !user.username) return false;
+                    token = storedToken;
+                    // 静默验证 token，避免后续 401
+                    const valid = await validateToken();
+                    if (!valid) return false;
+                    return true;
+                } catch (e) {
+                    return false;
+                }
             }
 
             // 加载网站
@@ -584,7 +599,6 @@
                         renderUserList(users);
                         renderSiteManageList(sitesData);
                     } catch (e) {
-                        // 401 已在 apiRequest 中处理，这里兜底
                         userListEl.innerHTML = '<p style="color:#c43d3d;">加载用户列表失败：' + e.message + '</p>';
                     }
                 }
@@ -622,14 +636,16 @@
                 } catch (e) { alert(e.message); }
             });
 
-            window.addEventListener('load', () => {
-                const restored = restoreSession();
+            // 启动（优化性能）
+            window.addEventListener('load', async () => {
+                const restored = await restoreSession();
                 if (restored && currentUser && currentUser.username !== '游客') {
                     showApp();
                 } else {
                     showLogin();
                 }
-                setPoem();
+                // 诗词延迟执行，减轻 load 事件压力
+                setTimeout(setPoem, 0);
             });
         })();
     </script>
