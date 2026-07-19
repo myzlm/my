@@ -15,25 +15,31 @@
       --ink: #2c2c2c;
       --red-seal: #c53b3b;
       --gold: #b89b5a;
-      --parchment: rgba(250, 245, 235, 0.85);
       --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.15);
       --transition: 0.3s ease;
     }
     body {
       font-family: 'ZCOOL XiaoWei', 'Ma Shan Zheng', 'KaiTi', '楷体', serif;
       min-height: 100vh;
-      background: var(--bg-pc) center/cover no-repeat fixed;
-      backdrop-filter: blur(1px);
+      background-color: #e8dcc8;
+      background-image: var(--bg-pc);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding: 2rem 1rem;
+      padding: 0.5rem 1rem;
       position: relative;
       overflow-x: hidden;
       color: var(--ink);
     }
     @media (max-width: 768px) {
-      body { background: var(--bg-mobile) center/cover no-repeat fixed; padding: 1rem 0.5rem; }
+      body {
+        background-image: var(--bg-mobile);
+        padding: 0.5rem 0.5rem;
+      }
     }
     .clouds { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
     .cloud { position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; filter: blur(18px); opacity: 0.5; animation: floatCloud linear infinite; }
@@ -43,132 +49,284 @@
     @keyframes floatCloud { 0% { transform: translateX(-120%); } 100% { transform: translateX(120vw); } }
     #petalCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
     #rippleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1.5; }
+
     .main-container {
-      position: relative; z-index: 2; width: 100%; max-width: 1200px;
-      background: var(--parchment); backdrop-filter: blur(12px); border-radius: 24px;
-      box-shadow: var(--shadow-soft), inset 0 0 30px rgba(0,0,0,0.05);
-      padding: 2rem 2rem 2.5rem; border: 1px solid rgba(180,150,100,0.3);
-      display: flex; flex-direction: column; gap: 2rem;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1200px;
+      background: transparent;
+      backdrop-filter: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 1rem 0.5rem 2rem;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
     }
-    .header { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; padding-bottom: 1rem; border-bottom: 2px dashed #c5a46b; }
-    .user-area { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-    .greeting { font-size: 1.1rem; color: #5a4a32; }
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px dashed rgba(180,150,100,0.5);
+    }
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0.3rem;
+    }
+    .greeting {
+      font-size: 1.1rem;
+      color: #3e2e1f;
+      text-shadow: 1px 1px 2px rgba(255,255,240,0.8);
+      background: rgba(255,250,240,0.5);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+    }
     .btn {
-      background: transparent; border: 1px solid #9e8b6b; color: #4a3b28; padding: 0.5rem 1.2rem;
-      border-radius: 30px; font-family: inherit; font-size: 1rem; cursor: pointer;
-      transition: all var(--transition); backdrop-filter: blur(4px);
-      background: rgba(255,250,240,0.4); letter-spacing: 1px;
+      background: rgba(255, 250, 240, 0.6);
+      backdrop-filter: blur(6px);
+      border: 1px solid #9e8b6b;
+      color: #3e2e1f;
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      letter-spacing: 1px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    .btn:hover { background: #c5a46b; color: #fff; border-color: #c5a46b; box-shadow: 0 4px 12px rgba(180,140,80,0.3); }
-    .btn.admin-btn { border-color: #b88a4b; color: #7a5c3a; font-weight: bold; }
-    .plaque-wrapper { display: flex; justify-content: center; width: 100%; }
+    .btn:hover {
+      background: rgba(197, 164, 107, 0.8);
+      color: #fff;
+      border-color: #c5a46b;
+      box-shadow: 0 4px 12px rgba(180,140,80,0.3);
+    }
+    .btn.admin-btn {
+      border-color: #b88a4b;
+      color: #5a3e2b;
+      font-weight: bold;
+      background: rgba(245, 235, 210, 0.7);
+    }
+
+    .plaque-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 0;
+    }
     .plaque {
       position: relative;
       background: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 5px),
                   repeating-linear-gradient(180deg, rgba(255,220,160,0.03) 0px, rgba(255,220,160,0.03) 1px, transparent 1px, transparent 3px),
                   linear-gradient(180deg, #5c3822 0%, #3d1f08 30%, #4a2610 60%, #2f1505 100%);
-      border-radius: 8px; padding: 1.2rem 2.8rem; border: 4px solid #3a1f0a;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3),
+      border-radius: 8px;
+      padding: 0.8rem 2.5rem;
+      border: 4px solid #3a1f0a;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3),
                   inset 0 0 0 3px #8b6914, inset 0 0 0 7px #3d1f08,
                   inset 0 0 0 9px #c4a44a, inset 0 0 0 12px #2a1405;
-      text-align: center; transition: transform 0.3s ease;
+      text-align: center;
+      transition: transform 0.3s ease;
+      margin-bottom: 0.5rem;
+    }
+    @media (max-width: 768px) {
+      .plaque {
+        padding: 0.6rem 1.2rem;
+        border-width: 3px;
+      }
+      .plaque-title {
+        font-size: clamp(1.8rem, 6vw, 2.4rem);
+        letter-spacing: 4px;
+      }
     }
     .plaque::before {
-      content: ''; position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-      width: 60px; height: 30px;
-      background: radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 10px 8px,
-                  radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 40px 8px;
-      background-repeat: no-repeat; z-index: 1; pointer-events: none;
+      content: '';
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 30px;
+      background:
+        radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 10px 8px,
+        radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 40px 8px;
+      background-repeat: no-repeat;
+      z-index: 1;
+      pointer-events: none;
     }
     .plaque::after {
-      content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
-      background: radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 0px,
-                  radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 0px,
-                  radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 100%,
-                  radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 100%;
-      background-repeat: no-repeat; z-index: 2; opacity: 0.8; pointer-events: none;
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background:
+        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 0px,
+        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 0px,
+        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 100%,
+        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 100%;
+      background-repeat: no-repeat;
+      z-index: 2;
+      opacity: 0.8;
+      pointer-events: none;
     }
     .plaque .shine {
-      position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255,255,240,0.08), rgba(255,255,240,0.15), rgba(255,255,240,0.08), transparent);
-      animation: plaqueShine 5s ease-in-out infinite; pointer-events: none; z-index: 0; border-radius: 4px;
+      animation: plaqueShine 5s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 4px;
     }
     @keyframes plaqueShine { 0% { left: -60%; } 60% { left: 110%; } 100% { left: 110%; } }
     .plaque-title {
       font-family: 'ZCOOL QingKe HuangYou', 'Ma Shan Zheng', 'STXingkai', '华文行楷', 'KaiTi', '楷体', serif;
-      font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: normal; color: #e8d5a3; letter-spacing: 8px;
-      text-shadow: 1px 0 0 rgba(0,0,0,0.7), -1px 0 0 rgba(0,0,0,0.4), 0 1px 0 rgba(0,0,0,0.6), 0 -1px 0 rgba(0,0,0,0.3),
-                   2px 2px 3px rgba(0,0,0,0.6), -1px -1px 1px rgba(255,240,200,0.25),
-                   0 0 12px rgba(200,160,60,0.5), 0 0 30px rgba(180,130,40,0.35), 0 4px 8px rgba(0,0,0,0.55);
-      position: relative; z-index: 1; white-space: nowrap; line-height: 1.3;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: normal;
+      color: #e8d5a3;
+      letter-spacing: 8px;
+      text-shadow:
+        1px 0 0 rgba(0,0,0,0.7), -1px 0 0 rgba(0,0,0,0.4),
+        0 1px 0 rgba(0,0,0,0.6), 0 -1px 0 rgba(0,0,0,0.3),
+        2px 2px 3px rgba(0,0,0,0.6), -1px -1px 1px rgba(255,240,200,0.25),
+        0 0 12px rgba(200,160,60,0.5), 0 0 30px rgba(180,130,40,0.35),
+        0 4px 8px rgba(0,0,0,0.55);
+      position: relative;
+      z-index: 1;
+      white-space: nowrap;
+      line-height: 1.3;
       filter: drop-shadow(0 1px 1px rgba(0,0,0,0.6));
     }
-    @media (max-width: 768px) {
-      .plaque { padding: 0.8rem 1.2rem; border-radius: 6px; border-width: 3px; }
-      .plaque-title { font-size: clamp(1.8rem, 6vw, 2.4rem); letter-spacing: 4px; }
-      .plaque::before {
-        width: 40px; height: 22px; top: -14px;
-        background: radial-gradient(circle 5px, #b8944b 40%, #6b4f10 60%, transparent 65%) 6px 5px,
-                    radial-gradient(circle 5px, #b8944b 40%, #6b4f10 60%, transparent 65%) 28px 5px;
-        background-repeat: no-repeat;
-      }
-      .plaque::after {
-        top: 6px; left: 6px; right: 6px; bottom: 6px;
-        background: radial-gradient(circle 4px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 0px,
-                    radial-gradient(circle 4px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 0px,
-                    radial-gradient(circle 4px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 100%,
-                    radial-gradient(circle 4px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 100%;
-        background-repeat: no-repeat;
-      }
+
+    .sites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 0.5rem;
     }
-    .sites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
     .site-card {
-      background: rgba(255,255,250,0.7); backdrop-filter: blur(8px); border: 1px solid #dcc79b;
-      border-radius: 20px; padding: 1.2rem; display: flex; align-items: center; gap: 1rem;
-      transition: all var(--transition); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      text-decoration: none; color: inherit; position: relative; overflow: hidden;
+      background: rgba(255, 255, 250, 0.25);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(180, 150, 100, 0.4);
+      border-radius: 20px;
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all var(--transition);
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      text-decoration: none;
+      color: inherit;
     }
     .site-card:hover {
-      transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-      background: rgba(255,255,250,0.9); border-color: #b89b5a;
+      transform: translateY(-4px);
+      background: rgba(255, 255, 250, 0.45);
+      border-color: #b89b5a;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
     }
     .seal {
-      width: 50px; height: 50px; min-width: 50px; background: #c53b3b; color: #fff;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; font-family: 'Ma Shan Zheng', cursive;
-      box-shadow: 0 2px 8px rgba(180,60,60,0.4); text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+      background: #c53b3b;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-family: 'Ma Shan Zheng', cursive;
+      box-shadow: 0 2px 8px rgba(180,60,60,0.4);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
     }
     .site-info { flex: 1; min-width: 0; }
-    .site-name { font-size: 1.3rem; font-weight: bold; color: #3e2e1f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .site-desc { font-size: 0.9rem; color: #6b5d4b; margin-top: 0.2rem; }
-    .site-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #9b8b72; margin-top: 0.4rem; }
-    .site-category { background: #e7dcc8; padding: 0.1rem 0.6rem; border-radius: 20px; }
+    .site-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #2e2210;
+      text-shadow: 0 1px 2px rgba(255,255,240,0.9);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .site-desc {
+      font-size: 0.9rem;
+      color: #4a3828;
+      text-shadow: 0 1px 2px rgba(255,255,240,0.7);
+      margin-top: 0.2rem;
+    }
+    .site-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #5e4e3a;
+      margin-top: 0.4rem;
+    }
+    .site-category {
+      background: rgba(231, 220, 200, 0.8);
+      padding: 0.1rem 0.6rem;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
     .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center;
-      z-index: 100; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 100; visibility: hidden; opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s;
     }
     .modal-overlay.active { visibility: visible; opacity: 1; }
     .modal {
-      background: #fdf8f0; border-radius: 32px; padding: 2rem; width: 90%; max-width: 420px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 1px solid #c5a46b; position: relative;
+      background: #fdf8f0; border-radius: 32px; padding: 2rem;
+      width: 90%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 1px solid #c5a46b; position: relative;
     }
     .modal h2 { text-align: center; font-family: 'Ma Shan Zheng', cursive; font-size: 2rem; margin-bottom: 1.5rem; color: #4a3828; }
     .input-group { margin-bottom: 1.2rem; }
     .input-group label { display: block; margin-bottom: 0.3rem; color: #5a4a32; }
     .input-group input {
-      width: 100%; padding: 0.7rem 1rem; border: 1px solid #cfbfa0; border-radius: 30px;
-      background: rgba(255,255,250,0.8); font-family: inherit; font-size: 1rem; outline: none;
+      width: 100%; padding: 0.7rem 1rem; border: 1px solid #cfbfa0;
+      border-radius: 30px; background: rgba(255,255,250,0.8);
+      font-family: inherit; font-size: 1rem; outline: none;
     }
     .modal-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
     .close-btn { position: absolute; top: 10px; right: 20px; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #8b7a62; }
-    .admin-panel { background: rgba(245,240,230,0.8); border-radius: 20px; padding: 1.5rem; border: 1px solid #d4b896; margin-top: 1rem; }
+
+    .admin-panel {
+      background: rgba(245,240,230,0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      border: 1px solid #d4b896;
+      margin-top: 1rem;
+    }
     .tab-buttons { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed #d4b896; flex-wrap: wrap; gap: 0.5rem; }
+    .list-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.5rem 0; border-bottom: 1px dashed #d4b896; flex-wrap: wrap; gap: 0.5rem;
+    }
     .warning { color: #b45f5f; font-size: 0.85rem; }
-    .input-group.input { padding: 0.5rem 0.8rem; border-radius: 24px; border: 1px solid #cfbfa0; font-family: inherit; background: rgba(255,255,250,0.8); flex: 1 1 120px; min-width: 100px; }
+    .input-group.input {
+      padding: 0.5rem 0.8rem; border-radius: 24px; border: 1px solid #cfbfa0;
+      font-family: inherit; background: rgba(255,255,250,0.8); flex: 1 1 120px; min-width: 100px;
+    }
     form { display: contents; }
   </style>
 </head>
@@ -195,12 +353,12 @@
 
     <div class="sites-grid" id="sitesGrid"></div>
 
-    <div style="text-align:right; margin-top:1rem;" id="userApplyArea" hidden>
+    <div style="text-align:right; margin-top:0.5rem;" id="userApplyArea" hidden>
       <button class="btn" id="applySiteBtn">📜 申请添加网站</button>
     </div>
 
     <div class="admin-panel" id="adminPanel" style="display:none;">
-      <h3 style="font-family:'Ma Shan Zheng'; font-size:1.8rem;">🔰 管理面板</h3>
+      <h3 style="font-family:'Ma Shan Zheng'; font-size:1.8rem; color:#4a3828;">🔰 管理面板</h3>
       <div class="tab-buttons">
         <button class="btn tab-btn active" data-tab="siteManage">网站管理</button>
         <button class="btn tab-btn" data-tab="userManage">用户管理</button>
@@ -219,8 +377,8 @@
       </div>
       <div class="tab-content" id="userManage">
         <form onsubmit="return false" style="margin-bottom:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-          <input type="text" id="newUsername" placeholder="新用户名" class="input-group input">
-          <input type="password" id="newUserPass" placeholder="密码" class="input-group input">
+          <input type="text" id="newUsername" placeholder="新用户名" class="input-group input" autocomplete="off">
+          <input type="password" id="newUserPass" placeholder="密码" class="input-group input" autocomplete="new-password">
           <button class="btn" id="addUserBtn">添加用户</button>
         </form>
         <div id="userListManage"></div>
@@ -238,8 +396,8 @@
       <button class="close-btn" id="closeLoginModal">&times;</button>
       <h2>登录书斋</h2>
       <form onsubmit="return false">
-        <div class="input-group"><label>账号</label><input type="text" id="loginUsername" placeholder="请输入账号"></div>
-        <div class="input-group"><label>密码</label><input type="password" id="loginPassword" placeholder="请输入密码"></div>
+        <div class="input-group"><label>账号</label><input type="text" id="loginUsername" placeholder="请输入账号" autocomplete="username"></div>
+        <div class="input-group"><label>密码</label><input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password"></div>
         <div class="modal-actions"><button class="btn" id="submitLogin">登 录</button></div>
       </form>
       <p style="text-align:center; margin-top:1rem; font-size:0.85rem; color:#8b7a62;">游客可浏览，登录后更多功能</p>
@@ -269,7 +427,7 @@
       <h2>修改密码</h2>
       <form onsubmit="return false">
         <div class="input-group"><label>用户名</label><input type="text" id="changePassUser" readonly></div>
-        <div class="input-group"><label>新密码</label><input type="password" id="changePassNew"></div>
+        <div class="input-group"><label>新密码</label><input type="password" id="changePassNew" autocomplete="new-password"></div>
         <div class="modal-actions"><button class="btn" id="submitChangePass">确认修改</button></div>
       </form>
       <p class="warning" style="margin-top:0.5rem;">※ 管理员修改他人密码通过删除后重建实现；修改主管理员(zlm)密码需后端支持。</p>
@@ -278,7 +436,6 @@
 
   <script>
     (function() {
-      // ⚠️ 重要：隧道地址已更新
       const API_BASE = 'https://ranging-qualified--purchase.trycloudflare.com';
       const APPLY_STORAGE_KEY = 'ink_nav_applications';
 
@@ -294,7 +451,6 @@
         return String(text).replace(/[&<>"']/g, m => map[m]);
       }
 
-      // silent模式：静默处理401等错误，返回null
       async function apiCall(url, options = {}, silent = false) {
         const config = {
           credentials: 'include',
@@ -404,7 +560,7 @@
           sites = await apiCall('/api/sites');
           renderSites();
           if (currentUser?.role === 'admin') renderSiteManage();
-        } catch (e) { /* 静默 */ }
+        } catch (e) {}
       }
 
       async function refreshUsersAndRender() {
@@ -412,7 +568,7 @@
         try {
           const users = await apiCall('/api/users');
           renderUserList(users);
-        } catch (e) { /* 静默 */ }
+        } catch (e) {}
       }
 
       function renderUserManage() { refreshUsersAndRender(); }
@@ -628,6 +784,7 @@
             $('#loginModal').classList.remove('active');
             updateUIByRole();
             if (currentUser.role === 'admin') refreshUsersAndRender();
+            alert(`登录成功，欢迎 ${data.username}`);
           } catch (err) { alert('登录失败: ' + err.message); }
         });
 
