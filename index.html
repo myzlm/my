@@ -1,710 +1,977 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>万壑松风 · 雅集</title>
-    <!-- 宽松的 CSP，允许连接任意后端（生产环境建议指定具体域名） -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src *;">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" />
-    <style>
-        /* ====== 基础 ====== */
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Noto Serif SC', serif;
-            background: #f7f2e8;
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            position:relative;
-            background-image: url('bg-pc.png');
-            background-size: cover;
-            background-position: center bottom;
-            background-attachment: fixed;
-            background-blend-mode: overlay;
-        }
-        @media (max-width:600px) {
-            body { background-image: url('bg-mobile.png'); background-position: center center; }
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>墨韵·书签雅集</title>
+  <!-- 引入古风字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* 云雾 */
-        .clouds-layer { position:fixed; bottom:0; left:0; width:100%; height:60%; pointer-events:none; z-index:1; }
-        .cloud { position:absolute; background:radial-gradient(ellipse at center, rgba(255,252,245,0.5) 0%, transparent 70%); border-radius:50%; filter:blur(24px); }
-        .cloud-1 { width:300px; height:80px; bottom:40%; left:-5%; animation:cloudDrift 25s linear infinite; opacity:0.4; }
-        .cloud-2 { width:250px; height:60px; bottom:30%; left:60%; animation:cloudDrift 30s linear infinite; animation-delay:-10s; opacity:0.35; }
-        .cloud-3 { width:350px; height:90px; bottom:20%; left:20%; animation:cloudDrift 35s linear infinite; animation-delay:-18s; opacity:0.4; }
-        @keyframes cloudDrift { from { transform:translateX(-400px); } to { transform:translateX(calc(100vw + 450px)); } }
+    :root {
+      --bg-pc: url('bg-pc.png');
+      --bg-mobile: url('bg-mobile.png');
+      --ink: #2c2c2c;
+      --red-seal: #c53b3b;
+      --gold: #b89b5a;
+      --parchment: rgba(250, 245, 235, 0.85);
+      --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.15);
+      --transition: 0.3s ease;
+    }
 
-        /* 花瓣 */
-        .petals { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:3; overflow:hidden; }
-        .petal { position:absolute; top:-30px; width:12px; height:16px; background:radial-gradient(ellipse at 35% 30%, rgba(235,175,160,0.7), rgba(220,145,130,0.4) 40%, transparent 70%); border-radius:45% 55% 50% 50%; animation:petalFall 8s linear infinite; opacity:0; }
-        .petal:nth-child(1) { left:10%; animation-duration:7.2s; animation-delay:0s; }
-        .petal:nth-child(2) { left:30%; animation-duration:8.5s; animation-delay:1.5s; }
-        .petal:nth-child(3) { left:50%; animation-duration:6.8s; animation-delay:3s; }
-        .petal:nth-child(4) { left:70%; animation-duration:9s; animation-delay:0.6s; }
-        .petal:nth-child(5) { left:90%; animation-duration:7.6s; animation-delay:4.2s; }
-        @keyframes petalFall {
-            0% { transform:translateY(-60px) rotate(0deg) scale(0.6); opacity:0; }
-            10% { opacity:0.7; }
-            50% { transform:translateY(50vh) rotate(180deg) scale(0.9); opacity:0.6; }
-            90% { opacity:0.2; }
-            100% { transform:translateY(105vh) rotate(360deg) scale(0.3); opacity:0; }
-        }
+    body {
+      font-family: 'ZCOOL XiaoWei', 'Ma Shan Zheng', 'KaiTi', '楷体', serif;
+      min-height: 100vh;
+      background: var(--bg-pc) center/cover no-repeat fixed;
+      backdrop-filter: blur(1px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+      color: var(--ink);
+    }
 
-        /* 登录卡片 */
-        .login-container {
-            position:relative; z-index:10;
-            width:380px; max-width:90%;
-            background:rgba(253,250,243,0.55);
-            border:2px solid rgba(140,120,90,0.5);
-            border-radius:10px;
-            padding:40px 30px;
-            box-shadow:0 6px 28px rgba(40,20,10,0.12), inset 0 0 20px rgba(255,245,220,0.3);
-            text-align:center;
-            backdrop-filter:blur(10px);
-            background-image:
-                linear-gradient(45deg, #c43d3d 2px, transparent 2px),
-                linear-gradient(135deg, #c43d3d 2px, transparent 2px),
-                linear-gradient(225deg, #c43d3d 2px, transparent 2px),
-                linear-gradient(315deg, #c43d3d 2px, transparent 2px);
-            background-size: 20px 20px;
-            background-position: 0 0, 100% 0, 100% 100%, 0 100%;
-            background-repeat: no-repeat;
-        }
-        .login-container::before {
-            content:''; position:absolute; top:6px; left:6px; right:6px; bottom:6px;
-            border:1px solid rgba(180,140,70,0.25);
-            border-radius:6px;
-            pointer-events:none;
-            background: repeating-linear-gradient(0deg, transparent, transparent 12px, rgba(180,140,70,0.05) 12px, rgba(180,140,70,0.05) 13px),
-                        repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(180,140,70,0.05) 12px, rgba(180,140,70,0.05) 13px);
-        }
-        .login-title { font-family:'ZCOOL XiaoWei', cursive; font-size:2.2rem; color:#2a2218; }
-        .login-title::after {
-            content:''; display:block; width:60%; height:2px; margin:6px auto 0;
-            background:linear-gradient(90deg, transparent, #b8944b, transparent);
-            opacity:0.4;
-        }
-        .login-subtitle { font-size:0.9rem; color:#8a7b65; margin-bottom:28px; letter-spacing:0.2em; }
-        .input-group { margin-bottom:18px; text-align:left; }
-        .input-group label { display:block; font-size:0.85rem; color:#5c4f3a; margin-bottom:4px; font-family:'ZCOOL XiaoWei', cursive; }
-        .input-group input { width:100%; padding:10px 14px; border:1px solid rgba(140,120,90,0.5); background:rgba(250,245,235,0.7); border-radius:4px; font-family:'Noto Serif SC', serif; color:#2a2218; outline:none; }
-        .input-group input:focus { border-color:#b8944b; box-shadow:0 0 0 3px rgba(180,140,60,0.2); }
-        .btn { width:100%; padding:12px; border:none; border-radius:4px; font-family:'ZCOOL XiaoWei', cursive; font-size:1.1rem; cursor:pointer; transition:0.3s; margin-top:8px; }
-        .btn-login { background:#c43d3d; color:#fef8f0; }
-        .btn-login:hover { background:#b53535; transform:translateY(-1px); box-shadow:0 4px 15px rgba(180,40,30,0.4); }
-        .btn-guest { background:rgba(255,255,255,0.2); color:#5c4f3a; border:1px solid rgba(140,120,90,0.5); }
-        .btn-guest:hover { background:rgba(180,140,60,0.15); border-color:#b8944b; }
-        .error-msg { color:#c43d3d; font-size:0.8rem; min-height:20px; margin-top:6px; }
+    /* 移动端背景切换 */
+    @media (max-width: 768px) {
+      body {
+        background: var(--bg-mobile) center/cover no-repeat fixed;
+        padding: 1rem 0.5rem;
+      }
+    }
 
-        /* 主界面 */
-        .main-app { display:none; width:100%; max-width:900px; margin:0 auto; padding:20px; position:relative; z-index:10; }
-        .header-plaque {
-            text-align:center; margin:0 auto 20px;
-            background:linear-gradient(180deg, #4a3525, #3d2a1a, #5c3d28, #4a3020, #3d2518, #4a3020, #5c3d28, #3d2a1a, #4a3525);
-            padding:14px 40px; display:inline-block; border-radius:6px;
-            border:3px solid #6b4d30; outline:2px solid #8b6d4a; outline-offset:-8px;
-            color:#e8d5a3; font-size:1.8rem; font-family:'ZCOOL XiaoWei', cursive; letter-spacing:0.18em;
-            box-shadow:inset 0 2px 4px rgba(255,220,160,0.1), inset 0 -3px 4px rgba(0,0,0,0.3), 0 6px 24px rgba(30,15,5,0.4);
-            text-shadow:
-                -2px -2px 0 rgba(0,0,0,0.7),
-                2px -2px 0 rgba(0,0,0,0.7),
-                -2px 2px 0 rgba(0,0,0,0.7),
-                2px 2px 0 rgba(0,0,0,0.7),
-                0 0 20px rgba(220,180,100,0.4);
-            animation:glow 3s ease-in-out infinite, titleBreath 4s ease-in-out infinite;
-            position:relative;
-        }
-        @keyframes glow { 50% { text-shadow:-2px -2px 0 rgba(0,0,0,0.8), 2px -2px 0 rgba(0,0,0,0.8), -2px 2px 0 rgba(0,0,0,0.8), 2px 2px 0 rgba(0,0,0,0.8), 0 0 40px rgba(220,180,100,0.6); } }
-        @keyframes titleBreath { 50% { transform:scale(1.02); } }
-        .header-plaque::after {
-            content:'❖'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-            font-size:8px; color:rgba(200,160,90,0.2); letter-spacing:60px;
-            white-space:nowrap; text-indent:-20px;
-        }
+    /* ---- 白云环绕特效 ---- */
+    .clouds {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      filter: blur(18px);
+      opacity: 0.5;
+      animation: floatCloud linear infinite;
+    }
+    .cloud::after,
+    .cloud::before {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .cloud::before {
+      width: 70%;
+      height: 70%;
+      top: -35%;
+      left: 15%;
+    }
+    .cloud::after {
+      width: 50%;
+      height: 50%;
+      top: -25%;
+      right: 10%;
+    }
+    @keyframes floatCloud {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(120vw); }
+    }
 
-        .toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
-        .role-badge { font-size:0.9rem; background:rgba(180,140,60,0.15); padding:4px 16px; border-radius:20px; color:#5c4f3a; font-family:'ZCOOL XiaoWei', cursive; border:1px solid rgba(180,140,60,0.2); }
-        .btn-sm { background:rgba(250,245,235,0.5); border:1px solid #b8944b; color:#2a2218; padding:6px 18px; border-radius:4px; cursor:pointer; font-family:'Noto Serif SC', serif; transition:0.2s; font-size:0.85rem; }
-        .btn-sm:hover { background:rgba(180,140,60,0.2); box-shadow:0 0 12px rgba(180,140,60,0.15); }
+    /* ---- 落花特效 ---- */
+    #petalCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
 
-        .filter-bar {
-            display:flex; flex-wrap:wrap; gap:12px; margin-bottom:25px; align-items:center;
-            background:rgba(253,250,243,0.45); backdrop-filter:blur(6px);
-            padding:10px 16px; border-radius:6px; border:1px solid rgba(140,120,90,0.25);
-        }
-        .filter-bar input { flex:1; min-width:140px; padding:8px 14px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.4); color:#2a2218; outline:none; }
-        .filter-bar input:focus { border-color:#b8944b; }
-        .category-tabs { display:flex; flex-wrap:wrap; gap:6px; }
-        .category-tab { padding:4px 14px; border-radius:20px; border:1px solid rgba(140,120,90,0.3); background:transparent; color:#5c4f3a; cursor:pointer; font-size:0.8rem; transition:0.2s; }
-        .category-tab:hover, .category-tab.active { background:#b8944b; color:#fff; border-color:#b8944b; }
+    /* 主容器：宣纸质感的卡片 */
+    .main-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1200px;
+      background: var(--parchment);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft), inset 0 0 30px rgba(0,0,0,0.05);
+      padding: 2rem 2rem 2.5rem;
+      border: 1px solid rgba(180, 150, 100, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
 
-        .cards-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:20px; }
-        .card-link {
-            display:flex; flex-direction:column;
-            background:rgba(253,250,243,0.55);
-            border:1px solid rgba(140,120,90,0.35);
-            border-radius:8px;
-            padding:16px;
-            text-decoration:none; color:#2a2218;
-            box-shadow:0 2px 12px rgba(40,20,10,0.05);
-            transition:all 0.35s ease;
-            position:relative;
-            backdrop-filter:blur(6px);
-            overflow:hidden;
-            background-image:
-                repeating-linear-gradient(45deg, rgba(200,160,80,0.05) 0px, rgba(200,160,80,0.05) 2px, transparent 2px, transparent 8px),
-                repeating-linear-gradient(-45deg, rgba(200,160,80,0.05) 0px, rgba(200,160,80,0.05) 2px, transparent 2px, transparent 8px);
-        }
-        .card-link:hover {
-            transform:translateY(-5px);
-            animation: cardGlow 1.2s ease-in-out infinite alternate;
-            border-color:rgba(200,160,60,0.7);
-        }
-        @keyframes cardGlow {
-            0% { box-shadow:0 0 25px rgba(220,170,40,0.4), 0 6px 20px rgba(180,140,60,0.2); }
-            100% { box-shadow:0 0 40px rgba(255,200,50,0.7), 0 6px 25px rgba(180,140,60,0.35); }
-        }
-        .card-link::before {
-            content:''; position:absolute; left:5px; top:5px; bottom:5px; width:4px;
-            background:linear-gradient(180deg, #d46565, #c43d3d, #d46565);
-            opacity:0.8; border-radius:2px;
-        }
-        .card-seal {
-            width:42px; height:42px; background:#c43d3d; color:#fef8f0;
-            display:flex; align-items:center; justify-content:center;
-            font-family:'ZCOOL XiaoWei', cursive; font-size:1.2rem;
-            border-radius:4px; transform:rotate(-3deg);
-            box-shadow:0 3px 10px rgba(180,40,30,0.3);
-            animation:sealBreathe 4s ease-in-out infinite;
-            margin-bottom:10px;
-        }
-        @keyframes sealBreathe { 50% { transform:rotate(-1deg) scale(1.05); } }
-        .card-content h3 { font-family:'ZCOOL XiaoWei', cursive; font-size:1rem; margin-bottom:2px; }
-        .card-desc { font-size:0.75rem; color:#8a7b65; }
-        .card-meta { margin-top:10px; display:flex; justify-content:space-between; font-size:0.65rem; color:#8a7b65; border-top:1px dashed rgba(140,120,90,0.25); padding-top:6px; }
-        .card-meta .category { background:rgba(180,140,60,0.1); padding:0 8px; border-radius:10px; }
-        .card-meta .visits { opacity:0.6; }
+    /* 头部 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 2px dashed #c5a46b;
+      padding-bottom: 1rem;
+    }
+    .title {
+      font-size: 2.8rem;
+      font-family: 'Ma Shan Zheng', cursive;
+      color: #3e2e1f;
+      letter-spacing: 6px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .greeting {
+      font-size: 1.2rem;
+      color: #5a4a32;
+    }
+    .btn {
+      background: transparent;
+      border: 1px solid #9e8b6b;
+      color: #4a3b28;
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      backdrop-filter: blur(4px);
+      background: rgba(255, 250, 240, 0.4);
+      letter-spacing: 1px;
+    }
+    .btn:hover {
+      background: #c5a46b;
+      color: #fff;
+      border-color: #c5a46b;
+      box-shadow: 0 4px 12px rgba(180, 140, 80, 0.3);
+    }
+    .btn.admin-btn {
+      border-color: #b88a4b;
+      color: #7a5c3a;
+      font-weight: bold;
+    }
 
-        .admin-panel { background:rgba(250,245,235,0.55); border:1px solid rgba(180,140,60,0.4); border-radius:8px; padding:18px; margin-top:30px; backdrop-filter:blur(6px); }
-        .admin-panel h3 { font-family:'ZCOOL XiaoWei', cursive; margin-bottom:14px; border-bottom:1px solid rgba(180,140,60,0.25); padding-bottom:6px; }
-        .list-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed rgba(140,120,90,0.2); font-size:0.85rem; }
-        .list-item button { font-size:0.75rem; padding:2px 10px; }
-        .form-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
-        .form-row input { flex:1; padding:6px 10px; border:1px solid rgba(140,120,90,0.3); border-radius:4px; background:rgba(250,245,235,0.4); color:#2a2218; min-width:70px; }
+    /* 网站卡片网格 */
+    .sites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .site-card {
+      background: rgba(255, 255, 250, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid #dcc79b;
+      border-radius: 20px;
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all var(--transition);
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+    }
+    .site-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+      background: rgba(255, 255, 250, 0.9);
+      border-color: #b89b5a;
+    }
+    .seal {
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+      background: #c53b3b;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-family: 'Ma Shan Zheng', cursive;
+      box-shadow: 0 2px 8px rgba(180, 60, 60, 0.4);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+    }
+    .site-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .site-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #3e2e1f;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .site-desc {
+      font-size: 0.9rem;
+      color: #6b5d4b;
+      margin-top: 0.2rem;
+    }
+    .site-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #9b8b72;
+      margin-top: 0.4rem;
+    }
+    .site-category {
+      background: #e7dcc8;
+      padding: 0.1rem 0.6rem;
+      border-radius: 20px;
+    }
 
-        .footer-poem { margin-top:30px; text-align:center; font-family:'ZCOOL XiaoWei', cursive; font-size:0.85rem; color:#8a7b65; opacity:0.65; border-top:1px solid rgba(140,120,90,0.2); padding-top:16px; font-style:italic; }
+    /* 模态框 */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s;
+    }
+    .modal-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .modal {
+      background: #fdf8f0;
+      border-radius: 32px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 1px solid #c5a46b;
+      position: relative;
+    }
+    .modal h2 {
+      text-align: center;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #4a3828;
+    }
+    .input-group {
+      margin-bottom: 1.2rem;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: #5a4a32;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1px solid #cfbfa0;
+      border-radius: 30px;
+      background: rgba(255,255,250,0.8);
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #8b7a62;
+    }
 
-        .ripple {
-            position:fixed; border-radius:50%;
-            background:radial-gradient(circle, rgba(0,0,0,0.7) 0%, rgba(30,20,10,0.4) 50%, transparent 80%);
-            transform:scale(0); animation:rippleAnim 0.9s ease-out forwards;
-            pointer-events:none; z-index:999; mix-blend-mode: multiply;
-        }
-        @keyframes rippleAnim { 0% { transform:scale(0); opacity:1; } 100% { transform:scale(4); opacity:0; } }
-
-        @media (max-width:600px) { .cards-grid { grid-template-columns:1fr; } }
-    </style>
+    /* 管理面板 */
+    .admin-panel {
+      background: rgba(245, 240, 230, 0.8);
+      border-radius: 20px;
+      padding: 1.5rem;
+      border: 1px solid #d4b896;
+      margin-top: 1rem;
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed #d4b896;
+    }
+    .warning {
+      color: #b45f5f;
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
 <body>
-    <div class="clouds-layer">
-        <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
-    </div>
-    <div class="petals">
-        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
-        <span class="petal"></span><span class="petal"></span>
+  <!-- 白云层 -->
+  <div class="clouds" id="cloudsContainer"></div>
+
+  <!-- 落花画布 -->
+  <canvas id="petalCanvas"></canvas>
+
+  <!-- 主界面 -->
+  <div class="main-container">
+    <div class="header">
+      <h1 class="title">🌸 墨韵·书签雅集</h1>
+      <div class="user-area" id="userArea">
+        <span class="greeting" id="greetingText">未登录·游客</span>
+        <button class="btn" id="loginBtn">登 录</button>
+        <button class="btn admin-btn" id="adminPanelBtn" style="display:none;">管理</button>
+        <button class="btn" id="logoutBtn" style="display:none;">登出</button>
+      </div>
     </div>
 
-    <div id="loginScreen" class="login-container">
-        <div class="login-title">万壑松风</div>
-        <div class="login-subtitle">· 雅集 · 登入</div>
-        <form onsubmit="return false;">
-            <div class="input-group"><label>账号</label><input type="text" id="usernameInput" autocomplete="username" /></div>
-            <div class="input-group"><label>密码</label><input type="password" id="passwordInput" autocomplete="current-password" /></div>
-        </form>
-        <div class="error-msg" id="loginError"></div>
-        <button class="btn btn-login" id="loginBtn">登 录</button>
-        <button class="btn btn-guest" id="guestBtn">游客模式 · 直接进入</button>
+    <!-- 网站卡片区 -->
+    <div class="sites-grid" id="sitesGrid"></div>
+
+    <!-- 用户申请添加网站按钮（仅用户可见） -->
+    <div style="text-align:right; margin-top:1rem;" id="userApplyArea" hidden>
+      <button class="btn" id="applySiteBtn">📜 申请添加网站</button>
     </div>
 
-    <div id="mainApp" class="main-app">
-        <div style="text-align:center;"><div class="header-plaque">万壑松风 · 雅集</div></div>
-        <div class="toolbar">
-            <span class="role-badge" id="roleDisplay">👤 游客</span>
-            <button class="btn-sm" id="logoutBtn">退出登录</button>
+    <!-- 管理员面板 -->
+    <div class="admin-panel" id="adminPanel" style="display:none;">
+      <h3 style="font-family:'Ma Shan Zheng'; font-size:1.8rem;">🔰 管理面板</h3>
+      <div class="tab-buttons">
+        <button class="btn tab-btn active" data-tab="siteManage">网站管理</button>
+        <button class="btn tab-btn" data-tab="userManage">用户管理</button>
+        <button class="btn tab-btn" data-tab="applyManage">待审核申请</button>
+      </div>
+      <!-- 网站管理 -->
+      <div class="tab-content active" id="siteManage">
+        <div style="margin-bottom:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <input type="text" id="newSiteName" placeholder="网站名称" class="input-group input">
+          <input type="text" id="newSiteUrl" placeholder="网址" class="input-group input">
+          <input type="text" id="newSiteDesc" placeholder="描述" class="input-group input">
+          <input type="text" id="newSiteSeal" placeholder="印章(1字)" maxlength="2" class="input-group input">
+          <input type="text" id="newSiteCat" placeholder="分类" class="input-group input">
+          <button class="btn" id="addSiteBtn">添加网站</button>
         </div>
-        <div class="filter-bar">
-            <input type="text" id="searchInput" placeholder="搜索网站..." />
-            <div class="category-tabs" id="categoryTabs"><button class="category-tab active" data-category="all">全部</button></div>
+        <div id="siteListManage"></div>
+      </div>
+      <!-- 用户管理 -->
+      <div class="tab-content" id="userManage">
+        <div style="margin-bottom:1rem; display:flex; gap:0.5rem;">
+          <input type="text" id="newUsername" placeholder="新用户名" class="input-group input">
+          <input type="password" id="newUserPass" placeholder="密码" class="input-group input">
+          <button class="btn" id="addUserBtn">添加用户</button>
         </div>
-        <div id="cardsContainer" class="cards-grid"></div>
-        <div id="adminPanel" class="admin-panel" style="display:none;">
-            <h3>⚙️ 管理员设置</h3>
-            <div style="display:flex; gap:16px; flex-wrap:wrap;">
-                <div style="flex:1; min-width:180px;">
-                    <h4 style="font-family:'ZCOOL XiaoWei',cursive; font-weight:normal; color:#5c4f3a; margin-bottom:8px;">账号管理</h4>
-                    <form onsubmit="return false;">
-                        <div class="form-row">
-                            <input type="text" id="newUser" placeholder="新账号" autocomplete="username" />
-                            <input type="password" id="newPass" placeholder="密码" autocomplete="new-password" />
-                            <button class="btn-sm" id="addUserBtn">添加</button>
-                        </div>
-                    </form>
-                    <div id="userList" style="max-height:140px; overflow-y:auto;"></div>
-                </div>
-                <div style="flex:1; min-width:220px;">
-                    <h4 style="font-family:'ZCOOL XiaoWei',cursive; font-weight:normal; color:#5c4f3a; margin-bottom:8px;">网站列表管理</h4>
-                    <form onsubmit="return false;">
-                        <div class="form-row">
-                            <input type="text" id="newSiteName" placeholder="名称" />
-                            <input type="text" id="newSiteUrl" placeholder="网址" />
-                        </div>
-                        <div class="form-row">
-                            <input type="text" id="newSiteDesc" placeholder="描述" />
-                            <input type="text" id="newSiteSeal" placeholder="印章" maxlength="2" style="max-width:70px;" />
-                            <input type="text" id="newSiteCategory" placeholder="分类" />
-                            <button class="btn-sm" id="addSiteBtn">添加</button>
-                        </div>
-                    </form>
-                    <div id="siteManageList" style="max-height:180px; overflow-y:auto;"></div>
-                </div>
+        <div id="userListManage"></div>
+        <p class="warning">※ 修改他人密码：将删除原用户并重新创建相同用户名（无数据损失）。修改主管理员密码需后端支持。</p>
+      </div>
+      <!-- 审核申请 -->
+      <div class="tab-content" id="applyManage">
+        <div id="applyListManage"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登录模态框 -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal">
+      <button class="close-btn" id="closeLoginModal">&times;</button>
+      <h2>登录书斋</h2>
+      <div class="input-group">
+        <label>账号</label>
+        <input type="text" id="loginUsername" placeholder="请输入账号">
+      </div>
+      <div class="input-group">
+        <label>密码</label>
+        <input type="password" id="loginPassword" placeholder="请输入密码">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="submitLogin">登 录</button>
+      </div>
+      <p style="text-align:center; margin-top:1rem; font-size:0.85rem; color:#8b7a62;">游客可浏览，登录后更多功能</p>
+    </div>
+  </div>
+
+  <!-- 申请网站模态框 -->
+  <div class="modal-overlay" id="applyModal">
+    <div class="modal">
+      <button class="close-btn" id="closeApplyModal">&times;</button>
+      <h2>申请收录网站</h2>
+      <div class="input-group">
+        <label>网站名称</label>
+        <input type="text" id="applyName" placeholder="必填">
+      </div>
+      <div class="input-group">
+        <label>网址</label>
+        <input type="text" id="applyUrl" placeholder="必填">
+      </div>
+      <div class="input-group">
+        <label>描述</label>
+        <input type="text" id="applyDesc">
+      </div>
+      <div class="input-group">
+        <label>印章(一字)</label>
+        <input type="text" id="applySeal" maxlength="2">
+      </div>
+      <div class="input-group">
+        <label>分类</label>
+        <input type="text" id="applyCat">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="submitApply">提交申请</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 修改密码模态框（管理员） -->
+  <div class="modal-overlay" id="changePassModal">
+    <div class="modal">
+      <button class="close-btn" id="closeChangePassModal">&times;</button>
+      <h2>修改密码</h2>
+      <div class="input-group">
+        <label>用户名</label>
+        <input type="text" id="changePassUser" readonly>
+      </div>
+      <div class="input-group">
+        <label>新密码</label>
+        <input type="password" id="changePassNew">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="submitChangePass">确认修改</button>
+      </div>
+      <p class="warning" style="margin-top:0.5rem;">※ 管理员修改他人密码通过删除后重建实现；修改主管理员(zlm)密码需后端支持。</p>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // ---------- 配置 ----------
+      const API_BASE = 'https://endorsed-mariah-said-bags.trycloudflare.com';
+      // 本地申请存储键
+      const APPLY_STORAGE_KEY = 'ink_nav_applications';
+
+      // ---------- 全局状态 ----------
+      let currentUser = null;   // { username, role }
+      let sites = [];
+      let localApplications = JSON.parse(localStorage.getItem(APPLY_STORAGE_KEY) || '[]');
+
+      // ---------- DOM 元素 ----------
+      const $ = (sel) => document.querySelector(sel);
+      const $$ = (sel) => document.querySelectorAll(sel);
+
+      // ---------- 工具函数 ----------
+      function escapeHtml(text) {
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return String(text).replace(/[&<>"']/g, m => map[m]);
+      }
+
+      async function apiCall(url, options = {}) {
+        const config = {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          ...options,
+        };
+        if (config.body && typeof config.body === 'object') {
+          config.body = JSON.stringify(config.body);
+        }
+        const res = await fetch(API_BASE + url, config);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || `请求失败 (${res.status})`);
+        }
+        return data;
+      }
+
+      // 更新UI状态
+      function updateUIByRole() {
+        const userArea = $('#userArea');
+        const greeting = $('#greetingText');
+        const loginBtn = $('#loginBtn');
+        const logoutBtn = $('#logoutBtn');
+        const adminBtn = $('#adminPanelBtn');
+        const adminPanel = $('#adminPanel');
+        const userApply = $('#userApplyArea');
+
+        if (currentUser) {
+          greeting.textContent = `${currentUser.role === 'admin' ? '🔰' : '📖'} ${currentUser.username}`;
+          loginBtn.style.display = 'none';
+          logoutBtn.style.display = 'inline-block';
+          if (currentUser.role === 'admin') {
+            adminBtn.style.display = 'inline-block';
+            adminPanel.style.display = 'block';
+            userApply.style.display = 'none'; // 管理员不需要申请入口
+          } else {
+            adminBtn.style.display = 'none';
+            adminPanel.style.display = 'none';
+            userApply.hidden = false;
+          }
+        } else {
+          greeting.textContent = '未登录·游客';
+          loginBtn.style.display = 'inline-block';
+          logoutBtn.style.display = 'none';
+          adminBtn.style.display = 'none';
+          adminPanel.style.display = 'none';
+          userApply.hidden = true;
+        }
+        renderSites();
+        if (currentUser && currentUser.role === 'admin') {
+          renderAdminPanels();
+        }
+      }
+
+      // 渲染网站卡片
+      function renderSites() {
+        const grid = $('#sitesGrid');
+        grid.innerHTML = '';
+        sites.forEach((site, index) => {
+          const card = document.createElement('a');
+          card.className = 'site-card';
+          card.href = site.url;
+          card.target = '_blank';
+          card.rel = 'noopener noreferrer';
+          card.addEventListener('click', (e) => {
+            // 记录访问
+            apiCall(`/api/sites/${index}/visit`, { method: 'POST' }).catch(()=>{});
+          });
+          card.innerHTML = `
+            <div class="seal">${escapeHtml(site.seal || '🔗')}</div>
+            <div class="site-info">
+              <div class="site-name">${escapeHtml(site.name)}</div>
+              <div class="site-desc">${escapeHtml(site.desc || '')}</div>
+              <div class="site-meta">
+                <span class="site-category">${escapeHtml(site.category || '其他')}</span>
+                <span>👁️ ${site.visits || 0}</span>
+              </div>
             </div>
-        </div>
-        <div class="footer-poem" id="poemDisplay"></div>
-    </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
 
-    <script>
-        (function() {
-            'use strict';
+      // 管理员面板渲染
+      function renderAdminPanels() {
+        renderSiteManage();
+        renderUserManage();
+        renderApplyManage();
+      }
 
-            // ★★★ 在这里替换为您的后端 API 地址（末尾不要加斜杠） ★★★
-            const API_BASE = 'https://your-api-domain.com';
+      function renderSiteManage() {
+        const container = $('#siteListManage');
+        container.innerHTML = sites.map((s, i) => `
+          <div class="list-item">
+            <span>${escapeHtml(s.name)} - <small>${escapeHtml(s.url)}</small></span>
+            <button class="btn" data-del-site="${i}">删除</button>
+          </div>
+        `).join('');
+        container.querySelectorAll('[data-del-site]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const idx = e.target.dataset.delSite;
+            if (!confirm('确认删除该网站？')) return;
+            try {
+              await apiCall(`/api/sites/${idx}`, { method: 'DELETE' });
+              await refreshSites();
+            } catch (err) { alert('删除失败: ' + err.message); }
+          });
+        });
+      }
 
-            let currentUser = null;
-            let token = null;
-            let sitesData = [];
-            let currentCategory = '全部';
-            let searchKeyword = '';
+      async function refreshSites() {
+        try {
+          sites = await apiCall('/api/sites');
+          renderSites();
+          if (currentUser?.role === 'admin') renderSiteManage();
+        } catch (e) { console.warn(e); }
+      }
 
-            // DOM 元素
-            const loginScreen = document.getElementById('loginScreen');
-            const mainApp = document.getElementById('mainApp');
-            const usernameInput = document.getElementById('usernameInput');
-            const passwordInput = document.getElementById('passwordInput');
-            const loginError = document.getElementById('loginError');
-            const loginBtn = document.getElementById('loginBtn');
-            const guestBtn = document.getElementById('guestBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const roleDisplay = document.getElementById('roleDisplay');
-            const cardsContainer = document.getElementById('cardsContainer');
-            const adminPanel = document.getElementById('adminPanel');
-            const userListEl = document.getElementById('userList');
-            const siteManageListEl = document.getElementById('siteManageList');
-            const addUserBtn = document.getElementById('addUserBtn');
-            const addSiteBtn = document.getElementById('addSiteBtn');
-            const searchInput = document.getElementById('searchInput');
-            const categoryTabs = document.getElementById('categoryTabs');
-            const poemDisplay = document.getElementById('poemDisplay');
+      async function refreshUsersAndRender() {
+        if (!currentUser || currentUser.role !== 'admin') return;
+        try {
+          const users = await apiCall('/api/users');
+          renderUserList(users);
+        } catch (e) { console.warn(e); }
+      }
 
-            // 诗词库
-            const poems = [
-                '松风吹解带，山月照弹琴。', '万壑树声满，千崖秋气高。',
-                '空山新雨后，天气晚来秋。', '明月松间照，清泉石上流。',
-                '竹喧归浣女，莲动下渔舟。', '随意春芳歇，王孙自可留。',
-                '山光悦鸟性，潭影空人心。', '曲径通幽处，禅房花木深。'
-            ];
-            function setPoem() {
-                if (poemDisplay) poemDisplay.textContent = '『 ' + poems[Math.floor(Math.random() * poems.length)] + ' 』';
-            }
+      function renderUserManage() {
+        // 触发加载用户列表
+        refreshUsersAndRender();
+      }
 
-            // 封装 API 请求（游客模式不传 token）
-            async function apiRequest(endpoint, options = {}) {
-                const headers = { 'Content-Type': 'application/json' };
-                if (currentUser && currentUser.role !== 'guest') {
-                    const storedToken = sessionStorage.getItem('gufeng_token');
-                    if (storedToken) headers['Authorization'] = `Bearer ${storedToken}`;
+      function renderUserList(users) {
+        const container = $('#userListManage');
+        container.innerHTML = users.map(u => `
+          <div class="list-item">
+            <span>${escapeHtml(u.username)}</span>
+            <div>
+              <button class="btn change-pass-btn" data-username="${escapeHtml(u.username)}">改密</button>
+              ${u.username !== 'zlm' ? `<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>` : ''}
+            </div>
+          </div>
+        `).join('');
+        container.querySelectorAll('.del-user-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const username = e.target.dataset.username;
+            if (!confirm(`确定删除用户 ${username}？`)) return;
+            try {
+              await apiCall(`/api/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
+              refreshUsersAndRender();
+            } catch (err) { alert('删除失败: ' + err.message); }
+          });
+        });
+        container.querySelectorAll('.change-pass-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const username = e.target.dataset.username;
+            openChangePassModal(username);
+          });
+        });
+      }
+
+      function openChangePassModal(username) {
+        $('#changePassUser').value = username;
+        $('#changePassNew').value = '';
+        $('#changePassModal').classList.add('active');
+      }
+
+      function renderApplyManage() {
+        const container = $('#applyListManage');
+        if (localApplications.length === 0) {
+          container.innerHTML = '<p style="color:#8b7a62;">暂无待审核申请。</p>';
+          return;
+        }
+        container.innerHTML = localApplications.map((app, idx) => `
+          <div class="list-item">
+            <span>${escapeHtml(app.name)} (${escapeHtml(app.url)})</span>
+            <div>
+              <button class="btn approve-btn" data-index="${idx}">通过</button>
+              <button class="btn reject-btn" data-index="${idx}">拒绝</button>
+            </div>
+          </div>
+        `).join('');
+        container.querySelectorAll('.approve-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const idx = e.target.dataset.index;
+            const app = localApplications[idx];
+            try {
+              await apiCall('/api/sites', {
+                method: 'POST',
+                body: {
+                  name: app.name,
+                  url: app.url,
+                  desc: app.desc || '',
+                  seal: app.seal || '🔗',
+                  category: app.category || '其他'
                 }
-                const res = await fetch(`${API_BASE}${endpoint}`, {
-                    ...options,
-                    headers: { ...headers, ...options.headers },
-                    credentials: 'omit'
-                });
-                if (res.status === 401) {
-                    sessionStorage.removeItem('gufeng_token');
-                    sessionStorage.removeItem('gufeng_user');
-                    currentUser = null; token = null;
-                    showLogin();
-                    throw new Error('登录已过期，请重新登录');
-                }
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || '请求失败');
-                return data;
+              });
+              localApplications.splice(idx, 1);
+              localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(localApplications));
+              await refreshSites();
+              renderApplyManage();
+              alert('网站已添加');
+            } catch (err) { alert('添加失败: ' + err.message); }
+          });
+        });
+        container.querySelectorAll('.reject-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = e.target.dataset.index;
+            if (confirm('拒绝该申请？')) {
+              localApplications.splice(idx, 1);
+              localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(localApplications));
+              renderApplyManage();
             }
+          });
+        });
+      }
 
-            // 显示登录界面
-            function showLogin() {
-                loginScreen.style.display = 'block';
-                mainApp.style.display = 'none';
+      // 登录/登出逻辑
+      async function checkLoginStatus() {
+        try {
+          const data = await apiCall('/api/me');
+          currentUser = data;
+        } catch (e) {
+          currentUser = null;
+        }
+        updateUIByRole();
+        if (currentUser?.role === 'admin') {
+          refreshUsersAndRender();
+        }
+      }
+
+      // 初始化白云
+      function initClouds() {
+        const container = $('#cloudsContainer');
+        container.innerHTML = '';
+        for (let i = 0; i < 6; i++) {
+          const cloud = document.createElement('div');
+          cloud.className = 'cloud';
+          const size = 80 + Math.random() * 100;
+          cloud.style.width = size + 'px';
+          cloud.style.height = size * 0.6 + 'px';
+          cloud.style.top = (5 + Math.random() * 60) + '%';
+          cloud.style.animationDuration = (15 + Math.random() * 25) + 's';
+          cloud.style.animationDelay = Math.random() * 10 + 's';
+          container.appendChild(cloud);
+        }
+      }
+
+      // 落花canvas动画
+      function initPetals() {
+        const canvas = $('#petalCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        const petals = [];
+        const petalCount = 35;
+
+        function resize() {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width;
+          canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Petal {
+          constructor() {
+            this.reset(true);
+          }
+          reset(initial = false) {
+            this.x = Math.random() * width;
+            this.y = initial ? Math.random() * height : -20;
+            this.size = 8 + Math.random() * 14;
+            this.speedY = 1 + Math.random() * 2.5;
+            this.speedX = 0.3 + Math.random() * 0.8;
+            this.rotation = Math.random() * Math.PI * 2;
+            this.rotSpeed = (Math.random() - 0.5) * 0.02;
+            this.opacity = 0.7 + Math.random() * 0.3;
+            this.color = `rgba(232, 160, 170, ${this.opacity})`; // 淡粉
+          }
+          update() {
+            this.y += this.speedY;
+            this.x += Math.sin(this.y * 0.02) * this.speedX;
+            this.rotation += this.rotSpeed;
+            if (this.y > height + 20) {
+              this.reset();
             }
+          }
+          draw(ctx) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            ctx.fillStyle = this.color;
+            // 简单花瓣形状
+            ctx.beginPath();
+            ctx.ellipse(0, 0, this.size * 0.6, this.size * 0.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(0, 0, this.size * 0.3, this.size * 0.6, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
 
-            // 显示主应用
-            function showApp() {
-                loginScreen.style.display = 'none';
-                mainApp.style.display = 'block';
-                setPoem();          // 显示随机诗词
-                renderAll();
-            }
+        for (let i = 0; i < petalCount; i++) {
+          petals.push(new Petal());
+        }
 
-            // 登录按钮
-            loginBtn.addEventListener('click', async () => {
-                const username = usernameInput.value.trim();
-                const password = passwordInput.value;
-                if (!username || !password) {
-                    loginError.textContent = '请输入账号和密码';
-                    return;
-                }
-                try {
-                    const res = await apiRequest('/api/login', {
-                        method: 'POST',
-                        body: JSON.stringify({ username, password })
-                    });
-                    loginError.textContent = '';
-                    token = res.token;
-                    sessionStorage.setItem('gufeng_token', token);
-                    let role = res.role || 'user';
-                    if (username === 'zlm' && role !== 'admin') role = 'admin';
-                    currentUser = { username, role };
-                    sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
-                    showApp();
-                } catch (err) {
-                    loginError.textContent = err.message;
-                }
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+          petals.forEach(p => {
+            p.update();
+            p.draw(ctx);
+          });
+          requestAnimationFrame(animate);
+        }
+        animate();
+      }
+
+      // 事件绑定
+      function bindEvents() {
+        // 登录模态框
+        $('#loginBtn').addEventListener('click', () => $('#loginModal').classList.add('active'));
+        $('#closeLoginModal').addEventListener('click', () => $('#loginModal').classList.remove('active'));
+        $('#submitLogin').addEventListener('click', async () => {
+          const username = $('#loginUsername').value.trim();
+          const password = $('#loginPassword').value;
+          if (!username || !password) return alert('请输入账号和密码');
+          try {
+            const data = await apiCall('/api/login', {
+              method: 'POST',
+              body: { username, password }
             });
+            currentUser = { username: data.username, role: data.role };
+            $('#loginModal').classList.remove('active');
+            $('#loginUsername').value = '';
+            $('#loginPassword').value = '';
+            updateUIByRole();
+            if (currentUser.role === 'admin') refreshUsersAndRender();
+          } catch (err) {
+            alert('登录失败: ' + err.message);
+          }
+        });
 
-            // 游客按钮
-            guestBtn.addEventListener('click', () => {
-                currentUser = { username: '游客', role: 'guest' };
-                sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
-                sessionStorage.removeItem('gufeng_token');
-                showApp();
+        $('#logoutBtn').addEventListener('click', async () => {
+          await apiCall('/api/logout', { method: 'POST' });
+          currentUser = null;
+          updateUIByRole();
+        });
+
+        $('#adminPanelBtn').addEventListener('click', () => {
+          const panel = $('#adminPanel');
+          panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // 管理面板选项卡
+        $$('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const tab = this.dataset.tab;
+            $$('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            $$('.tab-content').forEach(c => c.classList.remove('active'));
+            $('#' + tab).classList.add('active');
+          });
+        });
+
+        // 添加网站
+        $('#addSiteBtn').addEventListener('click', async () => {
+          const name = $('#newSiteName').value.trim();
+          const url = $('#newSiteUrl').value.trim();
+          if (!name || !url) return alert('名称和网址必填');
+          try {
+            await apiCall('/api/sites', {
+              method: 'POST',
+              body: {
+                name,
+                url,
+                desc: $('#newSiteDesc').value.trim(),
+                seal: $('#newSiteSeal').value.trim() || '🔗',
+                category: $('#newSiteCat').value.trim() || '其他'
+              }
             });
+            ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCat'].forEach(id => $('#'+id).value = '');
+            await refreshSites();
+          } catch (err) { alert(err.message); }
+        });
 
-            // 退出按钮
-            logoutBtn.addEventListener('click', async () => {
-                try { await apiRequest('/api/logout', { method: 'POST' }); } catch (e) {}
-                currentUser = null; token = null;
-                sessionStorage.removeItem('gufeng_user');
-                sessionStorage.removeItem('gufeng_token');
-                showLogin();
-            });
+        // 添加用户
+        $('#addUserBtn').addEventListener('click', async () => {
+          const username = $('#newUsername').value.trim();
+          const password = $('#newUserPass').value;
+          if (!username || !password) return alert('用户名和密码不能为空');
+          try {
+            await apiCall('/api/users', { method: 'POST', body: { username, password } });
+            $('#newUsername').value = '';
+            $('#newUserPass').value = '';
+            refreshUsersAndRender();
+          } catch (err) { alert(err.message); }
+        });
 
-            // 验证 token
-            async function validateToken() {
-                try {
-                    const res = await apiRequest('/api/me');
-                    currentUser = { username: res.username, role: res.role };
-                    sessionStorage.setItem('gufeng_user', JSON.stringify(currentUser));
-                    return true;
-                } catch (e) {
-                    return false;
-                }
-            }
+        // 修改密码提交
+        $('#submitChangePass').addEventListener('click', async () => {
+          const username = $('#changePassUser').value;
+          const newPass = $('#changePassNew').value;
+          if (!newPass) return alert('请输入新密码');
+          if (username === 'zlm') {
+            // 主管理员密码修改需后端支持，模拟提示
+            alert('修改主管理员密码需要后端专用接口，当前演示无法完成。请通过后端直接修改。');
+            return;
+          }
+          // 对其他用户：先删除再创建
+          if (!confirm(`将通过删除并重建用户“${username}”来修改密码，继续？`)) return;
+          try {
+            await apiCall(`/api/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
+            await apiCall('/api/users', { method: 'POST', body: { username, password: newPass } });
+            alert('密码已修改');
+            $('#changePassModal').classList.remove('active');
+            refreshUsersAndRender();
+          } catch (err) {
+            alert('操作失败: ' + err.message + ' (可能原用户已不存在，请刷新)');
+          }
+        });
+        $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
 
-            // 恢复会话
-            async function restoreSession() {
-                const storedToken = sessionStorage.getItem('gufeng_token');
-                const storedUser = sessionStorage.getItem('gufeng_user');
-                if (!storedToken || !storedUser) return false;
-                try {
-                    const user = JSON.parse(storedUser);
-                    if (!user || !user.username) return false;
-                    token = storedToken;
-                    return await validateToken();
-                } catch (e) {
-                    return false;
-                }
-            }
+        // 申请网站模态框
+        $('#applySiteBtn').addEventListener('click', () => $('#applyModal').classList.add('active'));
+        $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
+        $('#submitApply').addEventListener('click', () => {
+          const name = $('#applyName').value.trim();
+          const url = $('#applyUrl').value.trim();
+          if (!name || !url) return alert('名称和网址必填');
+          localApplications.push({
+            name,
+            url,
+            desc: $('#applyDesc').value.trim(),
+            seal: $('#applySeal').value.trim() || '🔗',
+            category: $('#applyCat').value.trim() || '其他'
+          });
+          localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(localApplications));
+          alert('申请已提交，等待管理员审核。');
+          $('#applyModal').classList.remove('active');
+          ['applyName','applyUrl','applyDesc','applySeal','applyCat'].forEach(id => $('#'+id).value = '');
+        });
 
-            // 加载网站列表（游客优先使用缓存）
-            async function loadSites() {
-                if (currentUser && currentUser.role === 'guest') {
-                    const cached = localStorage.getItem('gufeng_sites_cache');
-                    if (cached) {
-                        try {
-                            sitesData = JSON.parse(cached);
-                            return sitesData;
-                        } catch (e) {}
-                    }
-                    try {
-                        sitesData = await apiRequest('/api/sites');
-                        localStorage.setItem('gufeng_sites_cache', JSON.stringify(sitesData));
-                    } catch (e) {
-                        sitesData = [];
-                    }
-                    return sitesData;
-                }
-                // 普通用户/管理员
-                try {
-                    sitesData = await apiRequest('/api/sites');
-                } catch (e) {
-                    sitesData = [];
-                }
-                return sitesData;
-            }
+        // 点击模态框外部关闭
+        window.addEventListener('click', (e) => {
+          if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('active');
+          }
+        });
+      }
 
-            // 获取所有分类
-            function getCategories(sites) {
-                const cats = new Set(sites.map(s => s.category || '其他'));
-                return ['全部', ...Array.from(cats)];
-            }
+      // 启动
+      async function init() {
+        initClouds();
+        initPetals();
+        bindEvents();
+        try {
+          sites = await apiCall('/api/sites');
+        } catch (e) {
+          console.warn('获取网站列表失败，使用空列表', e);
+          sites = [];
+        }
+        await checkLoginStatus();
+        renderSites();
+      }
 
-            // 渲染分类标签
-            function renderCategoryTabs(cats) {
-                categoryTabs.innerHTML = '';
-                cats.forEach(cat => {
-                    const btn = document.createElement('button');
-                    btn.className = 'category-tab' + (cat === currentCategory ? ' active' : '');
-                    btn.textContent = cat;
-                    btn.addEventListener('click', () => {
-                        currentCategory = cat;
-                        renderCategoryTabs(getCategories(sitesData));
-                        renderCards();
-                    });
-                    categoryTabs.appendChild(btn);
-                });
-            }
-
-            // 涟漪效果
-            function createRipple(x, y) {
-                const ripple = document.createElement('div');
-                ripple.className = 'ripple';
-                const size = Math.min(window.innerWidth, window.innerHeight) * 0.35;
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = (x - size/2) + 'px';
-                ripple.style.top = (y - size/2) + 'px';
-                document.body.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 1000);
-            }
-
-            // 渲染卡片
-            function renderCards() {
-                const filtered = sitesData.filter(site => {
-                    const matchCat = currentCategory === '全部' || site.category === currentCategory;
-                    const keyword = searchKeyword.toLowerCase().trim();
-                    const matchSearch = !keyword || site.name.toLowerCase().includes(keyword) ||
-                                        (site.desc && site.desc.toLowerCase().includes(keyword));
-                    return matchCat && matchSearch;
-                });
-                cardsContainer.innerHTML = '';
-                if (filtered.length === 0) {
-                    cardsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#8a7b65;">暂无网站</p>';
-                    return;
-                }
-                filtered.forEach((site) => {
-                    const a = document.createElement('a');
-                    a.className = 'card-link';
-                    a.href = site.url || '#';
-                    a.target = '_blank';
-                    a.rel = 'noopener noreferrer';
-
-                    // 点击统计（使用 site.id）
-                    a.addEventListener('mousedown', function(e) {
-                        createRipple(e.clientX, e.clientY);
-                    });
-                    a.addEventListener('click', function(e) {
-                        if (!site.id) return;
-                        apiRequest(`/api/sites/${site.id}/visit`, { method: 'POST' })
-                            .then(() => {
-                                site.visits = (site.visits || 0) + 1;
-                                const visitsSpan = this.querySelector('.visits');
-                                if (visitsSpan) visitsSpan.textContent = `👁 ${site.visits}`;
-                            })
-                            .catch(e => console.warn('统计失败', e));
-                    });
-
-                    const seal = document.createElement('div');
-                    seal.className = 'card-seal';
-                    seal.textContent = site.seal || '🔗';
-
-                    const content = document.createElement('div');
-                    content.className = 'card-content';
-                    const h3 = document.createElement('h3');
-                    h3.textContent = site.name || '未命名';
-                    const desc = document.createElement('div');
-                    desc.className = 'card-desc';
-                    desc.textContent = site.desc || '';
-                    content.appendChild(h3);
-                    content.appendChild(desc);
-
-                    const meta = document.createElement('div');
-                    meta.className = 'card-meta';
-                    const catSpan = document.createElement('span');
-                    catSpan.className = 'category';
-                    catSpan.textContent = site.category || '其他';
-                    const visitsSpan = document.createElement('span');
-                    visitsSpan.className = 'visits';
-                    visitsSpan.textContent = `👁 ${site.visits || 0}`;
-                    meta.appendChild(catSpan);
-                    meta.appendChild(visitsSpan);
-
-                    a.appendChild(seal);
-                    a.appendChild(content);
-                    a.appendChild(meta);
-                    cardsContainer.appendChild(a);
-                });
-            }
-
-            // 渲染用户列表（管理员）
-            function renderUserList(users) {
-                userListEl.innerHTML = '';
-                users.forEach(user => {
-                    const div = document.createElement('div');
-                    div.className = 'list-item';
-                    const span = document.createElement('span');
-                    span.textContent = user.username + (user.username === 'zlm' ? ' (管理员)' : '');
-                    div.appendChild(span);
-                    if (user.username !== 'zlm') {
-                        const delBtn = document.createElement('button');
-                        delBtn.className = 'btn-sm';
-                        delBtn.textContent = '删除';
-                        delBtn.addEventListener('click', async () => {
-                            if (!confirm(`确定删除 ${user.username} 吗？`)) return;
-                            try {
-                                await apiRequest(`/api/users/${user.username}`, { method: 'DELETE' });
-                                const updated = await apiRequest('/api/users');
-                                renderUserList(updated);
-                            } catch (e) {
-                                alert(e.message);
-                            }
-                        });
-                        div.appendChild(delBtn);
-                    }
-                    userListEl.appendChild(div);
-                });
-            }
-
-            // 渲染网站管理列表（管理员）
-            function renderSiteManageList(sites) {
-                siteManageListEl.innerHTML = '';
-                sites.forEach(site => {
-                    const div = document.createElement('div');
-                    div.className = 'list-item';
-                    const span = document.createElement('span');
-                    span.textContent = `${site.name} (${site.url})`;
-                    div.appendChild(span);
-                    const delBtn = document.createElement('button');
-                    delBtn.className = 'btn-sm';
-                    delBtn.textContent = '删除';
-                    delBtn.addEventListener('click', async () => {
-                        if (!confirm(`确定删除 ${site.name} 吗？`)) return;
-                        try {
-                            // 使用 site.id 删除
-                            await apiRequest(`/api/sites/${site.id}`, { method: 'DELETE' });
-                            sitesData = await apiRequest('/api/sites');
-                            renderAll();
-                        } catch (e) {
-                            alert(e.message);
-                        }
-                    });
-                    div.appendChild(delBtn);
-                    siteManageListEl.appendChild(div);
-                });
-            }
-
-            // 渲染所有
-            async function renderAll() {
-                if (!currentUser) {
-                    showLogin();
-                    return;
-                }
-                let roleText = '游客';
-                if (currentUser.role === 'admin') roleText = '管理员';
-                else if (currentUser.role === 'user') roleText = '成员';
-                roleDisplay.textContent = roleText;
-                adminPanel.style.display = (currentUser.role === 'admin') ? 'block' : 'none';
-
-                await loadSites();
-                const cats = getCategories(sitesData);
-                renderCategoryTabs(cats);
-                renderCards();
-
-                if (currentUser.role === 'admin') {
-                    const valid = await validateToken();
-                    if (valid) {
-                        try {
-                            const users = await apiRequest('/api/users');
-                            renderUserList(users);
-                            renderSiteManageList(sitesData);
-                        } catch (e) {
-                            userListEl.innerHTML = '<p style="color:#c43d3d;">加载失败：' + e.message + '</p>';
-                        }
-                    }
-                }
-            }
-
-            // 搜索输入
-            searchInput.addEventListener('input', (e) => {
-                searchKeyword = e.target.value;
-                renderCards();
-            });
-
-            // 添加用户
-            addUserBtn.addEventListener('click', async () => {
-                const u = document.getElementById('newUser').value.trim();
-                const p = document.getElementById('newPass').value;
-                if (!u || !p) return alert('账号密码不能为空');
-                try {
-                    await apiRequest('/api/users', {
-                        method: 'POST',
-                        body: JSON.stringify({ username: u, password: p })
-                    });
-                    alert('添加成功');
-                    document.getElementById('newUser').value = '';
-                    document.getElementById('newPass').value = '';
-                    const users = await apiRequest('/api/users');
-                    renderUserList(users);
-                } catch (e) {
-                    alert(e.message);
-                }
-            });
-
-            // 添加网站
-            addSiteBtn.addEventListener('click', async () => {
-                const name = document.getElementById('newSiteName').value.trim();
-                const url = document.getElementById('newSiteUrl').value.trim();
-                const desc = document.getElementById('newSiteDesc').value.trim();
-                const seal = document.getElementById('newSiteSeal').value.trim();
-                const category = document.getElementById('newSiteCategory').value.trim() || '其他';
-                if (!name || !url) return alert('名称和网址必填');
-                try {
-                    await apiRequest('/api/sites', {
-                        method: 'POST',
-                        body: JSON.stringify({ name, url, desc, seal, category })
-                    });
-                    alert('添加成功');
-                    ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCategory'].forEach(id =>
-                        document.getElementById(id).value = ''
-                    );
-                    await loadSites();
-                    renderAll();
-                } catch (e) {
-                    alert(e.message);
-                }
-            });
-
-            // 启动：恢复会话
-            window.addEventListener('load', async () => {
-                const restored = await restoreSession();
-                if (restored && currentUser && currentUser.username !== '游客') {
-                    showApp();
-                } else {
-                    showLogin();
-                }
-                setTimeout(setPoem, 0);
-            });
-        })();
-    </script>
+      init();
+    })();
+  </script>
 </body>
 </html>
