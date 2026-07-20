@@ -487,7 +487,7 @@
           if (currentUser.role === 'admin') {
             adminBtn.style.display = 'inline-block';
             adminPanel.style.display = 'block';
-            userApply.style.display = 'none';
+            userApply.hidden = true;
           } else {
             adminBtn.style.display = 'none';
             adminPanel.style.display = 'none';
@@ -510,7 +510,7 @@
       function renderSites() {
         const grid = $('#sitesGrid');
         grid.innerHTML = '';
-        // ★ 容错处理：确保 sites 是数组
+        // 容错：确保 sites 是数组
         if (!Array.isArray(sites)) {
           console.warn('站点数据异常，已重置为[]', sites);
           sites = [];
@@ -564,7 +564,6 @@
       async function refreshSites() {
         try {
           const data = await apiCall('/api/sites');
-          // ★ 容错处理：确保赋值后是数组
           sites = Array.isArray(data) ? data : [];
           renderSites();
           if (currentUser?.role === 'admin') renderSiteManage();
@@ -897,7 +896,7 @@
         try {
           sites = await apiCall('/api/sites');
         } catch (e) { sites = []; }
-        // ★ 最终容错：确保初始加载后 sites 仍是数组
+        // 最终容错
         if (!Array.isArray(sites)) sites = [];
         await checkLoginStatus();
         renderSites();
