@@ -164,6 +164,7 @@
         <span class="greeting" id="greetingText">未登录·游客</span>
         <button class="btn" id="loginBtn">登 录</button>
         <button class="btn" id="changeMyPassBtn" style="display:none;">修改密码</button>
+        <button class="btn" id="applySiteBtn" style="display:none;">📜 申请网站</button>
         <button class="btn admin-btn" id="adminPanelBtn" style="display:none;">管理</button>
         <button class="btn" id="logoutBtn" style="display:none;">登出</button>
       </div>
@@ -171,16 +172,12 @@
 
     <div class="sites-grid" id="sitesGrid"></div>
 
-    <div style="text-align:right; margin-top:0.5rem;" id="userApplyArea" hidden>
-      <button class="btn" id="applySiteBtn">📜 申请添加网站</button>
-    </div>
-
     <div class="admin-panel" id="adminPanel" style="display:none;">
       <h3 style="font-family:'Ma Shan Zheng'; font-size:1.8rem; color:#4a3828;">🔰 管理面板</h3>
       <div class="tab-buttons">
         <button class="btn tab-btn active" data-tab="siteManage">网站管理</button>
         <button class="btn tab-btn" data-tab="userManage">用户管理</button>
-        <button class="btn tab-btn" data-tab="applyManage">待审核申请</button>
+        <button class="btn tab-btn" data-tab="applyManage">待审核网站</button>
       </div>
       <div class="tab-content active" id="siteManage">
         <form onsubmit="return false" style="margin-bottom:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
@@ -252,7 +249,7 @@
     </div>
   </div>
 
-  <!-- 🆕 成员自助修改密码模态框 -->
+  <!-- 成员自助修改密码模态框 -->
   <div class="modal-overlay" id="selfChangePassModal">
     <div class="modal">
       <button class="close-btn" id="closeSelfChangePassModal">&times;</button>
@@ -267,13 +264,12 @@
 
   <script>
     (function() {
-      // 永久固定地址
-      const API_BASE = 'https://myzlm.serveousercontent.com';
-      const APPLY_STORAGE_KEY = 'ink_nav_applications';
+      const API_BASE = 'https://myzlm.serveousercontent.com';  // 固定地址
+      const APPLY_STORAGE_KEY = 'ink_nav_site_applications';
 
       let currentUser = null;
       let sites = [];
-      let localApplications = JSON.parse(localStorage.getItem(APPLY_STORAGE_KEY) || '[]');
+      let siteApplications = JSON.parse(localStorage.getItem(APPLY_STORAGE_KEY) || '[]');
 
       const $ = (sel) => document.querySelector(sel);
       const $$ = (sel) => document.querySelectorAll(sel);
@@ -310,22 +306,21 @@
         const logoutBtn = $('#logoutBtn');
         const adminBtn = $('#adminPanelBtn');
         const adminPanel = $('#adminPanel');
-        const userApply = $('#userApplyArea');
         const changeMyPassBtn = $('#changeMyPassBtn');
+        const applySiteBtn = $('#applySiteBtn');
 
         if (currentUser) {
           greeting.textContent = `${currentUser.role === 'admin' ? '🔰' : '📖'} ${currentUser.username}`;
           loginBtn.style.display = 'none';
           logoutBtn.style.display = 'inline-block';
-          changeMyPassBtn.style.display = 'inline-block';  // 所有已登录用户均可修改密码
+          changeMyPassBtn.style.display = 'inline-block';
+          applySiteBtn.style.display = 'inline-block';   // 所有已登录用户均可申请网站
           if (currentUser.role === 'admin') {
             adminBtn.style.display = 'inline-block';
             adminPanel.style.display = 'block';
-            userApply.style.display = 'none';
           } else {
             adminBtn.style.display = 'none';
             adminPanel.style.display = 'none';
-            userApply.hidden = false;
           }
         } else {
           greeting.textContent = '未登录·游客';
@@ -333,8 +328,8 @@
           logoutBtn.style.display = 'none';
           adminBtn.style.display = 'none';
           adminPanel.style.display = 'none';
-          userApply.hidden = true;
           changeMyPassBtn.style.display = 'none';
+          applySiteBtn.style.display = 'none';
         }
         renderSites();
         if (currentUser && currentUser.role === 'admin') {
@@ -439,38 +434,51 @@
         $('#changePassModal').classList.add('active');
       }
 
+      // 待审核网站申请管理
       function renderApplyManage() {
         const container = $('#applyListManage');
-        if (!localApplications.length) {
-          container.innerHTML = '<p style="color:#8b7a62;">暂无待审核申请。</p>';
+        if (!siteApplications.length) {
+          container.innerHTML = '<p style="color:#8b7a62;">暂无待审核的网站申请。</p>';
           return;
         }
-        container.innerHTML = localApplications.map((app, idx) => `
+        container.innerHTML = siteApplications.map((app, idx) => `
           <div class="list-item">
             <span>${escapeHtml(app.name)} (${escapeHtml(app.url)})</span>
             <div>
-              <button class="btn approve-btn" data-index="${idx}">通过</button>
-              <button class="btn reject-btn" data-index="${idx}">拒绝</button>
+              <button class="btn approve-site-btn" data-index="${idx}">通过</button>
+              <button class="btn reject-site-btn" data-index="${idx}">拒绝</button>
             </div>
           </div>
         `).join('');
-        container.querySelectorAll('.approve-btn').forEach(btn => {
+        container.querySelectorAll('.approve-site-btn').forEach(btn => {
           btn.addEventListener('click', async (e) => {
-            const app = localApplications[e.target.dataset.index];
+            const idx = e.target.dataset.index;
+            const app = siteApplications[idx];
             try {
-              await apiCall('/api/sites', { method: 'POST', body: app });
-              localApplications.splice(e.target.dataset.index, 1);
-              localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(localApplications));
+              await apiCall('/api/sites', {
+                method: 'POST',
+                body: {
+                  name: app.name,
+                  url: app.url,
+                  desc: app.desc || '',
+                  seal: app.seal || '🔗',
+                  category: app.category || '其他'
+                }
+              });
+              siteApplications.splice(idx, 1);
+              localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(siteApplications));
               await refreshSites();
               renderApplyManage();
+              alert('网站已添加');
             } catch (err) { alert('添加失败: ' + err.message); }
           });
         });
-        container.querySelectorAll('.reject-btn').forEach(btn => {
+        container.querySelectorAll('.reject-site-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
-            if (confirm('拒绝申请？')) {
-              localApplications.splice(e.target.dataset.index, 1);
-              localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(localApplications));
+            const idx = e.target.dataset.index;
+            if (confirm('拒绝该申请？')) {
+              siteApplications.splice(idx, 1);
+              localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(siteApplications));
               renderApplyManage();
             }
           });
@@ -503,7 +511,7 @@
         }
       }
 
-      function initPetals() { /* ... 保持不变 ... */
+      function initPetals() {
         const canvas = $('#petalCanvas');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -528,20 +536,20 @@
         animate();
       }
 
-      function initRipples() { /* ... 保持不变 ... */
+      function initRipples() {
         const canvas = $('#rippleCanvas');
         const ctx = canvas.getContext('2d'); let width, height;
         const ripples = []; const maxRipples = 15;
         function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
         window.addEventListener('resize', resize); resize();
-        window.addEventListener('click', (e) => { ripples.push({ x: e.clientX, y: e.clientY, radius: 2, maxRadius: 50 + Math.random() * 80, opacity: 0.7, speed: 0.8 + Math.random() * 0.6, }); if (ripples.length > maxRipples) ripples.shift(); });
+        window.addEventListener('click', (e) => { ripples.push({ x: e.clientX, y: e.clientY, radius: 2, maxRadius: 50 + Math.random() * 80, opacity: 0.7, speed: 0.8 + Math.random() * 0.6 }); if (ripples.length > maxRipples) ripples.shift(); });
         function drawRipple(ctx, r) { const gradient = ctx.createRadialGradient(r.x, r.y, r.radius * 0.1, r.x, r.y, r.radius); gradient.addColorStop(0, `rgba(20, 15, 10, ${r.opacity})`); gradient.addColorStop(0.4, `rgba(40, 30, 20, ${r.opacity * 0.7})`); gradient.addColorStop(0.7, `rgba(80, 60, 40, ${r.opacity * 0.3})`); gradient.addColorStop(1, `rgba(120, 90, 60, 0)`); ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2); ctx.fill(); }
         function animate() { ctx.clearRect(0, 0, width, height); for (let i = ripples.length - 1; i >= 0; i--) { const r = ripples[i]; r.radius += r.speed; r.opacity -= 0.008; if (r.opacity <= 0 || r.radius > r.maxRadius) ripples.splice(i, 1); else drawRipple(ctx, r); } requestAnimationFrame(animate); }
         animate();
       }
 
       function bindEvents() {
-        // 登录相关
+        // 登录
         $('#loginBtn').addEventListener('click', () => $('#loginModal').classList.add('active'));
         $('#closeLoginModal').addEventListener('click', () => $('#loginModal').classList.remove('active'));
         $('#submitLogin').addEventListener('click', async () => {
@@ -609,7 +617,7 @@
           } catch (err) { alert(err.message); }
         });
 
-        // 管理员批量改密（保留）
+        // 管理员批量改密
         $('#submitChangePass').addEventListener('click', async () => {
           const username = $('#changePassUser').value;
           const newPass = $('#changePassNew').value;
@@ -626,26 +634,7 @@
         });
         $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
 
-        // 申请网站
-        $('#applySiteBtn').addEventListener('click', () => $('#applyModal').classList.add('active'));
-        $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
-        $('#submitApply').addEventListener('click', () => {
-          const name = $('#applyName').value.trim();
-          const url = $('#applyUrl').value.trim();
-          if (!name || !url) return alert('名称和网址必填');
-          localApplications.push({
-            name, url,
-            desc: $('#applyDesc').value.trim(),
-            seal: $('#applySeal').value.trim() || '🔗',
-            category: $('#applyCat').value.trim() || '其他'
-          });
-          localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(localApplications));
-          alert('申请已提交，等待管理员审核。');
-          $('#applyModal').classList.remove('active');
-          ['applyName','applyUrl','applyDesc','applySeal','applyCat'].forEach(id => $('#'+id).value = '');
-        });
-
-        // 🆕 成员自助修改密码
+        // 成员自助改密
         $('#changeMyPassBtn').addEventListener('click', () => {
           $('#selfOldPass').value = '';
           $('#selfNewPass').value = '';
@@ -664,7 +653,33 @@
           } catch (err) { alert('修改失败: ' + err.message); }
         });
 
-        // 点击模态框外部关闭
+        // 🆕 网站申请
+        $('#applySiteBtn').addEventListener('click', () => {
+          $('#applyName').value = '';
+          $('#applyUrl').value = '';
+          $('#applyDesc').value = '';
+          $('#applySeal').value = '';
+          $('#applyCat').value = '';
+          $('#applyModal').classList.add('active');
+        });
+        $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
+        $('#submitApply').addEventListener('click', () => {
+          const name = $('#applyName').value.trim();
+          const url = $('#applyUrl').value.trim();
+          if (!name || !url) return alert('网站名称和网址为必填项');
+          siteApplications.push({
+            name,
+            url,
+            desc: $('#applyDesc').value.trim(),
+            seal: $('#applySeal').value.trim() || '🔗',
+            category: $('#applyCat').value.trim() || '其他'
+          });
+          localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(siteApplications));
+          alert('申请已提交，请等待管理员审核');
+          $('#applyModal').classList.remove('active');
+        });
+
+        // 点击遮罩关闭模态框
         window.addEventListener('click', (e) => {
           if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
         });
