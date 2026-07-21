@@ -36,10 +36,7 @@
       color: var(--ink);
     }
     @media (max-width: 768px) {
-      body {
-        background-image: var(--bg-mobile);
-        padding: 0.5rem 0.5rem;
-      }
+      body { background-image: var(--bg-mobile); padding: 0.5rem 0.5rem; }
     }
     .clouds { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
     .cloud { position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; filter: blur(18px); opacity: 0.5; animation: floatCloud linear infinite; }
@@ -51,282 +48,102 @@
     #rippleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1.5; }
 
     .main-container {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 1200px;
-      background: transparent;
-      backdrop-filter: none;
-      border-radius: 0;
-      box-shadow: none;
-      padding: 1rem 0.5rem 2rem;
-      border: none;
-      display: flex;
-      flex-direction: column;
-      gap: 1.8rem;
+      position: relative; z-index: 2; width: 100%; max-width: 1200px;
+      background: transparent; backdrop-filter: none; border-radius: 0;
+      box-shadow: none; padding: 1rem 0.5rem 2rem; border: none;
+      display: flex; flex-direction: column; gap: 1.8rem;
     }
-    .header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.8rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 2px dashed rgba(180,150,100,0.5);
-    }
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 0.3rem;
-    }
-    .greeting {
-      font-size: 1.1rem;
-      color: #3e2e1f;
-      text-shadow: 1px 1px 2px rgba(255,255,240,0.8);
-      background: rgba(255,250,240,0.5);
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-    }
+    .header { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; padding-bottom: 0.8rem; border-bottom: 2px dashed rgba(180,150,100,0.5); }
+    .user-area { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-top: 0.3rem; }
+    .greeting { font-size: 1.1rem; color: #3e2e1f; text-shadow: 1px 1px 2px rgba(255,255,240,0.8); background: rgba(255,250,240,0.5); padding: 0.2rem 0.8rem; border-radius: 20px; }
     .btn {
-      background: rgba(255, 250, 240, 0.6);
-      backdrop-filter: blur(6px);
-      border: 1px solid #9e8b6b;
-      color: #3e2e1f;
-      padding: 0.5rem 1.2rem;
-      border-radius: 30px;
-      font-family: inherit;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all var(--transition);
-      letter-spacing: 1px;
+      background: rgba(255, 250, 240, 0.6); backdrop-filter: blur(6px); border: 1px solid #9e8b6b;
+      color: #3e2e1f; padding: 0.5rem 1.2rem; border-radius: 30px; font-family: inherit;
+      font-size: 1rem; cursor: pointer; transition: all var(--transition); letter-spacing: 1px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    .btn:hover {
-      background: rgba(197, 164, 107, 0.8);
-      color: #fff;
-      border-color: #c5a46b;
-      box-shadow: 0 4px 12px rgba(180,140,80,0.3);
-    }
-    .btn.admin-btn {
-      border-color: #b88a4b;
-      color: #5a3e2b;
-      font-weight: bold;
-      background: rgba(245, 235, 210, 0.7);
-    }
+    .btn:hover { background: rgba(197, 164, 107, 0.8); color: #fff; border-color: #c5a46b; box-shadow: 0 4px 12px rgba(180,140,80,0.3); }
+    .btn.admin-btn { border-color: #b88a4b; color: #5a3e2b; font-weight: bold; background: rgba(245, 235, 210, 0.7); }
 
-    .plaque-wrapper {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      margin-top: 0;
-    }
+    .plaque-wrapper { display: flex; justify-content: center; width: 100%; margin-top: 0; }
     .plaque {
       position: relative;
       background: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 5px),
                   repeating-linear-gradient(180deg, rgba(255,220,160,0.03) 0px, rgba(255,220,160,0.03) 1px, transparent 1px, transparent 3px),
                   linear-gradient(180deg, #5c3822 0%, #3d1f08 30%, #4a2610 60%, #2f1505 100%);
-      border-radius: 8px;
-      padding: 0.8rem 2.5rem;
-      border: 4px solid #3a1f0a;
+      border-radius: 8px; padding: 0.8rem 2.5rem; border: 4px solid #3a1f0a;
       box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3),
                   inset 0 0 0 3px #8b6914, inset 0 0 0 7px #3d1f08,
                   inset 0 0 0 9px #c4a44a, inset 0 0 0 12px #2a1405;
-      text-align: center;
-      transition: transform 0.3s ease;
-      margin-bottom: 0.5rem;
+      text-align: center; transition: transform 0.3s ease; margin-bottom: 0.5rem;
     }
     @media (max-width: 768px) {
-      .plaque {
-        padding: 0.6rem 1.2rem;
-        border-width: 3px;
-      }
-      .plaque-title {
-        font-size: clamp(1.8rem, 6vw, 2.4rem);
-        letter-spacing: 4px;
-      }
+      .plaque { padding: 0.6rem 1.2rem; border-width: 3px; }
+      .plaque-title { font-size: clamp(1.8rem, 6vw, 2.4rem); letter-spacing: 4px; }
     }
     .plaque::before {
-      content: '';
-      position: absolute;
-      top: -18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 30px;
-      background:
-        radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 10px 8px,
-        radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 40px 8px;
-      background-repeat: no-repeat;
-      z-index: 1;
-      pointer-events: none;
+      content: ''; position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 30px;
+      background: radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 10px 8px,
+                  radial-gradient(circle 8px, #b8944b 40%, #6b4f10 60%, transparent 65%) 40px 8px;
+      background-repeat: no-repeat; z-index: 1; pointer-events: none;
     }
     .plaque::after {
-      content: '';
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      background:
-        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 0px,
-        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 0px,
-        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 100%,
-        radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 100%;
-      background-repeat: no-repeat;
-      z-index: 2;
-      opacity: 0.8;
-      pointer-events: none;
+      content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+      background: radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 0px,
+                  radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 0px,
+                  radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 0px 100%,
+                  radial-gradient(circle 7px, #c49a4b 35%, #7a5c2a 55%, transparent 60%) 100% 100%;
+      background-repeat: no-repeat; z-index: 2; opacity: 0.8; pointer-events: none;
     }
     .plaque .shine {
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 50%;
-      height: 100%;
+      position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255,255,240,0.08), rgba(255,255,240,0.15), rgba(255,255,240,0.08), transparent);
-      animation: plaqueShine 5s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 0;
-      border-radius: 4px;
+      animation: plaqueShine 5s ease-in-out infinite; pointer-events: none; z-index: 0; border-radius: 4px;
     }
     @keyframes plaqueShine { 0% { left: -60%; } 60% { left: 110%; } 100% { left: 110%; } }
     .plaque-title {
       font-family: 'ZCOOL QingKe HuangYou', 'Ma Shan Zheng', 'STXingkai', '华文行楷', 'KaiTi', '楷体', serif;
-      font-size: clamp(2.4rem, 5vw, 3.8rem);
-      font-weight: normal;
-      color: #e8d5a3;
-      letter-spacing: 8px;
-      text-shadow:
-        1px 0 0 rgba(0,0,0,0.7), -1px 0 0 rgba(0,0,0,0.4),
-        0 1px 0 rgba(0,0,0,0.6), 0 -1px 0 rgba(0,0,0,0.3),
-        2px 2px 3px rgba(0,0,0,0.6), -1px -1px 1px rgba(255,240,200,0.25),
-        0 0 12px rgba(200,160,60,0.5), 0 0 30px rgba(180,130,40,0.35),
-        0 4px 8px rgba(0,0,0,0.55);
-      position: relative;
-      z-index: 1;
-      white-space: nowrap;
-      line-height: 1.3;
+      font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: normal; color: #e8d5a3; letter-spacing: 8px;
+      text-shadow: 1px 0 0 rgba(0,0,0,0.7), -1px 0 0 rgba(0,0,0,0.4), 0 1px 0 rgba(0,0,0,0.6), 0 -1px 0 rgba(0,0,0,0.3),
+                   2px 2px 3px rgba(0,0,0,0.6), -1px -1px 1px rgba(255,240,200,0.25),
+                   0 0 12px rgba(200,160,60,0.5), 0 0 30px rgba(180,130,40,0.35), 0 4px 8px rgba(0,0,0,0.55);
+      position: relative; z-index: 1; white-space: nowrap; line-height: 1.3;
       filter: drop-shadow(0 1px 1px rgba(0,0,0,0.6));
     }
 
-    .sites-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-top: 0.5rem;
-    }
+    .sites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 0.5rem; }
     .site-card {
-      background: rgba(255, 255, 250, 0.25);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(180, 150, 100, 0.4);
-      border-radius: 20px;
-      padding: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: all var(--transition);
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      text-decoration: none;
-      color: inherit;
+      background: rgba(255, 255, 250, 0.25); backdrop-filter: blur(12px); border: 1px solid rgba(180, 150, 100, 0.4);
+      border-radius: 20px; padding: 1.2rem; display: flex; align-items: center; gap: 1rem;
+      transition: all var(--transition); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      text-decoration: none; color: inherit;
     }
-    .site-card:hover {
-      transform: translateY(-4px);
-      background: rgba(255, 255, 250, 0.45);
-      border-color: #b89b5a;
-      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-    }
-    .seal {
-      width: 50px;
-      height: 50px;
-      min-width: 50px;
-      background: #c53b3b;
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      font-family: 'Ma Shan Zheng', cursive;
-      box-shadow: 0 2px 8px rgba(180,60,60,0.4);
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-    }
+    .site-card:hover { transform: translateY(-4px); background: rgba(255, 255, 250, 0.45); border-color: #b89b5a; box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+    .seal { width: 50px; height: 50px; min-width: 50px; background: #c53b3b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-family: 'Ma Shan Zheng', cursive; box-shadow: 0 2px 8px rgba(180,60,60,0.4); text-shadow: 1px 1px 0 rgba(0,0,0,0.3); }
     .site-info { flex: 1; min-width: 0; }
-    .site-name {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #2e2210;
-      text-shadow: 0 1px 2px rgba(255,255,240,0.9);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .site-desc {
-      font-size: 0.9rem;
-      color: #4a3828;
-      text-shadow: 0 1px 2px rgba(255,255,240,0.7);
-      margin-top: 0.2rem;
-    }
-    .site-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: #5e4e3a;
-      margin-top: 0.4rem;
-    }
-    .site-category {
-      background: rgba(231, 220, 200, 0.8);
-      padding: 0.1rem 0.6rem;
-      border-radius: 20px;
-      backdrop-filter: blur(4px);
-    }
+    .site-name { font-size: 1.3rem; font-weight: bold; color: #2e2210; text-shadow: 0 1px 2px rgba(255,255,240,0.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .site-desc { font-size: 0.9rem; color: #4a3828; text-shadow: 0 1px 2px rgba(255,255,240,0.7); margin-top: 0.2rem; }
+    .site-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #5e4e3a; margin-top: 0.4rem; }
+    .site-category { background: rgba(231, 220, 200, 0.8); padding: 0.1rem 0.6rem; border-radius: 20px; backdrop-filter: blur(4px); }
 
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
-      display: flex; justify-content: center; align-items: center;
-      z-index: 100; visibility: hidden; opacity: 0;
-      transition: opacity 0.3s ease, visibility 0.3s;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 100; visibility: hidden; opacity: 0; transition: opacity 0.3s, visibility 0.3s; }
     .modal-overlay.active { visibility: visible; opacity: 1; }
-    .modal {
-      background: #fdf8f0; border-radius: 32px; padding: 2rem;
-      width: 90%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      border: 1px solid #c5a46b; position: relative;
-    }
+    .modal { background: #fdf8f0; border-radius: 32px; padding: 2rem; width: 90%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 1px solid #c5a46b; position: relative; }
     .modal h2 { text-align: center; font-family: 'Ma Shan Zheng', cursive; font-size: 2rem; margin-bottom: 1.5rem; color: #4a3828; }
     .input-group { margin-bottom: 1.2rem; }
     .input-group label { display: block; margin-bottom: 0.3rem; color: #5a4a32; }
-    .input-group input {
-      width: 100%; padding: 0.7rem 1rem; border: 1px solid #cfbfa0;
-      border-radius: 30px; background: rgba(255,255,250,0.8);
-      font-family: inherit; font-size: 1rem; outline: none;
-    }
+    .input-group input { width: 100%; padding: 0.7rem 1rem; border: 1px solid #cfbfa0; border-radius: 30px; background: rgba(255,255,250,0.8); font-family: inherit; font-size: 1rem; outline: none; }
     .modal-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
     .close-btn { position: absolute; top: 10px; right: 20px; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #8b7a62; }
 
-    .admin-panel {
-      background: rgba(245,240,230,0.75);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 1.5rem;
-      border: 1px solid #d4b896;
-      margin-top: 1rem;
-    }
+    .admin-panel { background: rgba(245,240,230,0.75); backdrop-filter: blur(12px); border-radius: 20px; padding: 1.5rem; border: 1px solid #d4b896; margin-top: 1rem; }
     .tab-buttons { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .list-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 0.5rem 0; border-bottom: 1px dashed #d4b896; flex-wrap: wrap; gap: 0.5rem;
-    }
+    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed #d4b896; flex-wrap: wrap; gap: 0.5rem; }
     .warning { color: #b45f5f; font-size: 0.85rem; }
-    .input-group.input {
-      padding: 0.5rem 0.8rem; border-radius: 24px; border: 1px solid #cfbfa0;
-      font-family: inherit; background: rgba(255,255,250,0.8); flex: 1 1 120px; min-width: 100px;
-    }
+    .input-group.input { padding: 0.5rem 0.8rem; border-radius: 24px; border: 1px solid #cfbfa0; font-family: inherit; background: rgba(255,255,250,0.8); flex: 1 1 120px; min-width: 100px; }
     form { display: contents; }
   </style>
 </head>
@@ -346,6 +163,7 @@
       <div class="user-area" id="userArea">
         <span class="greeting" id="greetingText">未登录·游客</span>
         <button class="btn" id="loginBtn">登 录</button>
+        <button class="btn" id="changeMyPassBtn" style="display:none;">修改密码</button>
         <button class="btn admin-btn" id="adminPanelBtn" style="display:none;">管理</button>
         <button class="btn" id="logoutBtn" style="display:none;">登出</button>
       </div>
@@ -420,11 +238,11 @@
     </div>
   </div>
 
-  <!-- 修改密码模态框 -->
+  <!-- 管理员批量改密模态框（保留） -->
   <div class="modal-overlay" id="changePassModal">
     <div class="modal">
       <button class="close-btn" id="closeChangePassModal">&times;</button>
-      <h2>修改密码</h2>
+      <h2>修改用户密码</h2>
       <form onsubmit="return false">
         <div class="input-group"><label>用户名</label><input type="text" id="changePassUser" readonly></div>
         <div class="input-group"><label>新密码</label><input type="password" id="changePassNew" autocomplete="new-password"></div>
@@ -434,8 +252,22 @@
     </div>
   </div>
 
+  <!-- 🆕 成员自助修改密码模态框 -->
+  <div class="modal-overlay" id="selfChangePassModal">
+    <div class="modal">
+      <button class="close-btn" id="closeSelfChangePassModal">&times;</button>
+      <h2>修改我的密码</h2>
+      <form onsubmit="return false">
+        <div class="input-group"><label>旧密码</label><input type="password" id="selfOldPass" autocomplete="current-password"></div>
+        <div class="input-group"><label>新密码</label><input type="password" id="selfNewPass" autocomplete="new-password"></div>
+        <div class="modal-actions"><button class="btn" id="submitSelfChangePass">确认修改</button></div>
+      </form>
+    </div>
+  </div>
+
   <script>
     (function() {
+      // 永久固定地址
       const API_BASE = 'https://myzlm.serveousercontent.com';
       const APPLY_STORAGE_KEY = 'ink_nav_applications';
 
@@ -479,15 +311,17 @@
         const adminBtn = $('#adminPanelBtn');
         const adminPanel = $('#adminPanel');
         const userApply = $('#userApplyArea');
+        const changeMyPassBtn = $('#changeMyPassBtn');
 
         if (currentUser) {
           greeting.textContent = `${currentUser.role === 'admin' ? '🔰' : '📖'} ${currentUser.username}`;
           loginBtn.style.display = 'none';
           logoutBtn.style.display = 'inline-block';
+          changeMyPassBtn.style.display = 'inline-block';  // 所有已登录用户均可修改密码
           if (currentUser.role === 'admin') {
             adminBtn.style.display = 'inline-block';
             adminPanel.style.display = 'block';
-            userApply.hidden = true;
+            userApply.style.display = 'none';
           } else {
             adminBtn.style.display = 'none';
             adminPanel.style.display = 'none';
@@ -500,6 +334,7 @@
           adminBtn.style.display = 'none';
           adminPanel.style.display = 'none';
           userApply.hidden = true;
+          changeMyPassBtn.style.display = 'none';
         }
         renderSites();
         if (currentUser && currentUser.role === 'admin') {
@@ -510,11 +345,6 @@
       function renderSites() {
         const grid = $('#sitesGrid');
         grid.innerHTML = '';
-        // 容错：确保 sites 是数组
-        if (!Array.isArray(sites)) {
-          console.warn('站点数据异常，已重置为[]', sites);
-          sites = [];
-        }
         sites.forEach((site, index) => {
           const card = document.createElement('a');
           card.className = 'site-card';
@@ -543,7 +373,6 @@
 
       function renderSiteManage() {
         const container = $('#siteListManage');
-        if (!Array.isArray(sites)) return;
         container.innerHTML = sites.map((s, i) => `
           <div class="list-item">
             <span>${escapeHtml(s.name)} - <small>${escapeHtml(s.url)}</small></span>
@@ -563,14 +392,10 @@
 
       async function refreshSites() {
         try {
-          const data = await apiCall('/api/sites');
-          sites = Array.isArray(data) ? data : [];
+          sites = await apiCall('/api/sites');
           renderSites();
           if (currentUser?.role === 'admin') renderSiteManage();
-        } catch (e) {
-          sites = [];
-          renderSites();
-        }
+        } catch (e) {}
       }
 
       async function refreshUsersAndRender() {
@@ -678,110 +503,45 @@
         }
       }
 
-      function initPetals() {
+      function initPetals() { /* ... 保持不变 ... */
         const canvas = $('#petalCanvas');
         const ctx = canvas.getContext('2d');
         let width, height;
         const petals = [];
         const petalCount = 35;
-        function resize() {
-          width = window.innerWidth;
-          height = window.innerHeight;
-          canvas.width = width;
-          canvas.height = height;
-        }
-        window.addEventListener('resize', resize);
-        resize();
+        function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+        window.addEventListener('resize', resize); resize();
         class Petal {
           constructor() { this.reset(true); }
           reset(initial = false) {
-            this.x = Math.random() * width;
-            this.y = initial ? Math.random() * height : -20;
-            this.size = 8 + Math.random() * 14;
-            this.speedY = 1 + Math.random() * 2.5;
-            this.speedX = 0.3 + Math.random() * 0.8;
-            this.rotation = Math.random() * Math.PI * 2;
-            this.rotSpeed = (Math.random() - 0.5) * 0.02;
-            this.opacity = 0.7 + Math.random() * 0.3;
+            this.x = Math.random() * width; this.y = initial ? Math.random() * height : -20;
+            this.size = 8 + Math.random() * 14; this.speedY = 1 + Math.random() * 2.5;
+            this.speedX = 0.3 + Math.random() * 0.8; this.rotation = Math.random() * Math.PI * 2;
+            this.rotSpeed = (Math.random() - 0.5) * 0.02; this.opacity = 0.7 + Math.random() * 0.3;
             this.color = `rgba(232, 160, 170, ${this.opacity})`;
           }
-          update() {
-            this.y += this.speedY;
-            this.x += Math.sin(this.y * 0.02) * this.speedX;
-            this.rotation += this.rotSpeed;
-            if (this.y > height + 20) this.reset();
-          }
-          draw(ctx) {
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.rotate(this.rotation);
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, this.size * 0.6, this.size * 0.3, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(0, 0, this.size * 0.3, this.size * 0.6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-          }
+          update() { this.y += this.speedY; this.x += Math.sin(this.y * 0.02) * this.speedX; this.rotation += this.rotSpeed; if (this.y > height + 20) this.reset(); }
+          draw(ctx) { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation); ctx.fillStyle = this.color; ctx.beginPath(); ctx.ellipse(0, 0, this.size * 0.6, this.size * 0.3, 0, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.ellipse(0, 0, this.size * 0.3, this.size * 0.6, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
         }
         for (let i = 0; i < petalCount; i++) petals.push(new Petal());
-        function animate() {
-          ctx.clearRect(0, 0, width, height);
-          petals.forEach(p => { p.update(); p.draw(ctx); });
-          requestAnimationFrame(animate);
-        }
+        function animate() { ctx.clearRect(0, 0, width, height); petals.forEach(p => { p.update(); p.draw(ctx); }); requestAnimationFrame(animate); }
         animate();
       }
 
-      function initRipples() {
+      function initRipples() { /* ... 保持不变 ... */
         const canvas = $('#rippleCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        const ripples = [];
-        const maxRipples = 15;
-        function resize() {
-          width = window.innerWidth;
-          height = window.innerHeight;
-          canvas.width = width;
-          canvas.height = height;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-        window.addEventListener('click', (e) => {
-          ripples.push({
-            x: e.clientX, y: e.clientY, radius: 2,
-            maxRadius: 50 + Math.random() * 80, opacity: 0.7,
-            speed: 0.8 + Math.random() * 0.6,
-          });
-          if (ripples.length > maxRipples) ripples.shift();
-        });
-        function drawRipple(ctx, r) {
-          const gradient = ctx.createRadialGradient(r.x, r.y, r.radius * 0.1, r.x, r.y, r.radius);
-          gradient.addColorStop(0, `rgba(20, 15, 10, ${r.opacity})`);
-          gradient.addColorStop(0.4, `rgba(40, 30, 20, ${r.opacity * 0.7})`);
-          gradient.addColorStop(0.7, `rgba(80, 60, 40, ${r.opacity * 0.3})`);
-          gradient.addColorStop(1, `rgba(120, 90, 60, 0)`);
-          ctx.fillStyle = gradient;
-          ctx.beginPath();
-          ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        function animate() {
-          ctx.clearRect(0, 0, width, height);
-          for (let i = ripples.length - 1; i >= 0; i--) {
-            const r = ripples[i];
-            r.radius += r.speed;
-            r.opacity -= 0.008;
-            if (r.opacity <= 0 || r.radius > r.maxRadius) ripples.splice(i, 1);
-            else drawRipple(ctx, r);
-          }
-          requestAnimationFrame(animate);
-        }
+        const ctx = canvas.getContext('2d'); let width, height;
+        const ripples = []; const maxRipples = 15;
+        function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+        window.addEventListener('resize', resize); resize();
+        window.addEventListener('click', (e) => { ripples.push({ x: e.clientX, y: e.clientY, radius: 2, maxRadius: 50 + Math.random() * 80, opacity: 0.7, speed: 0.8 + Math.random() * 0.6, }); if (ripples.length > maxRipples) ripples.shift(); });
+        function drawRipple(ctx, r) { const gradient = ctx.createRadialGradient(r.x, r.y, r.radius * 0.1, r.x, r.y, r.radius); gradient.addColorStop(0, `rgba(20, 15, 10, ${r.opacity})`); gradient.addColorStop(0.4, `rgba(40, 30, 20, ${r.opacity * 0.7})`); gradient.addColorStop(0.7, `rgba(80, 60, 40, ${r.opacity * 0.3})`); gradient.addColorStop(1, `rgba(120, 90, 60, 0)`); ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2); ctx.fill(); }
+        function animate() { ctx.clearRect(0, 0, width, height); for (let i = ripples.length - 1; i >= 0; i--) { const r = ripples[i]; r.radius += r.speed; r.opacity -= 0.008; if (r.opacity <= 0 || r.radius > r.maxRadius) ripples.splice(i, 1); else drawRipple(ctx, r); } requestAnimationFrame(animate); }
         animate();
       }
 
       function bindEvents() {
+        // 登录相关
         $('#loginBtn').addEventListener('click', () => $('#loginModal').classList.add('active'));
         $('#closeLoginModal').addEventListener('click', () => $('#loginModal').classList.remove('active'));
         $('#submitLogin').addEventListener('click', async () => {
@@ -804,11 +564,13 @@
           updateUIByRole();
         });
 
+        // 管理员面板切换
         $('#adminPanelBtn').addEventListener('click', () => {
           const panel = $('#adminPanel');
           panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         });
 
+        // 选项卡
         $$('.tab-btn').forEach(btn => {
           btn.addEventListener('click', function() {
             $$('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -818,6 +580,7 @@
           });
         });
 
+        // 管理员添加网站
         $('#addSiteBtn').addEventListener('click', async () => {
           const name = $('#newSiteName').value.trim();
           const url = $('#newSiteUrl').value.trim();
@@ -834,26 +597,24 @@
           } catch (err) { alert(err.message); }
         });
 
+        // 管理员添加用户
         $('#addUserBtn').addEventListener('click', async () => {
           const username = $('#newUsername').value.trim();
           const password = $('#newUserPass').value;
           if (!username || !password) return alert('用户名和密码不能为空');
           try {
             await apiCall('/api/users', { method: 'POST', body: { username, password } });
-            $('#newUsername').value = '';
-            $('#newUserPass').value = '';
+            $('#newUsername').value = ''; $('#newUserPass').value = '';
             refreshUsersAndRender();
           } catch (err) { alert(err.message); }
         });
 
+        // 管理员批量改密（保留）
         $('#submitChangePass').addEventListener('click', async () => {
           const username = $('#changePassUser').value;
           const newPass = $('#changePassNew').value;
           if (!newPass) return alert('请输入新密码');
-          if (username === 'zlm') {
-            alert('修改主管理员密码需要后端专用接口。');
-            return;
-          }
+          if (username === 'zlm') { alert('修改主管理员密码需要后端专用接口。'); return; }
           if (!confirm(`将通过删除并重建用户“${username}”来修改密码，继续？`)) return;
           try {
             await apiCall(`/api/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
@@ -865,6 +626,7 @@
         });
         $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
 
+        // 申请网站
         $('#applySiteBtn').addEventListener('click', () => $('#applyModal').classList.add('active'));
         $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
         $('#submitApply').addEventListener('click', () => {
@@ -883,6 +645,26 @@
           ['applyName','applyUrl','applyDesc','applySeal','applyCat'].forEach(id => $('#'+id).value = '');
         });
 
+        // 🆕 成员自助修改密码
+        $('#changeMyPassBtn').addEventListener('click', () => {
+          $('#selfOldPass').value = '';
+          $('#selfNewPass').value = '';
+          $('#selfChangePassModal').classList.add('active');
+        });
+        $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList.remove('active'));
+        $('#submitSelfChangePass').addEventListener('click', async () => {
+          const oldPass = $('#selfOldPass').value;
+          const newPass = $('#selfNewPass').value;
+          if (!oldPass || !newPass) return alert('请输入旧密码和新密码');
+          if (newPass.length < 6) return alert('新密码长度至少6位');
+          try {
+            await apiCall('/api/me/password', { method: 'PUT', body: { oldPassword: oldPass, newPassword: newPass } });
+            alert('密码修改成功');
+            $('#selfChangePassModal').classList.remove('active');
+          } catch (err) { alert('修改失败: ' + err.message); }
+        });
+
+        // 点击模态框外部关闭
         window.addEventListener('click', (e) => {
           if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
         });
@@ -893,11 +675,7 @@
         initPetals();
         initRipples();
         bindEvents();
-        try {
-          sites = await apiCall('/api/sites');
-        } catch (e) { sites = []; }
-        // 最终容错
-        if (!Array.isArray(sites)) sites = [];
+        try { sites = await apiCall('/api/sites'); } catch (e) { sites = []; }
         await checkLoginStatus();
         renderSites();
       }
