@@ -4,15 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>墨韵·书签雅集</title>
-  <!-- 引入字体 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
-  <!-- 引入样式 -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 背景装饰层 -->
+  <!-- 背景装饰 -->
   <div class="watercolor-bg"></div>
   <div class="stars-container" id="starsContainer"></div>
   <div class="clouds" id="cloudsContainer"></div>
@@ -21,12 +19,11 @@
   <canvas id="rippleCanvas"></canvas>
   <canvas id="fireflyCanvas"></canvas>
 
-  <!-- UI 组件 -->
+  <!-- Toast与回到顶部 -->
   <div class="toast-container" id="toastContainer"></div>
-  <button class="back-to-top" id="backToTop" title="回到顶部" aria-label="回到顶部">⬆</button>
+  <button class="back-to-top" id="backToTop" title="回到顶部">⬆</button>
 
   <div class="main-container">
-    <!-- 头部 -->
     <div class="header">
       <div class="plaque-wrapper">
         <div class="plaque" id="plaqueEl">
@@ -55,7 +52,6 @@
       <span class="filter-count" id="filterCount"></span>
     </div>
 
-    <!-- 书签网格 -->
     <div class="sites-grid" id="sitesGrid"></div>
 
     <!-- 管理面板 -->
@@ -92,8 +88,7 @@
     </div>
   </div>
 
-  <!-- 模态框区域 -->
-  <!-- 登录 -->
+  <!-- 模态框 -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal">
       <button class="close-btn" id="closeLoginModal">&times;</button>
@@ -103,11 +98,10 @@
         <div class="input-group"><label>密码</label><input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password"></div>
         <div class="modal-actions"><button class="btn" id="submitLogin">登 录</button></div>
       </form>
-      <p style="text-align:center; margin-top:1rem; font-size:0.85rem; color:var(--text-muted);">游客可浏览，登录后更多功能</p>
+      <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--text-muted);">游客可浏览，登录后更多功能</p>
     </div>
   </div>
 
-  <!-- 申请网站 -->
   <div class="modal-overlay" id="applyModal">
     <div class="modal">
       <button class="close-btn" id="closeApplyModal">&times;</button>
@@ -123,7 +117,6 @@
     </div>
   </div>
 
-  <!-- 管理员改密 -->
   <div class="modal-overlay" id="changePassModal">
     <div class="modal">
       <button class="close-btn" id="closeChangePassModal">&times;</button>
@@ -137,7 +130,6 @@
     </div>
   </div>
 
-  <!-- 成员自助改密 -->
   <div class="modal-overlay" id="selfChangePassModal">
     <div class="modal">
       <button class="close-btn" id="closeSelfChangePassModal">&times;</button>
@@ -150,7 +142,6 @@
     </div>
   </div>
 
-  <!-- 引入脚本 -->
   <script src="script.js"></script>
 </body>
 </html>
