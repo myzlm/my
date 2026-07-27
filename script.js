@@ -18,7 +18,6 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
 
-  // 工具函数
   function escapeHtml(text) {
     const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
     return String(text).replace(/[&<>"']/g, m => map[m]);
@@ -68,7 +67,7 @@
     showToast(next==='dark'?'已切换至暗色模式 🌙':'已切换至亮色模式 ☀️','info');
   }
 
-  // 数据处理
+  // 数据过滤
   function getFilteredSites() {
     let filtered = [...sites];
     if(pinnedSites.length > 0) {
@@ -103,7 +102,7 @@
     return ['all', ...Array.from(cats).sort()];
   }
 
-  // 渲染函数
+  // 渲染
   function renderFilterTags() {
     const container = $('#filterTags');
     const categories = getAllCategories();
@@ -180,10 +179,8 @@
     grid.querySelectorAll('.site-card').forEach(card => {
       card.addEventListener('click', function(e) {
         if(e.target.closest('.star-btn')) return;
-        const url = this.dataset.url;
-        const idx = parseInt(this.dataset.index);
-        apiCall(`/api/sites/${idx}/visit`,{method:'POST'},true).catch(()=>{});
-        window.open(url, '_blank', 'noopener,noreferrer');
+        window.open(this.dataset.url, '_blank', 'noopener,noreferrer');
+        apiCall(`/api/sites/${this.dataset.index}/visit`,{method:'POST'},true).catch(()=>{});
       });
     });
     grid.querySelectorAll('.star-btn').forEach(btn => {
@@ -205,28 +202,42 @@
   }
 
   function spawnStarBurst(x,y) {
-    const colors = ['#f0c840','#e8b830','#ffda60','#ffed90','#fff'];
     for(let i=0;i<14;i++) {
       const particle = document.createElement('div');
       const angle = (Math.PI*2/14)*i;
       const dist = 30+Math.random()*50;
       const size = 3+Math.random()*7;
-      particle.style.cssText = `
-        position:fixed; left:${x}px; top:${y}px; width:${size}px; height:${size}px;
-        background:${colors[Math.floor(Math.random()*colors.length)]}; border-radius:50%;
-        pointer-events:none; z-index:9998;
-        animation:starBurstParticle 0.8s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
-        --dx:${Math.cos(angle)*dist}px; --dy:${Math.sin(angle)*dist}px;
-      `;
+      particle.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:#f0c840;border-radius:50%;pointer-events:none;z-index:9998;animation:starBurstParticle 0.8s cubic-bezier(0.25,0.46,0.45,0.94) forwards;--dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist}px;`;
       document.body.appendChild(particle);
       setTimeout(()=>particle.remove(),850);
     }
     if(!document.getElementById('starBurstStyle')) {
       const style = document.createElement('style');
-      style.id = 'starBurstStyle';
-      style.textContent = `@keyframes starBurstParticle{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0);}}`;
+      style.id='starBurstStyle';
+      style.textContent='@keyframes starBurstParticle{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0);}}';
       document.head.appendChild(style);
     }
+  }
+
+  // 🎉 管理员彩蛋
+  function spawnAdminEasterEgg() {
+    const colors = ['#f0c840','#c4a56a','#e8b830','#ffda60','#fff','#d4a030'];
+    for(let i=0;i<30;i++) {
+      const particle = document.createElement('div');
+      const angle = (Math.PI*2/30)*i;
+      const dist = 60+Math.random()*100;
+      const size = 4+Math.random()*8;
+      particle.style.cssText = `position:fixed;left:50%;top:50%;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:50%;pointer-events:none;z-index:9999;animation:adminBurst 1.2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;--dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist}px;`;
+      document.body.appendChild(particle);
+      setTimeout(()=>particle.remove(),1300);
+    }
+    if(!document.getElementById('adminBurstStyle')) {
+      const style = document.createElement('style');
+      style.id='adminBurstStyle';
+      style.textContent='@keyframes adminBurst{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.2) rotate(180deg);}}';
+      document.head.appendChild(style);
+    }
+    showToast('✨ 主公驾到，书斋蓬荜生辉！', 'success');
   }
 
   // 管理面板
@@ -302,14 +313,13 @@
     if(currentUser?.role==='admin') refreshUsersAndRender();
   }
 
-  // 特效初始化 (性能优化版)
+  // 特效
   function initStars() {
     const container = $('#starsContainer');
     const count = isMobile ? 15 : 30;
     let html = '';
     for(let i=0;i<count;i++) {
-      const size = 1+Math.random()*2.5;
-      html += `<div class="star" style="left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s;"></div>`;
+      html += `<div class="star" style="left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s;"></div>`;
     }
     container.innerHTML = html;
   }
@@ -335,7 +345,7 @@
     const ctx = canvas.getContext('2d');
     let width, height;
     const petals = [];
-    const count = isMobile ? 6 : 12;
+    const count = isMobile ? 6 : 14;
     function resize() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; }
     window.addEventListener('resize', resize); resize();
     class Petal {
@@ -353,9 +363,9 @@
     const canvas = $('#poemCanvas');
     const ctx = canvas.getContext('2d');
     let width, height;
-    const poems = ['静','思','墨','韵','雅','书','画','禅','云','风','月','山','水','花','竹'];
+    const poems = ['静','思','墨','韵','雅','书','画','禅','云','风','月','山','水','花','竹','兰','梅','清','幽','淡','远'];
     const items = [];
-    const count = isMobile ? 4 : 10;
+    const count = isMobile ? 4 : 12;
     function resize() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; }
     window.addEventListener('resize', resize); resize();
     class PoemChar {
@@ -374,16 +384,16 @@
     const ctx = canvas.getContext('2d');
     let width, height;
     const ripples = [];
-    const maxRipples = 12;
+    const maxRipples = 14;
     function resize() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; }
     window.addEventListener('resize', resize); resize();
     function addRipple(x, y) {
       ripples.push({
         x, y,
         radius: 2,
-        maxRadius: 30 + Math.random() * 70,
-        opacity: 0.65,
-        speed: 0.6 + Math.random() * 0.7,
+        maxRadius: 35 + Math.random() * 75,
+        opacity: 0.7,
+        speed: 0.6 + Math.random() * 0.8,
         life: 1.0
       });
       if (ripples.length > maxRipples) ripples.shift();
@@ -394,19 +404,19 @@
     }, { passive: true });
     function drawRipple(ctx, r) {
       const gradient = ctx.createRadialGradient(r.x, r.y, r.radius * 0.1, r.x, r.y, r.radius);
-      gradient.addColorStop(0, `rgba(20, 15, 10, ${r.opacity * 0.9})`);
-      gradient.addColorStop(0.4, `rgba(40, 30, 20, ${r.opacity * 0.7})`);
-      gradient.addColorStop(0.8, `rgba(80, 60, 40, ${r.opacity * 0.3})`);
-      gradient.addColorStop(1, `rgba(120, 90, 60, 0)`);
+      gradient.addColorStop(0, `rgba(20, 15, 10, ${r.opacity * 0.95})`);
+      gradient.addColorStop(0.45, `rgba(50, 35, 20, ${r.opacity * 0.7})`);
+      gradient.addColorStop(0.85, `rgba(90, 65, 40, ${r.opacity * 0.25})`);
+      gradient.addColorStop(1, 'rgba(120, 90, 60, 0)');
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
       ctx.fill();
       // 金色光圈
-      ctx.strokeStyle = `rgba(180, 150, 100, ${r.opacity * 0.4})`;
+      ctx.strokeStyle = `rgba(180, 150, 100, ${r.opacity * 0.45})`;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.arc(r.x, r.y, r.radius * 0.85, 0, Math.PI * 2);
+      ctx.arc(r.x, r.y, r.radius * 0.88, 0, Math.PI * 2);
       ctx.stroke();
     }
     function animate() {
@@ -414,8 +424,8 @@
       for (let i = ripples.length - 1; i >= 0; i--) {
         const r = ripples[i];
         r.radius += r.speed;
-        r.opacity -= 0.006;
-        r.life -= 0.008;
+        r.opacity -= 0.0065;
+        r.life -= 0.007;
         if (r.opacity <= 0 || r.radius > r.maxRadius || r.life <= 0) {
           ripples.splice(i, 1);
         } else {
@@ -432,7 +442,7 @@
     const ctx = canvas.getContext('2d');
     let width, height;
     const fireflies = [];
-    const count = isMobile ? 6 : 18;
+    const count = isMobile ? 8 : 20;
     let mouseX = -200, mouseY = -200;
     function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
     window.addEventListener('resize', resize); resize();
@@ -453,43 +463,40 @@
         this.phase = Math.random() * Math.PI * 2;
         this.speed = 0.4 + Math.random() * 0.6;
         this.changeTargetTime = 0;
-        this.followMouse = Math.random() < 0.4; // 40%概率跟随鼠标
+        this.followMouse = Math.random() < 0.45;
       }
       update() {
         this.changeTargetTime--;
         if (this.changeTargetTime <= 0) {
-          if (this.followMouse && mouseX > 0 && Math.random() < 0.6) {
-            // 向鼠标位置靠近
-            this.targetX = mouseX + (Math.random() - 0.5) * 80;
-            this.targetY = mouseY + (Math.random() - 0.5) * 70;
+          if (this.followMouse && mouseX > 0 && Math.random() < 0.7) {
+            this.targetX = mouseX + (Math.random() - 0.5) * 70;
+            this.targetY = mouseY + (Math.random() - 0.5) * 60;
           } else {
-            this.targetX = this.x + (Math.random() - 0.5) * 200;
-            this.targetY = this.y + (Math.random() - 0.5) * 160;
+            this.targetX = this.x + (Math.random() - 0.5) * 190;
+            this.targetY = this.y + (Math.random() - 0.5) * 150;
           }
           this.targetX = Math.max(10, Math.min(width - 10, this.targetX));
           this.targetY = Math.max(10, Math.min(height - 10, this.targetY));
           this.changeTargetTime = 40 + Math.random() * 80;
         }
-        // 平滑向目标移动
-        this.x += (this.targetX - this.x) * 0.025 * this.speed;
-        this.y += (this.targetY - this.y) * 0.025 * this.speed;
+        this.x += (this.targetX - this.x) * 0.028 * this.speed;
+        this.y += (this.targetY - this.y) * 0.028 * this.speed;
         this.phase += 0.04;
-        this.opacity = 0.4 + Math.sin(this.phase) * 0.35;
+        this.opacity = 0.4 + Math.sin(this.phase) * 0.38;
       }
       draw(ctx) {
         const glow = ctx.createRadialGradient(this.x, this.y, this.size * 0.2, this.x, this.y, this.glowSize);
         glow.addColorStop(0, `rgba(255, 230, 150, ${this.opacity})`);
         glow.addColorStop(0.3, `rgba(240, 200, 100, ${this.opacity * 0.8})`);
-        glow.addColorStop(0.7, `rgba(200, 160, 60, ${this.opacity * 0.25})`);
+        glow.addColorStop(0.7, `rgba(200, 160, 60, ${this.opacity * 0.3})`);
         glow.addColorStop(1, 'rgba(180, 140, 50, 0)');
         ctx.fillStyle = glow;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.glowSize, 0, Math.PI * 2);
         ctx.fill();
-        // 亮点
         ctx.fillStyle = `rgba(255, 255, 220, ${this.opacity + 0.2})`;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * 0.7, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.size * 0.65, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -504,11 +511,8 @@
 
   function initBackToTop() {
     const btn = $('#backToTop');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) btn.classList.add('visible');
-      else btn.classList.remove('visible');
-    }, { passive: true });
-    btn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', () => { btn.classList.toggle('visible', window.scrollY > 400); }, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 
   // 事件绑定
@@ -525,16 +529,10 @@
         renderFilterTags(); renderSites();
       }, 200);
     });
-    searchClear.addEventListener('click', () => {
-      searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible');
-      renderFilterTags(); renderSites(); searchInput.focus();
-    });
+    searchClear.addEventListener('click', () => { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); renderFilterTags(); renderSites(); searchInput.focus(); });
     document.addEventListener('keydown', (e) => {
       if((e.ctrlKey||e.metaKey) && e.key==='k') { e.preventDefault(); searchInput.focus(); searchInput.select(); }
-      if(e.key==='Escape' && document.activeElement===searchInput) {
-        searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible');
-        renderFilterTags(); renderSites(); searchInput.blur();
-      }
+      if(e.key==='Escape' && document.activeElement===searchInput) { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); renderFilterTags(); renderSites(); searchInput.blur(); }
       if(e.key==='/' && !e.target.closest('input,textarea')) { e.preventDefault(); searchInput.focus(); }
     });
 
@@ -549,109 +547,63 @@
         currentUser = {username:data.username, role:data.role};
         $('#loginModal').classList.remove('active');
         updateUIByRole();
-        if(currentUser.role==='admin') refreshUsersAndRender();
+        if(currentUser.role==='admin') {
+          refreshUsersAndRender();
+          spawnAdminEasterEgg(); // 🎉 触发彩蛋
+        }
         showToast(`登录成功，欢迎 ${data.username}`,'success');
       } catch(err) { showToast('登录失败: '+err.message,'error'); }
     });
-    $('#logoutBtn').addEventListener('click', async () => {
-      await apiCall('/api/logout',{method:'POST'}); currentUser=null; updateUIByRole(); showToast('已登出','info');
-    });
-    $('#adminPanelBtn').addEventListener('click', () => {
-      const panel=$('#adminPanel'); panel.style.display = panel.style.display==='none'?'block':'none';
-    });
-    $$('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        $$('.tab-btn').forEach(b=>b.classList.remove('active'));
-        this.classList.add('active');
-        $$('.tab-content').forEach(c=>c.classList.remove('active'));
-        $('#'+this.dataset.tab).classList.add('active');
-      });
-    });
+    $('#logoutBtn').addEventListener('click', async () => { await apiCall('/api/logout',{method:'POST'}); currentUser=null; updateUIByRole(); showToast('已登出','info'); });
+    $('#adminPanelBtn').addEventListener('click', () => { $('#adminPanel').style.display = $('#adminPanel').style.display==='none'?'block':'none'; });
+    $$('.tab-btn').forEach(btn => { btn.addEventListener('click', function() { $$('.tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); $$('.tab-content').forEach(c=>c.classList.remove('active')); $('#'+this.dataset.tab).classList.add('active'); }); });
 
-    // 添加网站
     $('#addSiteBtn').addEventListener('click', async () => {
       const name=$('#newSiteName').value.trim(), url=$('#newSiteUrl').value.trim();
       if(!name||!url) return showToast('名称和网址必填','error');
-      try {
-        await apiCall('/api/sites',{method:'POST',body:{name,url,desc:$('#newSiteDesc').value.trim(),seal:$('#newSiteSeal').value.trim()||'🔗',category:$('#newSiteCat').value.trim()||'其他'}});
-        ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCat'].forEach(id=>$('#'+id).value='');
-        await refreshSites(); showToast('网站已添加','success');
-      } catch(err) { showToast(err.message,'error'); }
+      try { await apiCall('/api/sites',{method:'POST',body:{name,url,desc:$('#newSiteDesc').value.trim(),seal:$('#newSiteSeal').value.trim()||'🔗',category:$('#newSiteCat').value.trim()||'其他'}}); ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCat'].forEach(id=>$('#'+id).value=''); await refreshSites(); showToast('网站已添加','success'); } catch(err) { showToast(err.message,'error'); }
     });
-    // 添加用户
     $('#addUserBtn').addEventListener('click', async () => {
       const u=$('#newUsername').value.trim(), p=$('#newUserPass').value;
       if(!u||!p) return showToast('用户名和密码不能为空','error');
-      try {
-        await apiCall('/api/users',{method:'POST',body:{username:u,password:p}});
-        $('#newUsername').value=''; $('#newUserPass').value='';
-        refreshUsersAndRender(); showToast('用户已添加','success');
-      } catch(err) { showToast(err.message,'error'); }
+      try { await apiCall('/api/users',{method:'POST',body:{username:u,password:p}}); $('#newUsername').value=''; $('#newUserPass').value=''; refreshUsersAndRender(); showToast('用户已添加','success'); } catch(err) { showToast(err.message,'error'); }
     });
 
-    // 管理员改密（安全接口）
     $('#submitChangePass').addEventListener('click', async () => {
-      const username = $('#changePassUser').value;
-      const newPass = $('#changePassNew').value;
+      const username = $('#changePassUser').value, newPass = $('#changePassNew').value;
       if (!newPass) return showToast('请输入新密码', 'error');
       if (newPass.length < 6) return showToast('密码长度至少6位', 'error');
       try {
-        await apiCall(`/api/users/${encodeURIComponent(username)}/password`, {
-          method: 'PUT',
-          body: { newPassword: newPass }
-        });
+        await apiCall(`/api/users/${encodeURIComponent(username)}/password`, { method: 'PUT', body: { newPassword: newPass } });
         showToast('密码修改成功', 'success');
         $('#changePassModal').classList.remove('active');
         refreshUsersAndRender();
-      } catch (err) {
-        showToast('密码修改失败: ' + (err.message.includes('404') ? '后端接口未实现' : err.message), 'error');
-      }
+      } catch (err) { showToast('密码修改失败: ' + (err.message.includes('404') ? '后端接口未实现' : err.message), 'error'); }
     });
     $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
 
-    // 成员自助改密
-    $('#changeMyPassBtn').addEventListener('click', () => {
-      $('#selfOldPass').value=''; $('#selfNewPass').value=''; $('#selfChangePassModal').classList.add('active');
-    });
+    $('#changeMyPassBtn').addEventListener('click', () => { $('#selfOldPass').value=''; $('#selfNewPass').value=''; $('#selfChangePassModal').classList.add('active'); });
     $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList.remove('active'));
     $('#submitSelfChangePass').addEventListener('click', async () => {
       const op=$('#selfOldPass').value, np=$('#selfNewPass').value;
       if(!op||!np) return showToast('请输入旧密码和新密码','error');
       if(np.length<6) return showToast('新密码长度至少6位','error');
-      try {
-        await apiCall('/api/me/password',{method:'PUT',body:{oldPassword:op,newPassword:np}});
-        showToast('密码修改成功','success');
-        $('#selfChangePassModal').classList.remove('active');
-      } catch(err) { showToast('修改失败: '+err.message,'error'); }
+      try { await apiCall('/api/me/password',{method:'PUT',body:{oldPassword:op,newPassword:np}}); showToast('密码修改成功','success'); $('#selfChangePassModal').classList.remove('active'); } catch(err) { showToast('修改失败: '+err.message,'error'); }
     });
 
-    // 申请网站
-    $('#applySiteBtn').addEventListener('click', () => {
-      $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value='';
-      $('#applySeal').value=''; $('#applyCat').value=''; $('#applyModal').classList.add('active');
-    });
+    $('#applySiteBtn').addEventListener('click', () => { $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value=''; $('#applySeal').value=''; $('#applyCat').value=''; $('#applyModal').classList.add('active'); });
     $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
     $('#submitApply').addEventListener('click', () => {
       const name=$('#applyName').value.trim(), url=$('#applyUrl').value.trim();
       if(!name||!url) return showToast('网站名称和网址为必填项','error');
-      siteApplications.push({
-        name, url,
-        desc:$('#applyDesc').value.trim(),
-        seal:$('#applySeal').value.trim()||'🔗',
-        category:$('#applyCat').value.trim()||'其他'
-      });
+      siteApplications.push({name,url,desc:$('#applyDesc').value.trim(),seal:$('#applySeal').value.trim()||'🔗',category:$('#applyCat').value.trim()||'其他'});
       localStorage.setItem(APPLY_STORAGE_KEY,JSON.stringify(siteApplications));
-      showToast('申请已提交','success');
-      $('#applyModal').classList.remove('active');
+      showToast('申请已提交','success'); $('#applyModal').classList.remove('active');
     });
 
-    // 关闭模态框
-    window.addEventListener('click', (e) => {
-      if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
-    });
+    window.addEventListener('click', (e) => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); });
   }
 
-  // 启动
   async function init() {
     initTheme();
     initStars();
