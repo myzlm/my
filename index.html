@@ -19,17 +19,17 @@
             --parchment: #fdf8f0;
             --parchment-warm: #f5efe0;
             --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.15);
-            --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.08);
-            --shadow-card-hover: 0 12px 28px rgba(0, 0, 0, 0.18);
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --card-bg: rgba(255, 255, 250, 0.28);
-            --card-bg-hover: rgba(255, 255, 250, 0.48);
-            --card-border: rgba(180, 150, 100, 0.4);
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.07);
+            --shadow-card-hover: 0 16px 36px rgba(0, 0, 0, 0.16);
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --card-bg: rgba(255, 255, 250, 0.26);
+            --card-bg-hover: rgba(255, 255, 250, 0.5);
+            --card-border: rgba(180, 150, 100, 0.38);
             --card-border-hover: #b89b5a;
             --text-primary: #2e2210;
             --text-secondary: #4a3828;
             --text-muted: #5e4e3a;
-            --tag-bg: rgba(231, 220, 200, 0.8);
+            --tag-bg: rgba(231, 220, 200, 0.78);
             --input-bg: rgba(255, 255, 250, 0.8);
             --input-border: #cfbfa0;
             --modal-bg: #fdf8f0;
@@ -45,54 +45,55 @@
             --list-border: #d4b896;
             --greeting-bg: rgba(255, 250, 240, 0.5);
             --greeting-text: #3e2e1f;
-            --skeleton-shine: rgba(255, 255, 255, 0.5);
+            --star-color: #e8b830;
+            --watercolor-1: rgba(180, 140, 100, 0.06);
+            --watercolor-2: rgba(160, 120, 140, 0.04);
+            --watercolor-3: rgba(140, 160, 180, 0.04);
         }
-
         [data-theme="dark"] {
-            --bg-pc: url('bg-pc.png');
-            --bg-mobile: url('bg-mobile.png');
             --ink: #d4c5b2;
             --ink-light: #c4b5a2;
             --red-seal: #d45555;
             --gold: #c4a56a;
             --gold-light: #d4b57a;
-            --parchment: #2a2218;
-            --parchment-warm: #32291e;
-            --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.4);
-            --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.25);
-            --shadow-card-hover: 0 12px 28px rgba(0, 0, 0, 0.4);
-            --card-bg: rgba(40, 35, 25, 0.55);
-            --card-bg-hover: rgba(50, 42, 30, 0.7);
-            --card-border: rgba(160, 130, 80, 0.45);
+            --parchment: #1e1812;
+            --parchment-warm: #261f18;
+            --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.5);
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-card-hover: 0 16px 36px rgba(0, 0, 0, 0.45);
+            --card-bg: rgba(35, 30, 22, 0.55);
+            --card-bg-hover: rgba(50, 42, 30, 0.72);
+            --card-border: rgba(150, 120, 75, 0.42);
             --card-border-hover: #c4a56a;
             --text-primary: #e8dcc8;
             --text-secondary: #d4c5b2;
             --text-muted: #b8a890;
-            --tag-bg: rgba(60, 50, 35, 0.7);
-            --input-bg: rgba(40, 35, 25, 0.7);
-            --input-border: #6b5a40;
-            --modal-bg: #2a2218;
-            --overlay-bg: rgba(0, 0, 0, 0.7);
-            --btn-bg: rgba(50, 42, 30, 0.7);
-            --btn-border: #6b5a40;
+            --tag-bg: rgba(55, 45, 32, 0.7);
+            --input-bg: rgba(35, 30, 22, 0.7);
+            --input-border: #5a4830;
+            --modal-bg: #1e1812;
+            --overlay-bg: rgba(0, 0, 0, 0.72);
+            --btn-bg: rgba(45, 38, 26, 0.7);
+            --btn-border: #5a4830;
             --btn-text: #d4c5b2;
-            --btn-hover-bg: rgba(180, 150, 100, 0.7);
+            --btn-hover-bg: rgba(180, 150, 100, 0.65);
             --btn-hover-text: #1a1410;
-            --divider-color: rgba(160, 130, 80, 0.4);
-            --admin-bg: rgba(40, 35, 25, 0.8);
-            --admin-border: #5a4a32;
-            --list-border: #5a4a32;
-            --greeting-bg: rgba(50, 42, 30, 0.6);
+            --divider-color: rgba(150, 120, 75, 0.38);
+            --admin-bg: rgba(35, 30, 22, 0.8);
+            --admin-border: #4a3828;
+            --list-border: #4a3828;
+            --greeting-bg: rgba(45, 38, 26, 0.6);
             --greeting-text: #d4c5b2;
-            --skeleton-shine: rgba(255, 255, 255, 0.08);
+            --star-color: #f0c840;
+            --watercolor-1: rgba(180, 140, 90, 0.08);
+            --watercolor-2: rgba(140, 100, 120, 0.05);
+            --watercolor-3: rgba(100, 130, 160, 0.05);
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'ZCOOL XiaoWei', 'Ma Shan Zheng', 'KaiTi', '楷体', serif;
             min-height: 100vh;
@@ -109,13 +110,12 @@
             position: relative;
             overflow-x: hidden;
             color: var(--ink);
-            transition: background-color 0.5s ease, color 0.4s ease;
+            transition: background-color 0.6s ease, color 0.5s ease;
+            cursor: none;
         }
-
         [data-theme="dark"] body {
-            background-color: #1a1410;
+            background-color: #120e0a;
         }
-
         body::before {
             content: '';
             position: fixed;
@@ -126,20 +126,143 @@
             pointer-events: none;
             z-index: 0;
             background: transparent;
-            transition: background 0.5s ease;
+            transition: background 0.6s ease;
         }
-
         [data-theme="dark"] body::before {
-            background: rgba(10, 6, 2, 0.55);
+            background: rgba(8, 5, 2, 0.58);
         }
-
         @media (max-width: 768px) {
             body {
                 background-image: var(--bg-mobile);
                 padding: 0.5rem 0.5rem 1.5rem;
             }
         }
-
+        /* 水彩渐变背景层 */
+        .watercolor-bg {
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.55;
+            background:
+                radial-gradient(ellipse at 25% 30%, var(--watercolor-1) 0%, transparent 55%),
+                radial-gradient(ellipse at 65% 60%, var(--watercolor-2) 0%, transparent 55%),
+                radial-gradient(ellipse at 40% 75%, var(--watercolor-3) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 20%, var(--watercolor-1) 0%, transparent 50%);
+            animation: watercolorShift 28s ease-in-out infinite;
+            transition: background 0.6s ease;
+        }
+        @keyframes watercolorShift {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(1.5%, -1%) scale(1.04);
+            }
+            50% {
+                transform: translate(-0.5%, 1.5%) scale(1.02);
+            }
+            75% {
+                transform: translate(-1.5%, -0.5%) scale(1.05);
+            }
+        }
+        /* 自定义光标 */
+        .custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 36px;
+            height: 36px;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, opacity 0.25s;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+            opacity: 0.9;
+        }
+        .custom-cursor .cursor-brush {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            line-height: 1;
+            color: #3a2a18;
+            transition: color 0.35s ease, transform 0.15s ease;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        [data-theme="dark"] .custom-cursor .cursor-brush {
+            color: #d4c5b2;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        .custom-cursor.pointer .cursor-brush {
+            transform: scale(1.3);
+            color: var(--gold);
+        }
+        .custom-cursor.clicking .cursor-brush {
+            transform: scale(0.75);
+            transition: transform 0.08s ease;
+        }
+        @media (max-width: 768px) {
+            body {
+                cursor: auto;
+            }
+            .custom-cursor {
+                display: none;
+            }
+        }
+        /* 星光层 */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            animation: starTwinkle var(--dur) ease-in-out infinite;
+            animation-delay: var(--delay);
+            opacity: 0;
+        }
+        @keyframes starTwinkle {
+            0%,
+            100% {
+                opacity: 0.15;
+                transform: scale(0.8);
+            }
+            30% {
+                opacity: 0.9;
+                transform: scale(1.5);
+            }
+            60% {
+                opacity: 0.25;
+                transform: scale(0.9);
+            }
+            85% {
+                opacity: 0.7;
+                transform: scale(1.3);
+            }
+        }
+        /* 锦鲤 */
+        .koi-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* 云层 */
         .clouds {
             position: fixed;
             top: 0;
@@ -149,22 +272,22 @@
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s ease;
         }
         [data-theme="dark"] .clouds {
-            opacity: 0.35;
+            opacity: 0.3;
         }
         .cloud {
             position: absolute;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.65);
             border-radius: 50%;
             filter: blur(18px);
-            opacity: 0.5;
+            opacity: 0.45;
             animation: floatCloud linear infinite;
         }
         [data-theme="dark"] .cloud {
-            background: rgba(200, 180, 150, 0.35);
-            opacity: 0.3;
+            background: rgba(190, 170, 140, 0.3);
+            opacity: 0.25;
         }
         .cloud::after,
         .cloud::before {
@@ -187,12 +310,13 @@
         }
         @keyframes floatCloud {
             0% {
-                transform: translateX(-120%);
+                transform: translateX(-130%);
             }
             100% {
-                transform: translateX(120vw);
+                transform: translateX(125vw);
             }
         }
+        /* 画布层 */
         #petalCanvas {
             position: fixed;
             top: 0;
@@ -201,10 +325,23 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s ease;
         }
         [data-theme="dark"] #petalCanvas {
-            opacity: 0.55;
+            opacity: 0.5;
+        }
+        #poemCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 0.6s ease;
+        }
+        [data-theme="dark"] #poemCanvas {
+            opacity: 0.45;
         }
         #rippleCanvas {
             position: fixed;
@@ -214,6 +351,15 @@
             height: 100%;
             pointer-events: none;
             z-index: 1.5;
+        }
+        #fireflyCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1.6;
         }
 
         .main-container {
@@ -229,26 +375,25 @@
             border: none;
             display: flex;
             flex-direction: column;
-            gap: 1.6rem;
+            gap: 1.5rem;
         }
-
-        /* Header */
+        /* 头部 */
         .header {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.8rem;
-            padding-bottom: 0.6rem;
+            gap: 0.7rem;
+            padding-bottom: 0.5rem;
             border-bottom: 2px dashed var(--divider-color);
-            transition: border-color 0.4s ease;
+            transition: border-color 0.5s ease;
         }
         .user-area {
             display: flex;
             align-items: center;
-            gap: 0.7rem;
+            gap: 0.65rem;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
         }
         .greeting {
             font-size: 1.05rem;
@@ -257,7 +402,8 @@
             background: var(--greeting-bg);
             padding: 0.25rem 0.9rem;
             border-radius: 20px;
-            transition: all 0.4s ease;
+            transition: all 0.5s ease;
+            cursor: default;
         }
         [data-theme="dark"] .greeting {
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
@@ -268,28 +414,28 @@
             -webkit-backdrop-filter: blur(6px);
             border: 1px solid var(--btn-border);
             color: var(--btn-text);
-            padding: 0.5rem 1.2rem;
+            padding: 0.5rem 1.15rem;
             border-radius: 30px;
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.93rem;
             cursor: pointer;
             transition: all var(--transition);
             letter-spacing: 1px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             white-space: nowrap;
             position: relative;
             overflow: hidden;
         }
         .btn:active {
-            transform: scale(0.96);
+            transform: scale(0.94);
             transition: transform 0.1s ease;
         }
         .btn:hover {
             background: var(--btn-hover-bg);
             color: var(--btn-hover-text);
             border-color: var(--gold-light);
-            box-shadow: 0 4px 14px rgba(180, 140, 80, 0.35);
-            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(180, 140, 80, 0.35);
+            transform: translateY(-2px);
         }
         .btn.admin-btn {
             border-color: #b88a4b;
@@ -300,31 +446,31 @@
         [data-theme="dark"] .btn.admin-btn {
             border-color: #c4a56a;
             color: #d4c5b2;
-            background: rgba(60, 48, 30, 0.7);
+            background: rgba(55, 42, 26, 0.7);
         }
         .btn.theme-btn {
             width: 38px;
             height: 38px;
             padding: 0;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             display: flex;
             align-items: center;
             justify-content: center;
             min-width: 38px;
         }
         .btn.icon-btn {
-            padding: 0.45rem 0.9rem;
-            font-size: 0.9rem;
+            padding: 0.4rem 0.85rem;
+            font-size: 0.88rem;
             letter-spacing: 0;
         }
-
-        /* Plaque */
+        /* 牌匾 */
         .plaque-wrapper {
             display: flex;
             justify-content: center;
             width: 100%;
             margin-top: 0;
+            perspective: 800px;
         }
         .plaque {
             position: relative;
@@ -338,23 +484,24 @@
                 inset 0 0 0 3px #8b6914, inset 0 0 0 7px #3d1f08,
                 inset 0 0 0 9px #c4a44a, inset 0 0 0 12px #2a1405;
             text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
             margin-bottom: 0.5rem;
+            transform-style: preserve-3d;
         }
         .plaque:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 3px 8px rgba(0, 0, 0, 0.35),
+            transform: translateY(-3px) rotateX(2deg);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 3px 10px rgba(0, 0, 0, 0.35),
                 inset 0 0 0 3px #8b6914, inset 0 0 0 7px #3d1f08,
                 inset 0 0 0 9px #c4a44a, inset 0 0 0 12px #2a1405;
         }
         @media (max-width: 768px) {
             .plaque {
-                padding: 0.6rem 1.2rem;
+                padding: 0.5rem 1rem;
                 border-width: 3px;
             }
             .plaque-title {
-                font-size: clamp(1.6rem, 5.5vw, 2.2rem);
-                letter-spacing: 4px;
+                font-size: clamp(1.4rem, 5vw, 2rem);
+                letter-spacing: 3px;
                 white-space: normal;
             }
         }
@@ -394,7 +541,7 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 240, 0.08), rgba(255, 255, 240, 0.15), rgba(255, 255, 240, 0.08), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 240, 0.06), rgba(255, 255, 240, 0.14), rgba(255, 255, 240, 0.06), transparent);
             animation: plaqueShine 5s ease-in-out infinite;
             pointer-events: none;
             z-index: 0;
@@ -425,16 +572,25 @@
             white-space: nowrap;
             line-height: 1.3;
             filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.6));
+            animation: titleGlow 4s ease-in-out infinite;
         }
-
-        /* 搜索栏 */
+        @keyframes titleGlow {
+            0%,
+            100% {
+                text-shadow: 1px 0 0 rgba(0, 0, 0, 0.7), -1px 0 0 rgba(0, 0, 0, 0.4), 0 1px 0 rgba(0, 0, 0, 0.6), 0 -1px 0 rgba(0, 0, 0, 0.3), 2px 2px 3px rgba(0, 0, 0, 0.6), -1px -1px 1px rgba(255, 240, 200, 0.25), 0 0 12px rgba(200, 160, 60, 0.5), 0 0 30px rgba(180, 130, 40, 0.35);
+            }
+            50% {
+                text-shadow: 1px 0 0 rgba(0, 0, 0, 0.7), -1px 0 0 rgba(0, 0, 0, 0.4), 0 1px 0 rgba(0, 0, 0, 0.6), 0 -1px 0 rgba(0, 0, 0, 0.3), 2px 2px 3px rgba(0, 0, 0, 0.6), -1px -1px 1px rgba(255, 240, 200, 0.3), 0 0 20px rgba(220, 180, 70, 0.6), 0 0 40px rgba(200, 150, 50, 0.45);
+            }
+        }
+        /* 搜索 */
         .search-wrapper {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
         }
         .search-container {
             position: relative;
@@ -453,19 +609,13 @@
             color: var(--text-primary);
             outline: none;
             transition: all var(--transition);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
             letter-spacing: 0.5px;
+            cursor: text;
         }
         .search-input:focus {
             border-color: var(--gold-light);
-            box-shadow: 0 0 0 3px rgba(180, 150, 100, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .search-input::placeholder {
-            color: #a09080;
-            opacity: 0.7;
-        }
-        [data-theme="dark"] .search-input::placeholder {
-            color: #8a7a65;
+            box-shadow: 0 0 0 4px rgba(180, 150, 100, 0.13), 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         .search-clear {
             position: absolute;
@@ -486,43 +636,19 @@
         .search-clear.visible {
             display: block;
         }
-        .search-clear:hover {
-            color: #6b5a40;
-            background: rgba(0, 0, 0, 0.06);
-        }
-        .search-shortcut {
-            font-size: 0.7rem;
-            color: #a09080;
-            background: rgba(0, 0, 0, 0.05);
-            padding: 2px 7px;
-            border-radius: 4px;
-            letter-spacing: 0;
-            white-space: nowrap;
-            pointer-events: none;
-            position: absolute;
-            right: 36px;
-            top: 50%;
-            transform: translateY(-50%);
-            transition: opacity 0.2s ease;
-        }
-        .search-input:focus~.search-shortcut,
-        .search-input:not(:placeholder-shown)~.search-shortcut {
-            opacity: 0;
-        }
-
-        /* 分类筛选标签 */
+        /* 分类标签 */
         .filter-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             justify-content: center;
             align-items: center;
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
         }
         .filter-tag {
             padding: 0.35rem 0.9rem;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             cursor: pointer;
             border: 1.5px solid transparent;
             background: var(--tag-bg);
@@ -536,14 +662,14 @@
         .filter-tag:hover {
             border-color: var(--gold-light);
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         .filter-tag.active {
             background: var(--gold);
             color: #fff;
             border-color: var(--gold);
             font-weight: bold;
-            box-shadow: 0 2px 10px rgba(180, 150, 100, 0.35);
+            box-shadow: 0 2px 12px rgba(180, 150, 100, 0.4);
         }
         [data-theme="dark"] .filter-tag.active {
             color: #1a1410;
@@ -554,7 +680,6 @@
             white-space: nowrap;
             opacity: 0.8;
         }
-
         /* 书签网格 */
         .sites-grid {
             display: grid;
@@ -585,6 +710,9 @@
             color: inherit;
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 600px;
+            will-change: transform;
         }
         .site-card::after {
             content: '';
@@ -593,23 +721,18 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at center, rgba(255, 255, 240, 0.08) 0%, transparent 60%);
+            background: radial-gradient(circle at center, rgba(255, 255, 240, 0.1) 0%, transparent 60%);
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.5s ease;
             pointer-events: none;
         }
         .site-card:hover::after {
             opacity: 1;
         }
         .site-card:hover {
-            transform: translateY(-5px);
-            background: var(--card-bg-hover);
             border-color: var(--card-border-hover);
             box-shadow: var(--shadow-card-hover);
-        }
-        .site-card:active {
-            transform: scale(0.97);
-            transition: transform 0.1s ease;
+            z-index: 5;
         }
         .seal {
             width: 50px;
@@ -625,12 +748,27 @@
             font-family: 'Ma Shan Zheng', cursive;
             box-shadow: 0 2px 8px rgba(180, 60, 60, 0.4);
             text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             flex-shrink: 0;
         }
         .site-card:hover .seal {
-            transform: rotate(-8deg) scale(1.08);
-            box-shadow: 0 4px 14px rgba(180, 60, 60, 0.55);
+            transform: rotate(-10deg) scale(1.12);
+            box-shadow: 0 6px 18px rgba(180, 60, 60, 0.6);
+            animation: sealStamp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes sealStamp {
+            0% {
+                transform: scale(0.7) rotate(-20deg);
+                opacity: 0.6;
+            }
+            60% {
+                transform: scale(1.18) rotate(3deg);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(-10deg) scale(1.12);
+                opacity: 1;
+            }
         }
         .site-info {
             flex: 1;
@@ -677,7 +815,38 @@
             -webkit-backdrop-filter: blur(4px);
             font-size: 0.72rem;
         }
-
+        .star-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            color: var(--star-color);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .star-btn:hover {
+            opacity: 1;
+            transform: scale(1.3);
+        }
+        .star-btn.starred {
+            opacity: 1;
+            animation: starPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes starPop {
+            0% {
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.6);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
         /* 骨架屏 */
         .skeleton-card {
             background: var(--card-bg);
@@ -693,7 +862,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: rgba(180, 160, 140, 0.35);
+            background: rgba(180, 160, 140, 0.3);
             flex-shrink: 0;
         }
         .skeleton-lines {
@@ -705,24 +874,20 @@
         .skeleton-line {
             height: 14px;
             border-radius: 8px;
-            background: rgba(180, 160, 140, 0.3);
+            background: rgba(180, 160, 140, 0.25);
         }
         .skeleton-line.short {
             width: 60%;
         }
-        .skeleton-line.medium {
-            width: 80%;
-        }
         @keyframes skeletonPulse {
             0%,
             100% {
-                opacity: 0.6;
+                opacity: 0.55;
             }
             50% {
                 opacity: 1;
             }
         }
-
         /* 空状态 */
         .empty-state {
             text-align: center;
@@ -730,14 +895,24 @@
             color: var(--text-muted);
             font-size: 1.1rem;
             letter-spacing: 1px;
+            grid-column: 1/-1;
         }
         .empty-state .empty-icon {
             font-size: 3rem;
             display: block;
             margin-bottom: 0.8rem;
             opacity: 0.6;
+            animation: float 3s ease-in-out infinite;
         }
-
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
         /* Toast */
         .toast-container {
             position: fixed;
@@ -764,11 +939,11 @@
             padding: 0.8rem 1.3rem;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.93rem;
             color: var(--text-primary);
             pointer-events: auto;
             animation: toastIn 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), toastOut 0.35s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
-            animation-delay: 0s, 2.2s;
+            animation-delay: 0s, 2.3s;
             max-width: 400px;
             letter-spacing: 0.5px;
             backdrop-filter: blur(10px);
@@ -806,7 +981,6 @@
                 transform: translateX(40px);
             }
         }
-
         /* 回到顶部 */
         .back-to-top {
             position: fixed;
@@ -840,10 +1014,9 @@
         .back-to-top:hover {
             background: var(--btn-hover-bg);
             color: var(--btn-hover-text);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
         }
-
         /* 模态框 */
         .modal-overlay {
             position: fixed;
@@ -860,7 +1033,7 @@
             z-index: 100;
             visibility: hidden;
             opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
+            transition: opacity 0.35s, visibility 0.35s;
         }
         .modal-overlay.active {
             visibility: visible;
@@ -872,10 +1045,14 @@
             padding: 2rem;
             width: 90%;
             max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
             border: 1px solid var(--gold-light);
             position: relative;
-            transition: background 0.4s ease;
+            transition: background 0.5s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.9) translateY(20px);
+        }
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
         }
         .modal h2 {
             text-align: center;
@@ -905,10 +1082,11 @@
             outline: none;
             color: var(--text-primary);
             transition: all var(--transition);
+            cursor: text;
         }
         .input-group input:focus {
             border-color: var(--gold-light);
-            box-shadow: 0 0 0 3px rgba(180, 150, 100, 0.12);
+            box-shadow: 0 0 0 4px rgba(180, 150, 100, 0.1);
         }
         .modal-actions {
             display: flex;
@@ -931,7 +1109,6 @@
         .close-btn:hover {
             color: #c53b3b;
         }
-
         /* 管理面板 */
         .admin-panel {
             background: var(--admin-bg);
@@ -941,7 +1118,23 @@
             padding: 1.5rem;
             border: 1px solid var(--admin-border);
             margin-top: 1rem;
-            transition: all 0.4s ease;
+            transition: all 0.5s ease;
+            animation: scrollUnroll 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        @keyframes scrollUnroll {
+            from {
+                max-height: 0;
+                opacity: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                overflow: hidden;
+            }
+            to {
+                max-height: 2000px;
+                opacity: 1;
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
         }
         .tab-buttons {
             display: flex;
@@ -963,7 +1156,7 @@
             border-bottom: 1px dashed var(--list-border);
             flex-wrap: wrap;
             gap: 0.5rem;
-            transition: border-color 0.4s ease;
+            transition: border-color 0.5s ease;
         }
         .warning {
             color: #b45f5f;
@@ -978,32 +1171,29 @@
             flex: 1 1 120px;
             min-width: 100px;
             color: var(--text-primary);
-        }
-        form {
-            display: contents;
+            cursor: text;
         }
 
-        /* 响应式优化 */
         @media (max-width: 768px) {
             .plaque {
-                padding: 0.5rem 0.8rem;
+                padding: 0.4rem 0.7rem;
                 border-width: 3px;
             }
             .plaque-title {
-                font-size: clamp(1.5rem, 5vw, 2rem);
-                letter-spacing: 3px;
+                font-size: clamp(1.3rem, 4.5vw, 1.8rem);
+                letter-spacing: 2px;
                 white-space: normal;
             }
             .search-container {
                 max-width: 100%;
             }
             .btn {
-                padding: 0.4rem 0.9rem;
-                font-size: 0.85rem;
+                padding: 0.4rem 0.85rem;
+                font-size: 0.84rem;
             }
             .site-card {
                 padding: 1rem;
-                gap: 0.8rem;
+                gap: 0.7rem;
             }
             .seal {
                 width: 42px;
@@ -1012,35 +1202,40 @@
                 font-size: 1.5rem;
             }
             .back-to-top {
-                bottom: 16px;
-                right: 16px;
-                width: 38px;
-                height: 38px;
-                font-size: 1.1rem;
+                bottom: 14px;
+                right: 14px;
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
             }
             .toast {
                 max-width: 90vw;
                 font-size: 0.85rem;
-                padding: 0.65rem 1rem;
+                padding: 0.6rem 1rem;
             }
         }
     </style>
 </head>
 <body>
+    <div class="watercolor-bg"></div>
+    <div class="stars-container" id="starsContainer"></div>
     <div class="clouds" id="cloudsContainer"></div>
+    <div class="koi-container" id="koiContainer"></div>
     <canvas id="petalCanvas"></canvas>
+    <canvas id="poemCanvas"></canvas>
     <canvas id="rippleCanvas"></canvas>
+    <canvas id="fireflyCanvas"></canvas>
+    <div class="custom-cursor" id="customCursor">
+        <span class="cursor-brush">🖌️</span>
+    </div>
 
-    <!-- Toast容器 -->
     <div class="toast-container" id="toastContainer"></div>
-
-    <!-- 回到顶部 -->
     <button class="back-to-top" id="backToTop" title="回到顶部" aria-label="回到顶部">⬆</button>
 
     <div class="main-container">
         <div class="header">
             <div class="plaque-wrapper">
-                <div class="plaque">
+                <div class="plaque" id="plaqueEl">
                     <span class="shine"></span>
                     <h1 class="plaque-title">墨韵·书签雅集</h1>
                 </div>
@@ -1054,15 +1249,12 @@
                 <button class="btn admin-btn" id="adminPanelBtn" style="display:none;">管理</button>
                 <button class="btn" id="logoutBtn" style="display:none;">登出</button>
             </div>
-            <!-- 搜索栏 -->
             <div class="search-wrapper">
                 <div class="search-container">
                     <input type="text" class="search-input" id="searchInput" placeholder="搜索书签名称或描述..." autocomplete="off">
-                    <span class="search-shortcut" id="searchShortcut">Ctrl+K</span>
                     <button class="search-clear" id="searchClear" aria-label="清除搜索">&times;</button>
                 </div>
             </div>
-            <!-- 分类筛选标签 -->
             <div class="filter-tags" id="filterTags">
                 <span class="filter-tag active" data-category="all">全部</span>
             </div>
@@ -1167,14 +1359,17 @@
             const APPLY_STORAGE_KEY = 'ink_nav_site_applications';
             const THEME_STORAGE_KEY = 'ink_nav_theme';
             const PINNED_STORAGE_KEY = 'ink_nav_pinned';
+            const STARRED_STORAGE_KEY = 'ink_nav_starred';
 
             let currentUser = null;
             let sites = [];
             let siteApplications = JSON.parse(localStorage.getItem(APPLY_STORAGE_KEY) || '[]');
             let pinnedSites = JSON.parse(localStorage.getItem(PINNED_STORAGE_KEY) || '[]');
+            let starredSites = JSON.parse(localStorage.getItem(STARRED_STORAGE_KEY) || '[]');
             let currentFilter = 'all';
             let searchQuery = '';
             let isLoading = true;
+            const isMobile = window.innerWidth < 768;
 
             const $ = (sel) => document.querySelector(sel);
             const $$ = (sel) => document.querySelectorAll(sel);
@@ -1184,29 +1379,19 @@
                 return String(text).replace(/[&<>"']/g, m => map[m]);
             }
 
-            // Toast系统
             function showToast(message, type = 'info') {
                 const container = $('#toastContainer');
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
                 const icons = { success: '✅', error: '❌', info: '💡' };
-                toast.innerHTML = `<span>${icons[type] || '💡'}</span> ${escapeHtml(message)}`;
+                toast.innerHTML = `<span>${icons[type]||'💡'}</span> ${escapeHtml(message)}`;
                 container.appendChild(toast);
-                const duration = 2600;
-                toast.style.animationDuration = '0.4s, 0.35s';
-                toast.style.animationDelay = '0s, ' + (duration / 1000 - 0.35) + 's';
-                setTimeout(() => {
-                    if (toast.parentNode) toast.remove();
-                }, duration);
+                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 2700);
             }
 
-            // API调用
             async function apiCall(url, options = {}, silent = false) {
-                const config = {
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    ...options,
-                };
+                const config = { credentials: 'include', headers: { 'Content-Type': 'application/json' },
+                    ...options };
                 if (config.body && typeof config.body === 'object') config.body = JSON.stringify(config.body);
                 try {
                     const res = await fetch(API_BASE + url, config);
@@ -1216,10 +1401,8 @@
                         throw new Error(data.error || `请求失败 (${res.status})`);
                     }
                     return await res.json();
-                } catch (e) {
-                    if (silent) return null;
-                    throw e;
-                }
+                } catch (e) { if (silent) return null;
+                    throw e; }
             }
 
             // 暗色模式
@@ -1243,83 +1426,64 @@
                 showToast(next === 'dark' ? '已切换至暗色模式 🌙' : '已切换至亮色模式 ☀️', 'info');
             }
 
-            // 获取过滤后的书签
             function getFilteredSites() {
                 let filtered = [...sites];
-
-                // 置顶排序
                 if (pinnedSites.length > 0) {
-                    const pinned = [];
-                    const unpinned = [];
+                    const pinned = [],
+                        unpinned = [];
                     filtered.forEach((site, index) => {
-                        if (pinnedSites.includes(index)) {
-                            pinned.push({ ...site, _pinned: true, _originalIndex: index });
-                        } else {
-                            unpinned.push({ ...site, _pinned: false, _originalIndex: index });
-                        }
+                        const s = { ...site, _originalIndex: index };
+                        if (pinnedSites.includes(index)) { s._pinned = true;
+                            pinned.push(s); } else { s._pinned = false;
+                            unpinned.push(s); }
                     });
                     filtered = [...pinned, ...unpinned];
                 }
-
-                // 分类筛选
-                if (currentFilter !== 'all') {
-                    filtered = filtered.filter(s => (s.category || '其他') === currentFilter);
+                if (starredSites.length > 0) {
+                    filtered.sort((a, b) => {
+                        const aStar = starredSites.includes(a._originalIndex !== undefined ? a
+                            ._originalIndex : sites.indexOf(a)) ? 1 : 0;
+                        const bStar = starredSites.includes(b._originalIndex !== undefined ? b
+                            ._originalIndex : sites.indexOf(b)) ? 1 : 0;
+                        if (a._pinned && !b._pinned) return -1;
+                        if (!a._pinned && b._pinned) return 1;
+                        return bStar - aStar;
+                    });
                 }
-
-                // 搜索过滤
+                if (currentFilter !== 'all') filtered = filtered.filter(s => (s.category || '其他') === currentFilter);
                 if (searchQuery.trim()) {
                     const q = searchQuery.trim().toLowerCase();
-                    filtered = filtered.filter(s =>
-                        (s.name || '').toLowerCase().includes(q) ||
-                        (s.desc || '').toLowerCase().includes(q) ||
-                        (s.url || '').toLowerCase().includes(q)
-                    );
+                    filtered = filtered.filter(s => (s.name || '').toLowerCase().includes(q) || (s.desc || '')
+                        .toLowerCase().includes(q) || (s.url || '').toLowerCase().includes(q));
                 }
-
                 return filtered;
             }
 
-            // 获取所有分类
             function getAllCategories() {
                 const cats = new Set();
                 sites.forEach(s => cats.add(s.category || '其他'));
                 return ['all', ...Array.from(cats).sort()];
             }
 
-            // 渲染分类标签
             function renderFilterTags() {
                 const container = $('#filterTags');
                 const categories = getAllCategories();
-                const filtered = getFilteredSites();
-                const allCount = currentFilter === 'all' && !searchQuery.trim() ? sites.length : getFilteredSites()
-                    .length;
-
                 container.innerHTML = categories.map(cat => {
                     const label = cat === 'all' ? '全部' : escapeHtml(cat);
                     const active = cat === currentFilter ? ' active' : '';
                     return `<span class="filter-tag${active}" data-category="${escapeHtml(cat)}">${label}</span>`;
                 }).join('');
-
-                // 更新计数
                 const countEl = $('#filterCount');
                 const totalFiltered = getFilteredSites().length;
-                if (searchQuery.trim() || currentFilter !== 'all') {
-                    countEl.textContent = `找到 ${totalFiltered} 个书签`;
-                } else {
-                    countEl.textContent = `共 ${sites.length} 个书签`;
-                }
-
-                // 绑定点击事件
+                countEl.textContent = (searchQuery.trim() || currentFilter !== 'all') ? `找到 ${totalFiltered} 个书签` :
+                    `共 ${sites.length} 个书签`;
                 container.querySelectorAll('.filter-tag').forEach(tag => {
-                    tag.addEventListener('click', () => {
-                        currentFilter = tag.dataset.category;
+                    tag.addEventListener('click', () => { currentFilter = tag.dataset.category;
                         renderFilterTags();
-                        renderSites();
-                    });
+                        renderSites(); });
                 });
             }
 
-            // 更新UI
             function updateUIByRole() {
                 const greeting = $('#greetingText');
                 const loginBtn = $('#loginBtn');
@@ -1328,21 +1492,16 @@
                 const adminPanel = $('#adminPanel');
                 const changeMyPassBtn = $('#changeMyPassBtn');
                 const applySiteBtn = $('#applySiteBtn');
-
                 if (currentUser) {
                     greeting.textContent =
-                        `${currentUser.role === 'admin' ? '🔰' : '📖'} ${currentUser.username}`;
+                        `${currentUser.role==='admin'?'🔰':'📖'} ${currentUser.username}`;
                     loginBtn.style.display = 'none';
                     logoutBtn.style.display = 'inline-block';
                     changeMyPassBtn.style.display = 'inline-block';
                     applySiteBtn.style.display = 'inline-block';
-                    if (currentUser.role === 'admin') {
-                        adminBtn.style.display = 'inline-block';
-                        adminPanel.style.display = 'block';
-                    } else {
-                        adminBtn.style.display = 'none';
-                        adminPanel.style.display = 'none';
-                    }
+                    if (currentUser.role === 'admin') { adminBtn.style.display = 'inline-block';
+                        adminPanel.style.display = 'block'; } else { adminBtn.style.display = 'none';
+                        adminPanel.style.display = 'none'; }
                 } else {
                     greeting.textContent = '未登录·游客';
                     loginBtn.style.display = 'inline-block';
@@ -1354,70 +1513,122 @@
                 }
                 renderSites();
                 renderFilterTags();
-                if (currentUser && currentUser.role === 'admin') {
-                    renderAdminPanels();
-                }
+                if (currentUser && currentUser.role === 'admin') renderAdminPanels();
             }
 
-            // 渲染书签
             function renderSites() {
                 const grid = $('#sitesGrid');
-
                 if (isLoading) {
                     grid.innerHTML = Array.from({ length: 6 }, () => `
-                        <div class="skeleton-card">
-                          <div class="skeleton-seal"></div>
-                          <div class="skeleton-lines">
-                            <div class="skeleton-line medium"></div>
-                            <div class="skeleton-line short"></div>
-                          </div>
-                        </div>
-                      `).join('');
+                        <div class="skeleton-card"><div class="skeleton-seal"></div><div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>`)
+                        .join('');
                     return;
                 }
-
                 const filtered = getFilteredSites();
-
                 if (filtered.length === 0) {
-                    grid.innerHTML = `
-                        <div class="empty-state" style="grid-column:1/-1;">
-                          <span class="empty-icon">📭</span>
-                          <p>${searchQuery.trim() || currentFilter !== 'all' ? '未找到匹配的书签，试试其他关键词吧' : '暂无书签，登录后可申请收录'}</p>
-                        </div>
-                      `;
+                    grid.innerHTML =
+                        `<div class="empty-state"><span class="empty-icon">📭</span><p>${searchQuery.trim()||currentFilter!=='all'?'未找到匹配的书签，试试其他关键词吧':'暂无书签，登录后可申请收录'}</p></div>`;
                     return;
                 }
-
                 grid.innerHTML = filtered.map((site) => {
-                    const isPinned = site._pinned;
-                    const originalIndex = site._originalIndex !== undefined ? site._originalIndex : sites
-                        .indexOf(site);
-                    const card = document.createElement('a');
-                    card.className = 'site-card';
-                    card.href = site.url;
-                    card.target = '_blank';
-                    card.rel = 'noopener noreferrer';
-                    card.addEventListener('click', (e) => {
-                        if (e.target.closest('.pin-indicator')) {
-                            e.preventDefault();
-                            return;
-                        }
-                        apiCall(`/api/sites/${originalIndex}/visit`, { method: 'POST' }, true).catch(
-                            () => {});
-                    });
-                    card.innerHTML = `
-                        <div class="seal">${escapeHtml(site.seal || '🔗')}</div>
-                        <div class="site-info">
-                          <div class="site-name">${isPinned ? '📌 ' : ''}${escapeHtml(site.name)}</div>
-                          <div class="site-desc">${escapeHtml(site.desc || '')}</div>
-                          <div class="site-meta">
-                            <span class="site-category">${escapeHtml(site.category || '其他')}</span>
-                            <span>👁️ ${site.visits || 0}</span>
-                          </div>
+                    const originalIndex = site._originalIndex !== undefined ? site._originalIndex : sites.indexOf(
+                        site);
+                    const isStarred = starredSites.includes(originalIndex);
+                    return `
+                    <div class="site-card" data-index="${originalIndex}" data-url="${escapeHtml(site.url)}">
+                      <div class="seal">${escapeHtml(site.seal||'🔗')}</div>
+                      <div class="site-info">
+                        <div class="site-name">${site._pinned?'📌 ':''}${escapeHtml(site.name)}</div>
+                        <div class="site-desc">${escapeHtml(site.desc||'')}</div>
+                        <div class="site-meta">
+                          <span class="site-category">${escapeHtml(site.category||'其他')}</span>
+                          <span>👁️ ${site.visits||0}</span>
                         </div>
-                      `;
-                    return card.outerHTML;
+                      </div>
+                      <button class="star-btn ${isStarred?'starred':''}" data-star-index="${originalIndex}" title="收藏">${isStarred?'⭐':'☆'}</button>
+                    </div>`;
                 }).join('');
+                // 绑定卡片事件
+                grid.querySelectorAll('.site-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('.star-btn')) return;
+                        const url = this.dataset.url;
+                        const idx = parseInt(this.dataset.index);
+                        apiCall(`/api/sites/${idx}/visit`, { method: 'POST' }, true).catch(() => {});
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                    });
+                    // 3D tilt
+                    card.addEventListener('mousemove', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateY = ((x - centerX) / centerX) * 8;
+                        const rotateX = ((centerY - y) / centerY) * 6;
+                        this.style.transform =
+                            `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+                        this.style.background = 'var(--card-bg-hover)';
+                        this.style.borderColor = 'var(--card-border-hover)';
+                        this.style.boxShadow = 'var(--shadow-card-hover)';
+                    });
+                    card.addEventListener('mouseleave', function() {
+                        this.style.transform =
+                            'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+                        this.style.background = 'var(--card-bg)';
+                        this.style.borderColor = 'var(--card-border)';
+                        this.style.boxShadow = 'var(--shadow-card)';
+                    });
+                });
+                // 星标按钮
+                grid.querySelectorAll('.star-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const idx = parseInt(this.dataset.starIndex);
+                        if (starredSites.includes(idx)) {
+                            starredSites = starredSites.filter(s => s !== idx);
+                            this.classList.remove('starred');
+                            this.textContent = '☆';
+                        } else {
+                            starredSites.push(idx);
+                            this.classList.add('starred');
+                            this.textContent = '⭐';
+                            // 粒子爆发
+                            spawnStarBurst(e.clientX, e.clientY);
+                        }
+                        localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(starredSites));
+                        renderSites();
+                    });
+                });
+            }
+
+            function spawnStarBurst(x, y) {
+                const container = document.body;
+                const colors = ['#f0c840', '#e8b830', '#ffda60', '#ffed90', '#fff'];
+                for (let i = 0; i < 14; i++) {
+                    const particle = document.createElement('div');
+                    const angle = (Math.PI * 2 / 14) * i;
+                    const dist = 30 + Math.random() * 50;
+                    const size = 3 + Math.random() * 7;
+                    particle.style.cssText = `
+                position:fixed; left:${x}px; top:${y}px; width:${size}px; height:${size}px;
+                background:${colors[Math.floor(Math.random()*colors.length)]}; border-radius:50%;
+                pointer-events:none; z-index:9998;
+                animation: starBurstParticle 0.8s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+                --dx:${Math.cos(angle)*dist}px; --dy:${Math.sin(angle)*dist}px;
+              `;
+                    container.appendChild(particle);
+                    setTimeout(() => particle.remove(), 850);
+                }
+                // 动态注入关键帧(如果不存在)
+                if (!document.getElementById('starBurstStyle')) {
+                    const style = document.createElement('style');
+                    style.id = 'starBurstStyle';
+                    style.textContent =
+                        `@keyframes starBurstParticle{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0);}}`;
+                    document.head.appendChild(style);
+                }
             }
 
             function renderAdminPanels() { renderSiteManage();
@@ -1430,23 +1641,22 @@
                     <div class="list-item">
                       <span>${escapeHtml(s.name)} - <small>${escapeHtml(s.url)}</small></span>
                       <div style="display:flex;gap:0.3rem;align-items:center;">
-                        <button class="btn icon-btn pin-toggle-btn" data-index="${i}" title="置顶/取消置顶">
-                          ${pinnedSites.includes(i) ? '📌' : '📍'}
-                        </button>
+                        <button class="btn icon-btn pin-toggle-btn" data-index="${i}" title="置顶">${pinnedSites.includes(i)?'📌':'📍'}</button>
                         <button class="btn" data-del-site="${i}">删除</button>
                       </div>
-                    </div>
-                  `).join('');
+                    </div>`).join('');
                 container.querySelectorAll('[data-del-site]').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         if (!confirm('确认删除？')) return;
                         try {
                             await apiCall(`/api/sites/${e.target.dataset.delSite}`, { method: 'DELETE' });
-                            // 同时从置顶中移除
                             const idx = parseInt(e.target.dataset.delSite);
-                            pinnedSites = pinnedSites.filter(p => p !== idx).map(p => p > idx ? p -
-                                1 : p);
+                            pinnedSites = pinnedSites.filter(p => p !== idx).map(p => p > idx ? p - 1 :
+                                p);
+                            starredSites = starredSites.filter(s => s !== idx).map(s => s > idx ? s - 1 :
+                                s);
                             localStorage.setItem(PINNED_STORAGE_KEY, JSON.stringify(pinnedSites));
+                            localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(starredSites));
                             await refreshSites();
                             showToast('网站已删除', 'success');
                         } catch (err) { showToast('删除失败: ' + err.message, 'error'); }
@@ -1455,13 +1665,10 @@
                 container.querySelectorAll('.pin-toggle-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const idx = parseInt(e.target.dataset.index);
-                        if (pinnedSites.includes(idx)) {
-                            pinnedSites = pinnedSites.filter(p => p !== idx);
-                            showToast('已取消置顶', 'info');
-                        } else {
-                            pinnedSites.push(idx);
-                            showToast('已置顶', 'success');
-                        }
+                        if (pinnedSites.includes(idx)) { pinnedSites = pinnedSites.filter(p => p !==
+                                idx);
+                            showToast('已取消置顶', 'info'); } else { pinnedSites.push(idx);
+                            showToast('已置顶', 'success'); }
                         localStorage.setItem(PINNED_STORAGE_KEY, JSON.stringify(pinnedSites));
                         renderSiteManage();
                         renderSites();
@@ -1470,130 +1677,119 @@
             }
 
             async function refreshSites() {
-                try {
-                    sites = await apiCall('/api/sites');
+                try { sites = await apiCall('/api/sites');
                     isLoading = false;
                     renderSites();
-                    renderFilterTags();
-                    if (currentUser?.role === 'admin') renderSiteManage();
-                } catch (e) {
-                    isLoading = false;
+                    renderFilterTags(); if (currentUser?.role === 'admin') renderSiteManage(); } catch (e) { isLoading =
+                        false;
                     renderSites();
-                    renderFilterTags();
-                }
+                    renderFilterTags(); }
             }
-
-            async function refreshUsersAndRender() {
-                if (!currentUser || currentUser.role !== 'admin') return;
-                try {
-                    const users = await apiCall('/api/users');
-                    renderUserList(users);
-                } catch (e) {}
-            }
+            async function refreshUsersAndRender() { if (!currentUser || currentUser.role !== 'admin') return; try { const
+                    users = await apiCall('/api/users');
+                    renderUserList(users); } catch (e) {} }
 
             function renderUserManage() { refreshUsersAndRender(); }
 
             function renderUserList(users) {
                 const container = $('#userListManage');
                 container.innerHTML = users.map(u => `
-                    <div class="list-item">
-                      <span>${escapeHtml(u.username)}</span>
-                      <div style="display:flex;gap:0.3rem;">
-                        <button class="btn change-pass-btn" data-username="${escapeHtml(u.username)}">改密</button>
-                        ${u.username !== 'zlm' ? `<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>` : ''}
-                      </div>
-                    </div>
-                  `).join('');
-                container.querySelectorAll('.del-user-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        if (!confirm('删除用户？')) return;
-                        try {
-                            await apiCall(`/api/users/${encodeURIComponent(e.target.dataset.username)}`, {
-                                method: 'DELETE' });
+                    <div class="list-item"><span>${escapeHtml(u.username)}</span><div style="display:flex;gap:0.3rem;"><button class="btn change-pass-btn" data-username="${escapeHtml(u.username)}">改密</button>${u.username!=='zlm'?`<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>`:''}</div></div>`)
+                    .join('');
+                container.querySelectorAll('.del-user-btn').forEach(btn => { btn.addEventListener('click', async (e) => { if (
+                            !confirm('删除用户？')) return; try { await apiCall(
+                            `/api/users/${encodeURIComponent(e.target.dataset.username)}`, { method: 'DELETE' });
                             refreshUsersAndRender();
-                            showToast('用户已删除', 'success');
-                        } catch (err) { showToast('删除失败: ' + err.message, 'error'); }
-                    });
-                });
-                container.querySelectorAll('.change-pass-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => openChangePassModal(e.target.dataset.username));
-                });
+                            showToast('用户已删除', 'success'); } catch (err) { showToast('删除失败: ' + err.message,
+                            'error'); } }); });
+                container.querySelectorAll('.change-pass-btn').forEach(btn => { btn.addEventListener('click', (e) =>
+                        openChangePassModal(e.target.dataset.username)); });
             }
 
-            function openChangePassModal(username) {
-                $('#changePassUser').value = username;
+            function openChangePassModal(username) { $('#changePassUser').value = username;
                 $('#changePassNew').value = '';
-                $('#changePassModal').classList.add('active');
-            }
+                $('#changePassModal').classList.add('active'); }
 
             function renderApplyManage() {
                 const container = $('#applyListManage');
-                if (!siteApplications.length) {
-                    container.innerHTML = '<p style="color:var(--text-muted);">暂无待审核的网站申请。</p>';
-                    return;
-                }
+                if (!siteApplications.length) { container.innerHTML =
+                        '<p style="color:var(--text-muted);">暂无待审核的网站申请。</p>'; return; }
                 container.innerHTML = siteApplications.map((app, idx) => `
-                    <div class="list-item">
-                      <span>${escapeHtml(app.name)} (${escapeHtml(app.url)})</span>
-                      <div>
-                        <button class="btn approve-site-btn" data-index="${idx}">通过</button>
-                        <button class="btn reject-site-btn" data-index="${idx}">拒绝</button>
-                      </div>
-                    </div>
-                  `).join('');
-                container.querySelectorAll('.approve-site-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
+                    <div class="list-item"><span>${escapeHtml(app.name)} (${escapeHtml(app.url)})</span><div><button class="btn approve-site-btn" data-index="${idx}">通过</button><button class="btn reject-site-btn" data-index="${idx}">拒绝</button></div></div>`)
+                    .join('');
+                container.querySelectorAll('.approve-site-btn').forEach(btn => { btn.addEventListener('click', async (e) => {
                         const idx = e.target.dataset.index;
-                        const app = siteApplications[idx];
-                        try {
-                            await apiCall('/api/sites', {
-                                method: 'POST',
-                                body: {
-                                    name: app.name,
-                                    url: app.url,
-                                    desc: app.desc || '',
-                                    seal: app.seal || '🔗',
-                                    category: app.category || '其他'
-                                }
-                            });
+                        const app = siteApplications[idx]; try { await apiCall('/api/sites', { method: 'POST',
+                                body: { name: app.name, url: app.url, desc: app.desc || '', seal: app
+                                    .seal || '🔗', category: app.category || '其他' } });
                             siteApplications.splice(idx, 1);
-                            localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(
-                                siteApplications));
+                            localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(siteApplications));
                             await refreshSites();
                             renderApplyManage();
-                            showToast('网站已添加并通过审核', 'success');
-                        } catch (err) { showToast('添加失败: ' + err.message, 'error'); }
-                    });
-                });
-                container.querySelectorAll('.reject-site-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const idx = e.target.dataset.index;
-                        if (confirm('拒绝该申请？')) {
-                            siteApplications.splice(idx, 1);
-                            localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(
-                                siteApplications));
+                            showToast('网站已添加并通过审核', 'success'); } catch (err) { showToast('添加失败: ' + err
+                                .message, 'error'); } }); });
+                container.querySelectorAll('.reject-site-btn').forEach(btn => { btn.addEventListener('click', (e) => { const
+                        idx = e.target.dataset.index; if (confirm('拒绝该申请？')) { siteApplications.splice(idx, 1);
+                            localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(siteApplications));
                             renderApplyManage();
-                            showToast('申请已拒绝', 'info');
-                        }
-                    });
+                            showToast('申请已拒绝', 'info'); } }); });
+            }
+            async function checkLoginStatus() { const data = await apiCall('/api/me', {}, true); if (data && data.username) {
+                    currentUser = data; } else { currentUser = null; }
+                updateUIByRole(); if (currentUser?.role === 'admin') refreshUsersAndRender(); }
+
+            // === 特效系统 ===
+
+            // 自定义光标
+            function initCustomCursor() {
+                if (isMobile) return;
+                const cursor = $('#customCursor');
+                let mouseX = 0,
+                    mouseY = 0,
+                    cursorX = 0,
+                    cursorY = 0;
+                document.addEventListener('mousemove', (e) => { mouseX = e.clientX;
+                    mouseY = e.clientY; }, { passive: true });
+                document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+                document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+                document.addEventListener('mouseover', (e) => {
+                    const el = e.target;
+                    if (el.closest('a,button,.site-card,.filter-tag,.star-btn,[role="button"]')) cursor
+                        .classList.add('pointer');
+                    else cursor.classList.remove('pointer');
                 });
-            }
-
-            async function checkLoginStatus() {
-                const data = await apiCall('/api/me', {}, true);
-                if (data && data.username) {
-                    currentUser = data;
-                } else {
-                    currentUser = null;
+                function animate() {
+                    cursorX += (mouseX - cursorX) * 0.25;
+                    cursorY += (mouseY - cursorY) * 0.25;
+                    cursor.style.left = cursorX + 'px';
+                    cursor.style.top = cursorY + 'px';
+                    requestAnimationFrame(animate);
                 }
-                updateUIByRole();
-                if (currentUser?.role === 'admin') refreshUsersAndRender();
+                animate();
             }
 
-            // 初始化云朵
+            // 星光
+            function initStars() {
+                const container = $('#starsContainer');
+                const count = isMobile ? 25 : 55;
+                let html = '';
+                for (let i = 0; i < count; i++) {
+                    const size = 1 + Math.random() * 2.5;
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const dur = 2 + Math.random() * 5;
+                    const delay = Math.random() * 6;
+                    html +=
+                        `<div class="star" style="left:${x}%;top:${y}%;width:${size}px;height:${size}px;--dur:${dur}s;--delay:${delay}s;"></div>`;
+                }
+                container.innerHTML = html;
+            }
+
+            // 云层
             function initClouds() {
                 const container = $('#cloudsContainer');
-                for (let i = 0; i < 6; i++) {
+                const count = isMobile ? 3 : 6;
+                for (let i = 0; i < count; i++) {
                     const cloud = document.createElement('div');
                     cloud.className = 'cloud';
                     const size = 80 + Math.random() * 100;
@@ -1606,209 +1802,351 @@
                 }
             }
 
-            // 初始化花瓣
+            // 花瓣
             function initPetals() {
                 const canvas = $('#petalCanvas');
                 const ctx = canvas.getContext('2d');
                 let width, height;
-                const isMobile = window.innerWidth < 768;
                 const petals = [];
-                const petalCount = isMobile ? 18 : 35;
+                const count = isMobile ? 14 : 30;
 
-                function resize() {
-                    width = window.innerWidth;
+                function resize() { width = window.innerWidth;
                     height = window.innerHeight;
                     canvas.width = width;
-                    canvas.height = height;
-                }
+                    canvas.height = height; }
                 window.addEventListener('resize', resize);
                 resize();
-
                 class Petal {
                     constructor() { this.reset(true); }
-                    reset(initial = false) {
-                        this.x = Math.random() * width;
-                        this.y = initial ? Math.random() * height : -20;
-                        this.size = 8 + Math.random() * 14;
-                        this.speedY = 1 + Math.random() * 2.5;
-                        this.speedX = 0.3 + Math.random() * 0.8;
+                    reset(initial = false) { this.x = Math.random() * width;
+                        this.y = initial ? Math.random() * height : -25;
+                        this.size = 7 + Math.random() * 13;
+                        this.speedY = 0.8 + Math.random() * 2.2;
+                        this.speedX = 0.2 + Math.random() * 0.7;
                         this.rotation = Math.random() * Math.PI * 2;
-                        this.rotSpeed = (Math.random() - 0.5) * 0.02;
-                        this.opacity = 0.7 + Math.random() * 0.3;
-                        this.color =
-                            `rgba(${220 + Math.random()*35}, ${140 + Math.random()*40}, ${150 + Math.random()*30}, ${this.opacity})`;
-                    }
-                    update() {
-                        this.y += this.speedY;
-                        this.x += Math.sin(this.y * 0.02) * this.speedX;
-                        this.rotation += this.rotSpeed;
-                        if (this.y > height + 20) this.reset();
-                    }
-                    draw(ctx) {
-                        ctx.save();
+                        this.rotSpeed = (Math.random() - 0.5) * 0.018;
+                        this.opacity = 0.6 + Math.random() * 0.35;
+                        this.hue = 340 + Math.random() * 30;
+                        this.sat = 40 + Math.random() * 40;
+                        this.light = 60 + Math.random() * 25; }
+                    update() { this.y += this.speedY;
+                        this.x += Math.sin(this.y * 0.018) * this.speedX;
+                        this.rotation += this.rotSpeed; if (this.y > height + 30) this.reset(); }
+                    draw(ctx) { ctx.save();
                         ctx.translate(this.x, this.y);
                         ctx.rotate(this.rotation);
-                        ctx.fillStyle = this.color;
+                        ctx.fillStyle =
+                            `hsla(${this.hue},${this.sat}%,${this.light}%,${this.opacity})`;
                         ctx.beginPath();
-                        ctx.ellipse(0, 0, this.size * 0.6, this.size * 0.3, 0, 0, Math.PI * 2);
+                        ctx.ellipse(0, 0, this.size * 0.55, this.size * 0.28, 0, 0, Math.PI * 2);
                         ctx.fill();
                         ctx.beginPath();
-                        ctx.ellipse(0, 0, this.size * 0.3, this.size * 0.6, 0, 0, Math.PI * 2);
+                        ctx.ellipse(0, 0, this.size * 0.28, this.size * 0.55, 0, 0, Math.PI * 2);
                         ctx.fill();
-                        ctx.restore();
-                    }
+                        ctx.restore(); }
                 }
-                for (let i = 0; i < petalCount; i++) petals.push(new Petal());
+                for (let i = 0; i < count; i++) petals.push(new Petal());
 
-                function animate() {
-                    ctx.clearRect(0, 0, width, height);
+                function animate() { ctx.clearRect(0, 0, width, height);
                     petals.forEach(p => { p.update();
                         p.draw(ctx); });
-                    requestAnimationFrame(animate);
-                }
+                    requestAnimationFrame(animate); }
                 animate();
             }
 
-            // 初始化涟漪
+            // 诗词飘落
+            function initPoems() {
+                const canvas = $('#poemCanvas');
+                const ctx = canvas.getContext('2d');
+                let width, height;
+                const poems = [
+                    '静', '思', '墨', '韵', '雅', '书', '画', '禅', '道', '云', '风', '月', '山', '水', '花', '竹', '兰',
+                    '梅',
+                    '清', '幽', '淡', '远', '逸', '神', '妙', '趣', '真', '善', '美', '和', '敬', '寂', '空', '灵'
+                ];
+                const items = [];
+                const count = isMobile ? 8 : 20;
+
+                function resize() { width = window.innerWidth;
+                    height = window.innerHeight;
+                    canvas.width = width;
+                    canvas.height = height; }
+                window.addEventListener('resize', resize);
+                resize();
+                class PoemChar {
+                    constructor() { this.reset(true); }
+                    reset(initial = false) {
+                        this.x = Math.random() * width;
+                        this.y = initial ? Math.random() * height : -40;
+                        this.char = poems[Math.floor(Math.random() * poems.length)];
+                        this.size = 14 + Math.random() * 22;
+                        this.speedY = 0.3 + Math.random() * 0.9;
+                        this.speedX = (Math.random() - 0.5) * 0.35;
+                        this.opacity = 0.35 + Math.random() * 0.4;
+                        this.wobble = Math.random() * Math.PI * 2;
+                        this.wobbleSpeed = 0.01 + Math.random() * 0.03;
+                    }
+                    update() {
+                        this.y += this.speedY;
+                        this.wobble += this.wobbleSpeed;
+                        this.x += Math.sin(this.wobble) * this.speedX;
+                        if (this.y > height + 30) this.reset();
+                    }
+                    draw(ctx) {
+                        ctx.save();
+                        ctx.font = `${this.size}px 'Ma Shan Zheng','KaiTi','楷体',serif`;
+                        ctx.fillStyle = `rgba(80,50,30,${this.opacity})`;
+                        const theme = document.documentElement.getAttribute('data-theme');
+                        if (theme === 'dark') ctx.fillStyle = `rgba(200,180,150,${this.opacity})`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText(this.char, this.x, this.y);
+                        ctx.restore();
+                    }
+                }
+                for (let i = 0; i < count; i++) items.push(new PoemChar());
+
+                function animate() { ctx.clearRect(0, 0, width, height);
+                    items.forEach(p => { p.update();
+                        p.draw(ctx); });
+                    requestAnimationFrame(animate); }
+                animate();
+            }
+
+            // 涟漪
             function initRipples() {
                 const canvas = $('#rippleCanvas');
                 const ctx = canvas.getContext('2d');
                 let width, height;
                 const ripples = [];
-                const maxRipples = 15;
+                const maxRipples = 18;
 
-                function resize() {
-                    width = window.innerWidth;
+                function resize() { width = window.innerWidth;
                     height = window.innerHeight;
                     canvas.width = width;
-                    canvas.height = height;
-                }
+                    canvas.height = height; }
                 window.addEventListener('resize', resize);
                 resize();
 
                 function addRipple(x, y) {
-                    ripples.push({
-                        x,
-                        y,
-                        radius: 2,
-                        maxRadius: 50 + Math.random() * 80,
-                        opacity: 0.7,
-                        speed: 0.8 + Math.random() * 0.6
-                    });
+                    ripples.push({ x, y, radius: 2, maxRadius: 40 + Math.random() * 70, opacity: 0.65, speed: 0.7 + Math
+                            .random() * 0.7, hue: 25 + Math.random() * 20 });
                     if (ripples.length > maxRipples) ripples.shift();
                 }
-
                 window.addEventListener('click', (e) => addRipple(e.clientX, e.clientY));
-                window.addEventListener('touchstart', (e) => {
-                    if (e.touches.length === 1) addRipple(e.touches[0].clientX, e.touches[0].clientY);
-                }, { passive: true });
+                window.addEventListener('touchstart', (e) => { if (e.touches.length === 1) addRipple(e.touches[0].clientX,
+                        e.touches[0].clientY); }, { passive: true });
 
                 function drawRipple(ctx, r) {
-                    const gradient = ctx.createRadialGradient(r.x, r.y, r.radius * 0.1, r.x, r.y, r.radius);
-                    gradient.addColorStop(0, `rgba(20, 15, 10, ${r.opacity})`);
-                    gradient.addColorStop(0.4, `rgba(40, 30, 20, ${r.opacity * 0.7})`);
-                    gradient.addColorStop(0.7, `rgba(80, 60, 40, ${r.opacity * 0.3})`);
-                    gradient.addColorStop(1, `rgba(120, 90, 60, 0)`);
+                    const gradient = ctx.createRadialGradient(r.x, r.y, r.radius * 0.05, r.x, r.y, r.radius);
+                    gradient.addColorStop(0, `rgba(30,20,12,${r.opacity})`);
+                    gradient.addColorStop(0.35, `rgba(50,35,22,${r.opacity*0.65})`);
+                    gradient.addColorStop(0.7, `rgba(90,65,40,${r.opacity*0.25})`);
+                    gradient.addColorStop(1, `rgba(140,110,70,0)`);
                     ctx.fillStyle = gradient;
                     ctx.beginPath();
                     ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
                     ctx.fill();
+                    // 金色光环
+                    ctx.strokeStyle = `rgba(180,150,100,${r.opacity*0.35})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, r.radius * 0.85, 0, Math.PI * 2);
+                    ctx.stroke();
                 }
 
-                function animate() {
-                    ctx.clearRect(0, 0, width, height);
-                    for (let i = ripples.length - 1; i >= 0; i--) {
-                        const r = ripples[i];
+                function animate() { ctx.clearRect(0, 0, width, height); for (let i = ripples.length - 1; i >= 0; i--) { const
+                            r = ripples[i];
                         r.radius += r.speed;
-                        r.opacity -= 0.008;
-                        if (r.opacity <= 0 || r.radius > r.maxRadius) ripples.splice(i, 1);
-                        else drawRipple(ctx, r);
-                    }
-                    requestAnimationFrame(animate);
-                }
+                        r.opacity -= 0.007; if (r.opacity <= 0 || r.radius > r.maxRadius) ripples.splice(i, 1); else
+                            drawRipple(ctx, r); }
+                    requestAnimationFrame(animate); }
                 animate();
+            }
+
+            // 萤火虫
+            function initFireflies() {
+                const canvas = $('#fireflyCanvas');
+                const ctx = canvas.getContext('2d');
+                let width, height;
+                const fireflies = [];
+                const count = isMobile ? 10 : 25;
+                let mouseX = -200,
+                    mouseY = -200;
+
+                function resize() { width = window.innerWidth;
+                    height = window.innerHeight;
+                    canvas.width = width;
+                    canvas.height = height; }
+                window.addEventListener('resize', resize);
+                resize();
+                document.addEventListener('mousemove', (e) => { mouseX = e.clientX;
+                    mouseY = e.clientY; }, { passive: true });
+                document.addEventListener('touchmove', (e) => { if (e.touches.length === 1) { mouseX = e.touches[0]
+                        .clientX;
+                        mouseY = e.touches[0].clientY; } }, { passive: true });
+
+                class Firefly {
+                    constructor() { this.reset(); }
+                    reset() {
+                        this.x = Math.random() * width;
+                        this.y = Math.random() * height;
+                        this.targetX = this.x;
+                        this.targetY = this.y;
+                        this.size = 2 + Math.random() * 4;
+                        this.glowSize = this.size * 4 + Math.random() * 10;
+                        this.opacity = 0.3 + Math.random() * 0.55;
+                        this.phase = Math.random() * Math.PI * 2;
+                        this.speed = 0.3 + Math.random() * 0.7;
+                        this.changeTargetTime = 0;
+                    }
+                    update() {
+                        this.changeTargetTime--;
+                        if (this.changeTargetTime <= 0) {
+                            this.targetX = this.x + (Math.random() - 0.5) * 180;
+                            this.targetY = this.y + (Math.random() - 0.5) * 140;
+                            this.targetX = Math.max(10, Math.min(width - 10, this.targetX));
+                            this.targetY = Math.max(10, Math.min(height - 10, this.targetY));
+                            // 偶尔靠近鼠标
+                            if (Math.random() < 0.25 && mouseX > 0) {
+                                this.targetX = mouseX + (Math.random() - 0.5) * 100;
+                                this.targetY = mouseY + (Math.random() - 0.5) * 80;
+                            }
+                            this.changeTargetTime = 40 + Math.random() * 80;
+                        }
+                        this.x += (this.targetX - this.x) * 0.02 * this.speed;
+                        this.y += (this.targetY - this.y) * 0.02 * this.speed;
+                        this.phase += 0.03;
+                        this.opacity = 0.3 + Math.sin(this.phase) * 0.3;
+                    }
+                    draw(ctx) {
+                        const glow = ctx.createRadialGradient(this.x, this.y, this.size * 0.2, this.x, this.y, this
+                            .glowSize);
+                        glow.addColorStop(0, `rgba(255,230,150,${this.opacity})`);
+                        glow.addColorStop(0.3, `rgba(240,200,100,${this.opacity*0.7})`);
+                        glow.addColorStop(0.7, `rgba(200,160,60,${this.opacity*0.2})`);
+                        glow.addColorStop(1, 'rgba(180,140,50,0)');
+                        ctx.fillStyle = glow;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.glowSize, 0, Math.PI * 2);
+                        ctx.fill();
+                        // 亮点
+                        ctx.fillStyle = `rgba(255,255,220,${this.opacity+0.15})`;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 0.7, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                for (let i = 0; i < count; i++) fireflies.push(new Firefly());
+
+                function animate() { ctx.clearRect(0, 0, width, height);
+                    fireflies.forEach(f => { f.update();
+                        f.draw(ctx); });
+                    requestAnimationFrame(animate); }
+                animate();
+            }
+
+            // 锦鲤
+            function initKoi() {
+                const container = $('#koiContainer');
+                const koi = document.createElement('div');
+                koi.style.cssText = `
+              position:absolute; font-size:${isMobile?'28px':'40px'}; pointer-events:none;
+              opacity:0; transition:opacity 1.5s ease;
+              filter:drop-shadow(0 3px 8px rgba(0,0,0,0.25));
+              animation: koiSwim var(--swim-dur,18s) linear infinite;
+              left:-80px; top:var(--swim-y,40%);
+            `;
+                koi.textContent = '🐟';
+                container.appendChild(koi);
+
+                function resetKoi() {
+                    const y = 15 + Math.random() * 65;
+                    const dur = 14 + Math.random() * 22;
+                    koi.style.setProperty('--swim-y', y + '%');
+                    koi.style.setProperty('--swim-dur', dur + 's');
+                    koi.style.opacity = '0';
+                    setTimeout(() => { koi.style.opacity = '0.7'; }, 600);
+                }
+                if (!document.getElementById('koiSwimStyle')) {
+                    const style = document.createElement('style');
+                    style.id = 'koiSwimStyle';
+                    style.textContent =
+                        `@keyframes koiSwim{0%{left:-80px;transform:scaleX(1);}48%{left:105vw;transform:scaleX(1);}52%{left:105vw;transform:scaleX(-1);}100%{left:-80px;transform:scaleX(-1);}}`;
+                    document.head.appendChild(style);
+                }
+                resetKoi();
+                setInterval(resetKoi, 20000 + Math.random() * 15000);
             }
 
             // 回到顶部
             function initBackToTop() {
                 const btn = $('#backToTop');
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 400) {
-                        btn.classList.add('visible');
-                    } else {
-                        btn.classList.remove('visible');
-                    }
-                }, { passive: true });
-                btn.addEventListener('click', () => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.addEventListener('scroll', () => { if (window.scrollY > 400) btn.classList.add('visible');
+                    else btn.classList.remove('visible'); }, { passive: true });
+                btn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+            }
+
+            // 牌匾3D交互
+            function initPlaque3D() {
+                const plaque = $('#plaqueEl');
+                if (!plaque || isMobile) return;
+                plaque.addEventListener('mousemove', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const rx = ((y / rect.height) - 0.5) * 8;
+                    const ry = ((x / rect.width) - 0.5) * 6;
+                    this.style.transform = `perspective(400px) rotateX(${-rx}deg) rotateY(${ry}deg) translateY(-3px)`;
+                });
+                plaque.addEventListener('mouseleave', function() {
+                    this.style.transform = 'perspective(400px) rotateX(0deg) rotateY(0deg) translateY(0px)';
                 });
             }
 
             // 绑定事件
             function bindEvents() {
-                // 暗色模式切换
                 $('#themeToggle').addEventListener('click', toggleTheme);
-
-                // 搜索
                 const searchInput = $('#searchInput');
                 const searchClear = $('#searchClear');
                 let searchDebounce;
-
                 searchInput.addEventListener('input', () => {
                     clearTimeout(searchDebounce);
                     searchDebounce = setTimeout(() => {
                         searchQuery = searchInput.value;
-                        if (searchQuery.trim()) {
-                            searchClear.classList.add('visible');
-                        } else {
-                            searchClear.classList.remove('visible');
-                        }
+                        searchClear.classList.toggle('visible', !!searchQuery.trim());
                         renderFilterTags();
                         renderSites();
                     }, 200);
                 });
-                searchClear.addEventListener('click', () => {
-                    searchInput.value = '';
+                searchClear.addEventListener('click', () => { searchInput.value = '';
                     searchQuery = '';
                     searchClear.classList.remove('visible');
                     renderFilterTags();
                     renderSites();
-                    searchInput.focus();
-                });
-
-                // 快捷键
+                    searchInput.focus(); });
                 document.addEventListener('keydown', (e) => {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                        e.preventDefault();
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault();
                         searchInput.focus();
-                        searchInput.select();
-                    }
-                    if (e.key === 'Escape' && document.activeElement === searchInput) {
-                        searchInput.value = '';
+                        searchInput.select(); }
+                    if (e.key === 'Escape' && document.activeElement === searchInput) { searchInput.value = '';
                         searchQuery = '';
                         searchClear.classList.remove('visible');
                         renderFilterTags();
                         renderSites();
-                        searchInput.blur();
-                    }
-                    // 按 / 快速聚焦搜索
-                    if (e.key === '/' && document.activeElement === document.body && !e.target.closest(
-                            'input') && !e.target.closest('textarea')) {
-                        e.preventDefault();
-                        searchInput.focus();
-                    }
+                        searchInput.blur(); }
+                    if (e.key === '/' && document.activeElement === document.body && !e.target.closest('input') && !e
+                        .target.closest('textarea')) { e.preventDefault();
+                        searchInput.focus(); }
                 });
-
-                // 登录
                 $('#loginBtn').addEventListener('click', () => $('#loginModal').classList.add('active'));
                 $('#closeLoginModal').addEventListener('click', () => $('#loginModal').classList.remove('active'));
                 $('#submitLogin').addEventListener('click', async () => {
-                    const username = $('#loginUsername').value.trim();
-                    const password = $('#loginPassword').value;
-                    if (!username || !password) return showToast('请输入账号和密码', 'error');
+                    const u = $('#loginUsername').value.trim();
+                    const p = $('#loginPassword').value;
+                    if (!u || !p) return showToast('请输入账号和密码', 'error');
                     try {
-                        const data = await apiCall('/api/login', { method: 'POST', body: { username,
-                                password } });
+                        const data = await apiCall('/api/login', { method: 'POST', body: { username: u,
+                            password: p } });
                         currentUser = { username: data.username, role: data.role };
                         $('#loginModal').classList.remove('active');
                         updateUIByRole();
@@ -1816,158 +2154,112 @@
                         showToast(`登录成功，欢迎 ${data.username}`, 'success');
                     } catch (err) { showToast('登录失败: ' + err.message, 'error'); }
                 });
-
-                $('#logoutBtn').addEventListener('click', async () => {
-                    await apiCall('/api/logout', { method: 'POST' });
+                $('#logoutBtn').addEventListener('click', async () => { await apiCall('/api/logout', { method: 'POST' });
                     currentUser = null;
                     updateUIByRole();
-                    showToast('已登出', 'info');
-                });
-
-                // 管理员面板切换
-                $('#adminPanelBtn').addEventListener('click', () => {
-                    const panel = $('#adminPanel');
-                    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-                });
-
-                // 选项卡
-                $$('.tab-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        $$('.tab-btn').forEach(b => b.classList.remove('active'));
+                    showToast('已登出', 'info'); });
+                $('#adminPanelBtn').addEventListener('click', () => { const panel = $('#adminPanel');
+                    panel.style.display = panel.style.display === 'none' ? 'block' : 'none'; });
+                $$('.tab-btn').forEach(btn => { btn.addEventListener('click', function() { $$('.tab-btn').forEach(b => b
+                            .classList.remove('active'));
                         this.classList.add('active');
                         $$('.tab-content').forEach(c => c.classList.remove('active'));
-                        $('#' + this.dataset.tab).classList.add('active');
-                    });
-                });
-
-                // 管理员添加网站
+                        $('#' + this.dataset.tab).classList.add('active'); }); });
                 $('#addSiteBtn').addEventListener('click', async () => {
                     const name = $('#newSiteName').value.trim();
                     const url = $('#newSiteUrl').value.trim();
                     if (!name || !url) return showToast('名称和网址必填', 'error');
                     try {
-                        await apiCall('/api/sites', {
-                            method: 'POST',
-                            body: {
-                                name,
-                                url,
-                                desc: $('#newSiteDesc').value.trim(),
-                                seal: $('#newSiteSeal').value.trim() || '🔗',
-                                category: $('#newSiteCat').value.trim() || '其他'
-                            }
-                        });
-                        ['newSiteName', 'newSiteUrl', 'newSiteDesc', 'newSiteSeal', 'newSiteCat'].forEach(
-                            id => $('#' + id).value = '');
+                        await apiCall('/api/sites', { method: 'POST', body: { name, url, desc: $('#newSiteDesc')
+                                    .value.trim(), seal: $('#newSiteSeal').value.trim() || '🔗',
+                                category: $('#newSiteCat').value.trim() || '其他' } });
+                        ['newSiteName', 'newSiteUrl', 'newSiteDesc', 'newSiteSeal', 'newSiteCat'].forEach(id => $('#' +
+                            id).value = '');
                         await refreshSites();
                         showToast('网站已添加', 'success');
                     } catch (err) { showToast(err.message, 'error'); }
                 });
-
-                // 管理员添加用户
                 $('#addUserBtn').addEventListener('click', async () => {
-                    const username = $('#newUsername').value.trim();
-                    const password = $('#newUserPass').value;
-                    if (!username || !password) return showToast('用户名和密码不能为空', 'error');
-                    try {
-                        await apiCall('/api/users', { method: 'POST', body: { username, password } });
+                    const u = $('#newUsername').value.trim();
+                    const p = $('#newUserPass').value;
+                    if (!u || !p) return showToast('用户名和密码不能为空', 'error');
+                    try { await apiCall('/api/users', { method: 'POST', body: { username: u, password: p } });
                         $('#newUsername').value = '';
                         $('#newUserPass').value = '';
                         refreshUsersAndRender();
-                        showToast('用户已添加', 'success');
-                    } catch (err) { showToast(err.message, 'error'); }
+                        showToast('用户已添加', 'success'); } catch (err) { showToast(err.message, 'error'); }
                 });
-
-                // 管理员批量改密
                 $('#submitChangePass').addEventListener('click', async () => {
                     const username = $('#changePassUser').value;
-                    const newPass = $('#changePassNew').value;
-                    if (!newPass) return showToast('请输入新密码', 'error');
-                    if (username === 'zlm') { showToast('修改主管理员密码需要后端专用接口。', 'error');
-                        return; }
+                    const np = $('#changePassNew').value;
+                    if (!np) return showToast('请输入新密码', 'error');
+                    if (username === 'zlm') { showToast('修改主管理员密码需要后端专用接口。', 'error'); return; }
                     if (!confirm(`将通过删除并重建用户"${username}"来修改密码，继续？`)) return;
-                    try {
-                        await apiCall(`/api/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
-                        await apiCall('/api/users', { method: 'POST', body: { username, password: newPass } });
+                    try { await apiCall(`/api/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
+                        await apiCall('/api/users', { method: 'POST', body: { username, password: np } });
                         showToast('密码已修改', 'success');
                         $('#changePassModal').classList.remove('active');
-                        refreshUsersAndRender();
-                    } catch (err) { showToast('操作失败: ' + err.message, 'error'); }
+                        refreshUsersAndRender(); } catch (err) { showToast('操作失败: ' + err.message, 'error'); }
                 });
                 $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove(
-                    'active'));
-
-                // 成员自助改密
-                $('#changeMyPassBtn').addEventListener('click', () => {
-                    $('#selfOldPass').value = '';
+                'active'));
+                $('#changeMyPassBtn').addEventListener('click', () => { $('#selfOldPass').value = '';
                     $('#selfNewPass').value = '';
-                    $('#selfChangePassModal').classList.add('active');
-                });
-                $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList
-                    .remove('active'));
+                    $('#selfChangePassModal').classList.add('active'); });
+                $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList.remove(
+                    'active'));
                 $('#submitSelfChangePass').addEventListener('click', async () => {
-                    const oldPass = $('#selfOldPass').value;
-                    const newPass = $('#selfNewPass').value;
-                    if (!oldPass || !newPass) return showToast('请输入旧密码和新密码', 'error');
-                    if (newPass.length < 6) return showToast('新密码长度至少6位', 'error');
-                    try {
-                        await apiCall('/api/me/password', { method: 'PUT', body: { oldPassword: oldPass,
-                                newPassword: newPass } });
+                    const op = $('#selfOldPass').value;
+                    const np = $('#selfNewPass').value;
+                    if (!op || !np) return showToast('请输入旧密码和新密码', 'error');
+                    if (np.length < 6) return showToast('新密码长度至少6位', 'error');
+                    try { await apiCall('/api/me/password', { method: 'PUT', body: { oldPassword: op,
+                            newPassword: np } });
                         showToast('密码修改成功', 'success');
-                        $('#selfChangePassModal').classList.remove('active');
-                    } catch (err) { showToast('修改失败: ' + err.message, 'error'); }
+                        $('#selfChangePassModal').classList.remove('active'); } catch (err) { showToast('修改失败: ' + err
+                            .message, 'error'); }
                 });
-
-                // 网站申请
-                $('#applySiteBtn').addEventListener('click', () => {
-                    $('#applyName').value = '';
+                $('#applySiteBtn').addEventListener('click', () => { $('#applyName').value = '';
                     $('#applyUrl').value = '';
                     $('#applyDesc').value = '';
                     $('#applySeal').value = '';
                     $('#applyCat').value = '';
-                    $('#applyModal').classList.add('active');
-                });
+                    $('#applyModal').classList.add('active'); });
                 $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
                 $('#submitApply').addEventListener('click', () => {
                     const name = $('#applyName').value.trim();
                     const url = $('#applyUrl').value.trim();
                     if (!name || !url) return showToast('网站名称和网址为必填项', 'error');
-                    siteApplications.push({
-                        name,
-                        url,
-                        desc: $('#applyDesc').value.trim(),
-                        seal: $('#applySeal').value.trim() || '🔗',
-                        category: $('#applyCat').value.trim() || '其他'
-                    });
+                    siteApplications.push({ name, url, desc: $('#applyDesc').value.trim(), seal: $('#applySeal').value
+                            .trim() || '🔗', category: $('#applyCat').value.trim() || '其他' });
                     localStorage.setItem(APPLY_STORAGE_KEY, JSON.stringify(siteApplications));
                     showToast('申请已提交，请等待管理员审核', 'success');
                     $('#applyModal').classList.remove('active');
                 });
-
-                // 点击遮罩关闭模态框
-                window.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
-                });
+                window.addEventListener('click', (e) => { if (e.target.classList.contains('modal-overlay')) e.target
+                        .classList.remove('active'); });
             }
 
             async function init() {
                 initTheme();
+                initStars();
                 initClouds();
                 initPetals();
+                initPoems();
                 initRipples();
+                initFireflies();
+                initKoi();
+                initCustomCursor();
                 initBackToTop();
+                initPlaque3D();
                 bindEvents();
-                try {
-                    sites = await apiCall('/api/sites');
-                    isLoading = false;
-                } catch (e) {
-                    sites = [];
-                    isLoading = false;
-                }
+                try { sites = await apiCall('/api/sites');
+                    isLoading = false; } catch (e) { sites = [];
+                    isLoading = false; }
                 await checkLoginStatus();
                 renderSites();
                 renderFilterTags();
             }
-
             init();
         })();
     </script>
