@@ -1,861 +1,630 @@
-(function() {
-  const API_BASE = 'https://myzlm.serveousercontent.com';
-  const APPLY_STORAGE_KEY = 'ink_nav_site_applications';
-  const THEME_STORAGE_KEY = 'ink_nav_theme';
-  const PINNED_STORAGE_KEY = 'ink_nav_pinned';
-  const STARRED_STORAGE_KEY = 'ink_nav_starred';
+// ============================================================
+//  极速墨韵后端（权限：owner / admin / member）
+//  安全增强：禁止通过 API 创建 owner 账号
+//  运行：node server.js
+// ============================================================
 
-  let currentUser = null;
-  let sites = [];
-  let siteApplications = JSON.parse(localStorage.getItem(APPLY_STORAGE_KEY) || '[]');
-  let pinnedSites = JSON.parse(localStorage.getItem(PINNED_STORAGE_KEY) || '[]');
-  let starredSites = JSON.parse(localStorage.getItem(STARRED_STORAGE_KEY) || '[]');
-  let currentFilter = 'all';
-  let searchQuery = '';
-  let isLoading = true;
-  const isMobile = window.innerWidth < 768;
+const express = require('express');
+const session = require('express-session');
+const cors = require('cors');
+const fs = require('fs');
+const fsp = fs.promises;
+const path = require('path');
+const crypto = require('crypto');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const bcrypt = require('bcrypt');
 
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => document.querySelectorAll(sel);
+const app = express();
+const PORT = process.env.PORT || 3001;
 
-  function escapeHtml(text) {
-    const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
-    return String(text).replace(/[&<>"']/g, m => map[m]);
+// ---------- 数据文件路径 ----------
+const DATA_DIR = __dirname;
+const SITES_FILE = path.join(DATA_DIR, 'data.json');
+const ARTICLES_FILE = path.join(DATA_DIR, 'articles.json');
+const APPLICATIONS_FILE = path.join(DATA_DIR, 'article_applications.json');
+const QUESTIONS_FILE = path.join(DATA_DIR, 'questions.json');
+const USERS_FILE = path.join(DATA_DIR, 'users.json');
+const DELETE_REQUESTS_FILE = path.join(DATA_DIR, 'delete_requests.json');
+
+const DAILY_APPLY_LIMIT = 3;
+
+// ==================== 全内存数据存储 ====================
+let DB = {
+  sites: [],
+  articles: [],
+  applications: [],
+  questions: [],
+  users: {},
+  deleteRequests: []
+};
+
+// 异步写入队列
+const writeQueue = {};
+function scheduleWrite(file, data) {
+  if (!writeQueue[file]) writeQueue[file] = Promise.resolve();
+  writeQueue[file] = writeQueue[file].then(() => fsp.writeFile(file, JSON.stringify(data, null, 2), 'utf-8'));
+  writeQueue[file].catch(e => console.error(`写入 ${file} 失败:`, e));
+}
+
+async function loadAllData() {
+  async function readIfExists(file, fallback) {
+    try { return JSON.parse(await fsp.readFile(file, 'utf-8')); }
+    catch { return fallback; }
+  }
+  const [sites, articles, applications, questions, users, deleteRequests] = await Promise.all([
+    readIfExists(SITES_FILE, []),
+    readIfExists(ARTICLES_FILE, []),
+    readIfExists(APPLICATIONS_FILE, []),
+    readIfExists(QUESTIONS_FILE, []),
+    readIfExists(USERS_FILE, { zlm: { password: 'zlm20130503', role: 'admin' } }),
+    readIfExists(DELETE_REQUESTS_FILE, [])
+  ]);
+  DB.sites = sites;
+  DB.articles = articles;
+  DB.applications = applications;
+  DB.questions = questions;
+  DB.users = users;
+  DB.deleteRequests = deleteRequests;
+  console.log('📂 数据已全部加载到内存');
+}
+
+// 密码升级为 bcrypt
+async function upgradePasswords() {
+  let modified = false;
+  for (const [username, user] of Object.entries(DB.users)) {
+    if (!user.password.startsWith('$2b$')) {
+      console.log(`🔐 正在将用户 ${username} 的明文密码升级为哈希...`);
+      const hash = await bcrypt.hash(user.password, 10);
+      DB.users[username].password = hash;
+      modified = true;
+    }
+  }
+  if (modified) {
+    scheduleWrite(USERS_FILE, DB.users);
+    console.log('✅ 所有密码已升级为 bcrypt 哈希');
+  }
+}
+
+// 角色升级：将原 admin 角色全部转为 owner（一次性）
+function upgradeRoles() {
+  let modified = false;
+  for (const [username, user] of Object.entries(DB.users)) {
+    if (user.role === 'admin') {
+      console.log(`🔄 将用户 ${username} 的角色从 admin 升级为 owner`);
+      user.role = 'owner';
+      modified = true;
+    }
+  }
+  if (modified) {
+    scheduleWrite(USERS_FILE, DB.users);
+    console.log('✅ 所有 admin 已升级为 owner');
+  }
+}
+
+// 确保至少有一个 owner 账号（zlm）
+function ensureOwner() {
+  if (!DB.users.zlm) {
+    const hash = bcrypt.hashSync('zlm20130503', 10);
+    DB.users.zlm = { password: hash, role: 'owner' };
+    scheduleWrite(USERS_FILE, DB.users);
+    console.log('👤 已创建默认所有者账户 zlm');
+  } else if (DB.users.zlm.role !== 'owner') {
+    DB.users.zlm.role = 'owner';
+    scheduleWrite(USERS_FILE, DB.users);
+    console.log('🔧 已将 zlm 角色修正为 owner');
+  }
+}
+
+// ==================== 中间件 ====================
+app.set('trust proxy', 1);
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+app.use(compression());
+app.use(express.json({ limit: '1mb' }));
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','X-Requested-With']
+}));
+app.options('*', cors());
+
+// ---------- Session 配置 ----------
+const sessionMiddleware = session({
+  secret: 'ink-blog-secret-2025',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true,
+    sameSite: 'none',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000
+  }
+});
+app.use(sessionMiddleware);
+
+// 全局限速
+app.use('/api', rateLimit({ windowMs: 60*1000, max: 150, message: { error:'请求太频繁' } }));
+
+// 登录限流
+const loginLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 10,
+  message: { error: '登录尝试过多，请5分钟后重试' },
+  skip: (req) => {
+    const localIPs = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
+    if (localIPs.includes(req.ip)) return true;
+    const username = req.body && req.body.username;
+    if (username === 'zlm') return true;
+    return false;
+  }
+});
+app.use('/api/login', loginLimiter);
+
+// ==================== 权限中间件 ====================
+function requireLogin(req,res,next) {
+  if (!req.session.user) return res.status(401).json({ error:'请先登录' });
+  next();
+}
+
+function requireOwner(req,res,next) {
+  if (!req.session.user || req.session.user.role !== 'owner')
+    return res.status(403).json({ error:'需要所有者权限' });
+  next();
+}
+
+function requireAdmin(req,res,next) {
+  if (!req.session.user || !['owner','admin'].includes(req.session.user.role))
+    return res.status(403).json({ error:'需要管理员或所有者权限' });
+  next();
+}
+
+function requireMember(req,res,next) {
+  if (!req.session.user) return res.status(401).json({ error:'请先登录' });
+  next();
+}
+
+// ==================== 页面托管 ====================
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ==================== 通用接口 ====================
+app.get('/api/me', (req, res) => res.json(req.session.user || null));
+
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username||!password) return res.status(400).json({ error:'用户名和密码不能为空' });
+  const user = DB.users[username];
+  if (!user) return res.status(401).json({ error:'账号或密码错误' });
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.status(401).json({ error:'账号或密码错误' });
+  req.session.user = { username, role: user.role };
+  res.json({ username, role: user.role });
+});
+
+app.post('/api/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ error:'登出失败' });
+    res.clearCookie('connect.sid');
+    res.json({ message:'已登出' });
+  });
+});
+
+// ==================== 导航页 API ====================
+app.get('/api/sites', (req, res) => res.json(DB.sites));
+app.post('/api/sites', requireAdmin, (req, res) => {
+  const { name, url, desc, seal, category } = req.body;
+  if (!name||!url) return res.status(400).json({ error:'名称和网址不能为空' });
+  const site = {
+    name: name.trim(),
+    url: url.trim(),
+    desc: desc ? desc.trim() : '',
+    seal: seal ? seal.trim().substring(0,2) : '🔗',
+    category: category ? category.trim() : '其他',
+    visits: 0,
+    createdAt: new Date().toISOString()
+  };
+  DB.sites.push(site);
+  scheduleWrite(SITES_FILE, DB.sites);
+  res.status(201).json(site);
+});
+app.delete('/api/sites/:index', requireAdmin, (req, res) => {
+  const index = parseInt(req.params.index);
+  if (isNaN(index) || index < 0 || index >= DB.sites.length)
+    return res.status(404).json({ error:'站点不存在' });
+  const deleted = DB.sites.splice(index, 1)[0];
+  scheduleWrite(SITES_FILE, DB.sites);
+  res.json({ message:'已删除', deleted });
+});
+app.post('/api/sites/:index/visit', (req, res) => {
+  const index = parseInt(req.params.index);
+  if (isNaN(index) || index < 0 || index >= DB.sites.length)
+    return res.status(404).json({ error:'站点不存在' });
+  DB.sites[index].visits = (DB.sites[index].visits || 0) + 1;
+  scheduleWrite(SITES_FILE, DB.sites);
+  res.json({ visits: DB.sites[index].visits });
+});
+
+// ==================== 用户管理（安全增强） ====================
+
+// 查看所有用户
+app.get('/api/users', requireAdmin, (req, res) => {
+  res.json(Object.keys(DB.users).map(u => ({ username: u, role: DB.users[u].role })));
+});
+
+// 创建用户 - 禁止创建 owner 角色
+app.post('/api/users', requireAdmin, async (req, res) => {
+  const { username, password, role } = req.body;
+  if (!username||!password) return res.status(400).json({ error:'用户名和密码不能为空' });
+  if (DB.users[username]) return res.status(400).json({ error:'用户已存在' });
+
+  const currentUserRole = req.session.user.role;
+  let targetRole = 'member';   // 默认成员
+
+  // 安全限制：禁止通过 API 创建 owner 账号
+  if (role === 'owner') {
+    return res.status(403).json({ error: '禁止通过此接口创建所有者账号' });
+  }
+  
+  if (role === 'admin') {
+    // 只有 owner 才能创建 admin
+    if (currentUserRole !== 'owner') {
+      return res.status(403).json({ error: '只有所有者才能创建管理员账号' });
+    }
+    targetRole = 'admin';
+  } else {
+    targetRole = 'member';
   }
 
-  function showToast(message, type='info') {
-    const container = $('#toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    const icons = {success:'✅', error:'❌', info:'💡'};
-    toast.innerHTML = `<span>${icons[type]||'💡'}</span> ${escapeHtml(message)}`;
-    container.appendChild(toast);
-    setTimeout(() => { if(toast.parentNode) toast.remove(); }, 2700);
-  }
+  const hash = await bcrypt.hash(password, 10);
+  DB.users[username] = { password: hash, role: targetRole };
+  scheduleWrite(USERS_FILE, DB.users);
+  res.status(201).json({ username, role: targetRole });
+});
 
-  async function apiCall(url, options={}, silent=false) {
-    const config = {credentials:'include', headers:{'Content-Type':'application/json'}, ...options};
-    if(config.body && typeof config.body === 'object') config.body = JSON.stringify(config.body);
-    try {
-      const res = await fetch(API_BASE + url, config);
-      if(!res.ok) {
-        if(silent) return null;
-        const data = await res.json().catch(()=>({}));
-        throw new Error(data.error || `请求失败 (${res.status})`);
+// 删除用户（仅限 owner，且不能删除其他 owner）
+app.delete('/api/users/:username', requireOwner, (req, res) => {
+  const { username } = req.params;
+  if (username === 'zlm') return res.status(400).json({ error:'不能删除主所有者' });
+  if (!DB.users[username]) return res.status(404).json({ error:'用户不存在' });
+  if (DB.users[username].role === 'owner') return res.status(400).json({ error:'不能删除其他所有者' });
+  delete DB.users[username];
+  scheduleWrite(USERS_FILE, DB.users);
+  res.json({ message:'用户已删除' });
+});
+
+// 修改他人密码（仅限 owner）
+app.put('/api/users/:username/password', requireOwner, async (req, res) => {
+  const { username } = req.params;
+  const { newPassword } = req.body;
+  if (!newPassword || newPassword.length < 6) return res.status(400).json({ error:'新密码长度至少6位' });
+  if (!DB.users[username]) return res.status(404).json({ error:'用户不存在' });
+  const hash = await bcrypt.hash(newPassword, 10);
+  DB.users[username].password = hash;
+  scheduleWrite(USERS_FILE, DB.users);
+  res.json({ success: true, message: `已修改 ${username} 的密码` });
+});
+
+// 成员自助修改密码
+app.put('/api/me/password', requireLogin, async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) return res.status(400).json({ error:'请输入旧密码和新密码' });
+  if (newPassword.length < 6) return res.status(400).json({ error:'新密码长度至少6位' });
+  const username = req.session.user.username;
+  const user = DB.users[username];
+  if (!user) return res.status(500).json({ error:'用户数据异常' });
+  const match = await bcrypt.compare(oldPassword, user.password);
+  if (!match) return res.status(401).json({ error:'旧密码错误' });
+  const hash = await bcrypt.hash(newPassword, 10);
+  DB.users[username].password = hash;
+  scheduleWrite(USERS_FILE, DB.users);
+  res.json({ success: true, message: '密码修改成功' });
+});
+
+// ==================== 管理员申请删除成员 ====================
+
+app.post('/api/delete-requests', requireAdmin, (req, res) => {
+  if (req.session.user.role === 'owner') {
+    return res.status(400).json({ error:'所有者可直接删除，无需申请' });
+  }
+  const { username } = req.body;
+  if (!username) return res.status(400).json({ error:'请提供要删除的用户名' });
+  if (!DB.users[username]) return res.status(404).json({ error:'目标用户不存在' });
+  if (username === 'zlm' || DB.users[username].role === 'owner') {
+    return res.status(400).json({ error:'不能对所有者执行此操作' });
+  }
+  const existed = DB.deleteRequests.find(r => r.target === username && r.status === 'pending');
+  if (existed) return res.status(400).json({ error:'该用户的删除申请已存在，请等待处理' });
+
+  const request = {
+    id: crypto.randomUUID(),
+    applicant: req.session.user.username,
+    target: username,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+  DB.deleteRequests.push(request);
+  scheduleWrite(DELETE_REQUESTS_FILE, DB.deleteRequests);
+  res.status(201).json({ message: '删除申请已提交', request });
+});
+
+app.get('/api/delete-requests', requireOwner, (req, res) => {
+  res.json(DB.deleteRequests);
+});
+
+app.post('/api/delete-requests/:id/approve', requireOwner, async (req, res) => {
+  const reqId = req.params.id;
+  const index = DB.deleteRequests.findIndex(r => r.id === reqId);
+  if (index === -1) return res.status(404).json({ error:'申请不存在' });
+  const request = DB.deleteRequests[index];
+  if (request.status !== 'pending') return res.status(400).json({ error:'该申请已处理' });
+
+  const target = request.target;
+  if (!DB.users[target]) {
+    request.status = 'failed';
+    request.result = '目标用户已不存在';
+    scheduleWrite(DELETE_REQUESTS_FILE, DB.deleteRequests);
+    return res.status(400).json({ error:'目标用户不存在' });
+  }
+  delete DB.users[target];
+  scheduleWrite(USERS_FILE, DB.users);
+
+  request.status = 'approved';
+  request.result = '已删除';
+  request.processedAt = new Date().toISOString();
+  scheduleWrite(DELETE_REQUESTS_FILE, DB.deleteRequests);
+  res.json({ message: `已批准并删除用户 ${target}`, request });
+});
+
+app.post('/api/delete-requests/:id/reject', requireOwner, (req, res) => {
+  const reqId = req.params.id;
+  const index = DB.deleteRequests.findIndex(r => r.id === reqId);
+  if (index === -1) return res.status(404).json({ error:'申请不存在' });
+  const request = DB.deleteRequests[index];
+  if (request.status !== 'pending') return res.status(400).json({ error:'该申请已处理' });
+
+  request.status = 'rejected';
+  request.result = '已拒绝';
+  request.processedAt = new Date().toISOString();
+  scheduleWrite(DELETE_REQUESTS_FILE, DB.deleteRequests);
+  res.json({ message: '已拒绝该申请', request });
+});
+
+// ==================== 博客文章 API ====================
+app.get('/api/articles', (req, res) => {
+  const sorted = [...DB.articles].sort((a,b) => (b.pinned?1:0) - (a.pinned?1:0) || new Date(b.createdAt) - new Date(a.createdAt));
+  res.json(sorted);
+});
+app.get('/api/articles/:id', (req, res) => {
+  const article = DB.articles.find(a => a.id === req.params.id);
+  if (!article) return res.status(404).json({ error:'文章不存在' });
+  res.json(article);
+});
+app.post('/api/articles', requireAdmin, (req, res) => {
+  const { title, content, summary, tags, seal, pinned } = req.body;
+  if (!title||!content) return res.status(400).json({ error:'标题和内容不能为空' });
+  const article = {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    content: content.trim(),
+    summary: summary ? summary.trim() : content.trim().substring(0, 150),
+    tags: Array.isArray(tags) ? tags : [],
+    seal: seal ? seal.trim().substring(0,2) : '墨',
+    pinned: !!pinned,
+    author: req.session.user.username,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  DB.articles.push(article);
+  scheduleWrite(ARTICLES_FILE, DB.articles);
+  res.status(201).json(article);
+});
+app.put('/api/articles/:id', requireAdmin, (req, res) => {
+  const idx = DB.articles.findIndex(a => a.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error:'文章不存在' });
+  const { title, content, summary, tags, seal, pinned, annotations } = req.body;
+  if (!title||!content) return res.status(400).json({ error:'标题和内容不能为空' });
+  const existing = DB.articles[idx];
+  DB.articles[idx] = {
+    ...existing,
+    title: title.trim(),
+    content: content.trim(),
+    summary: summary ? summary.trim() : content.trim().substring(0, 150),
+    tags: Array.isArray(tags) ? tags : existing.tags || [],
+    seal: seal ? seal.trim().substring(0,2) : existing.seal || '墨',
+    pinned: pinned !== undefined ? !!pinned : existing.pinned,
+    annotations: annotations || existing.annotations || [],
+    updatedAt: new Date().toISOString()
+  };
+  scheduleWrite(ARTICLES_FILE, DB.articles);
+  res.json(DB.articles[idx]);
+});
+app.delete('/api/articles/:id', requireAdmin, (req, res) => {
+  const idx = DB.articles.findIndex(a => a.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error:'文章不存在' });
+  const deleted = DB.articles.splice(idx, 1)[0];
+  scheduleWrite(ARTICLES_FILE, DB.articles);
+  res.json({ message:'已删除', deleted });
+});
+
+// ==================== 文章申请 API ====================
+app.get('/api/apply-quota', requireMember, (req, res) => {
+  const username = req.session.user.username;
+  const today = new Date().toISOString().substring(0,10);
+  const used = DB.applications.filter(a => a.applicant === username && a.createdAt.startsWith(today)).length;
+  res.json({ limit: DAILY_APPLY_LIMIT, used, remaining: Math.max(0, DAILY_APPLY_LIMIT - used) });
+});
+app.get('/api/apply-quota/all', requireAdmin, (req, res) => {
+  const today = new Date().toISOString().substring(0,10);
+  const result = Object.keys(DB.users).map(username => ({
+    username,
+    used: DB.applications.filter(a => a.applicant === username && a.createdAt.startsWith(today)).length,
+    limit: DAILY_APPLY_LIMIT
+  }));
+  res.json(result);
+});
+app.post('/api/apply-quota/reset/:username', requireAdmin, (req, res) => {
+  const { username } = req.params;
+  if (!DB.users[username]) return res.status(404).json({ error:'用户不存在' });
+  const today = new Date().toISOString().substring(0,10);
+  DB.applications = DB.applications.filter(a => !(a.applicant === username && a.createdAt.startsWith(today)));
+  scheduleWrite(APPLICATIONS_FILE, DB.applications);
+  res.json({ message: `已重置 ${username} 今日申请次数` });
+});
+app.post('/api/article-applications', requireMember, (req, res) => {
+  const username = req.session.user.username;
+  const { title, content, summary, tags, seal } = req.body;
+  if (!title||!content) return res.status(400).json({ error:'标题和内容不能为空' });
+  const today = new Date().toISOString().substring(0,10);
+  const used = DB.applications.filter(a => a.applicant === username && a.createdAt.startsWith(today)).length;
+  if (used >= DAILY_APPLY_LIMIT) return res.status(429).json({ error:`今日申请次数已用尽` });
+  const app = {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    content: content.trim(),
+    summary: summary ? summary.trim() : content.trim().substring(0,150),
+    tags: Array.isArray(tags) ? tags : [],
+    seal: seal ? seal.trim().substring(0,2) : '墨',
+    applicant: username,
+    createdAt: new Date().toISOString()
+  };
+  DB.applications.push(app);
+  scheduleWrite(APPLICATIONS_FILE, DB.applications);
+  res.status(201).json(app);
+});
+app.get('/api/article-applications', requireAdmin, (req, res) => {
+  res.json(DB.applications);
+});
+app.post('/api/article-applications/:id/approve', requireAdmin, (req, res) => {
+  const idx = DB.applications.findIndex(a => a.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error:'申请不存在' });
+  const app = DB.applications[idx];
+  const article = {
+    id: crypto.randomUUID(),
+    title: app.title,
+    content: app.content,
+    summary: app.summary,
+    tags: app.tags,
+    seal: app.seal,
+    pinned: false,
+    author: app.applicant,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  DB.articles.push(article);
+  DB.applications.splice(idx, 1);
+  scheduleWrite(ARTICLES_FILE, DB.articles);
+  scheduleWrite(APPLICATIONS_FILE, DB.applications);
+  res.json({ message:'已批准并发布', article });
+});
+app.delete('/api/article-applications/:id', requireAdmin, (req, res) => {
+  const idx = DB.applications.findIndex(a => a.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error:'申请不存在' });
+  DB.applications.splice(idx, 1);
+  scheduleWrite(APPLICATIONS_FILE, DB.applications);
+  res.json({ message:'申请已拒绝' });
+});
+
+// ==================== 题库 API ====================
+app.get('/api/questions', requireMember, (req, res) => {
+  const categories = [...new Set(DB.questions.map(q => q.category).filter(Boolean))].sort();
+  res.json({ questions: DB.questions, categories });
+});
+app.post('/api/questions', requireAdmin, (req, res) => {
+  const { number, name, category, content, images, code } = req.body;
+  if (!number||!name) return res.status(400).json({ error:'题号与题名必填' });
+  const q = {
+    id: crypto.randomUUID(),
+    number: number.trim(),
+    name: name.trim(),
+    category: category ? category.trim() : '',
+    content: content ? content.trim() : '',
+    images: Array.isArray(images) ? images : [],
+    code: code ? code.trim() : '',
+    createdAt: new Date().toISOString()
+  };
+  DB.questions.push(q);
+  scheduleWrite(QUESTIONS_FILE, DB.questions);
+  res.status(201).json({ success: true, question: q });
+});
+app.put('/api/questions/:id', requireAdmin, (req, res) => {
+  const idx = DB.questions.findIndex(q => q.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error:'题目不存在' });
+  const { number, name, category, content, images, code } = req.body;
+  if (!number||!name) return res.status(400).json({ error:'编号和名称不能为空' });
+  DB.questions[idx] = {
+    ...DB.questions[idx],
+    number: number.trim(),
+    name: name.trim(),
+    category: category ? category.trim() : '',
+    content: content ? content.trim() : '',
+    images: Array.isArray(images) ? images : DB.questions[idx].images || [],
+    code: code ? code.trim() : '',
+    updatedAt: new Date().toISOString()
+  };
+  scheduleWrite(QUESTIONS_FILE, DB.questions);
+  res.json({ success: true, question: DB.questions[idx] });
+});
+app.delete('/api/questions/:id', requireAdmin, (req, res) => {
+  const idx = DB.questions.findIndex(q => q.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error:'题目不存在' });
+  const deleted = DB.questions.splice(idx, 1)[0];
+  scheduleWrite(QUESTIONS_FILE, DB.questions);
+  res.json({ success: true, deleted });
+});
+
+// ==================== 启动服务器 ====================
+const useCluster = process.env.CLUSTER === 'true';
+
+if (useCluster) {
+  const cluster = require('cluster');
+  const numCPUs = require('os').cpus().length;
+
+  if (cluster.isMaster) {
+    console.log(`🚀 启动 Cluster 模式，使用 ${numCPUs} 个进程`);
+    for (let i = 0; i < numCPUs; i++) {
+      cluster.fork();
+    }
+    cluster.on('exit', (worker, code, signal) => {
+      console.log(`💀 Worker ${worker.process.pid} 退出，重新启动...`);
+      cluster.fork();
+    });
+  } else {
+    startServer();
+  }
+} else {
+  startServer();
+}
+
+function startServer() {
+  (async () => {
+    await loadAllData();
+    await upgradePasswords();
+    upgradeRoles();         // 将 admin 角色升级为 owner
+    ensureOwner();          // 确保 zlm 为 owner
+
+    app.listen(PORT, () => {
+      console.log(`🚀 极速墨韵后端已启动，端口 ${PORT}`);
+      console.log(`📡 REST API 服务就绪（权限：owner / admin / member）`);
+      console.log(`🔑 所有者: zlm / zlm20130503`);
+      console.log(`⛔ 禁止通过 API 创建 owner 账号`);
+      if (useCluster) {
+        console.log(`🧵 当前进程 PID: ${process.pid}`);
       }
-      return await res.json();
-    } catch(e) { if(silent) return null; throw e; }
-  }
-
-  // 辅助角色判断
-  function isOwner() { return currentUser && currentUser.role === 'owner'; }
-  function isAdmin() { return currentUser && (currentUser.role === 'owner' || currentUser.role === 'admin'); }
-  function isLoggedIn() { return !!currentUser; }
-
-  // 主题
-  function initTheme() {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    if(saved === 'dark') {
-      document.documentElement.setAttribute('data-theme','dark');
-      $('#themeToggle').textContent = '☀️';
-    } else {
-      document.documentElement.setAttribute('data-theme','light');
-      $('#themeToggle').textContent = '🌓';
-    }
-  }
-  function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem(THEME_STORAGE_KEY, next);
-    $('#themeToggle').textContent = next === 'dark' ? '☀️' : '🌓';
-    showToast(next==='dark'?'已切换至暗色模式 🌙':'已切换至亮色模式 ☀️','info');
-  }
-
-  // 数据过滤
-  function getFilteredSites() {
-    let filtered = [...sites];
-    if(pinnedSites.length > 0) {
-      const pinned=[], unpinned=[];
-      filtered.forEach((site, index) => {
-        const s = {...site, _originalIndex: index};
-        if(pinnedSites.includes(index)) { s._pinned=true; pinned.push(s); }
-        else { s._pinned=false; unpinned.push(s); }
-      });
-      filtered = [...pinned, ...unpinned];
-    }
-    if(starredSites.length > 0) {
-      filtered.sort((a,b) => {
-        const aStar = starredSites.includes(a._originalIndex ?? sites.indexOf(a)) ? 1 : 0;
-        const bStar = starredSites.includes(b._originalIndex ?? sites.indexOf(b)) ? 1 : 0;
-        if(a._pinned && !b._pinned) return -1;
-        if(!a._pinned && b._pinned) return 1;
-        return bStar - aStar;
-      });
-    }
-    if(currentFilter !== 'all') filtered = filtered.filter(s => (s.category||'其他') === currentFilter);
-    if(searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
-      filtered = filtered.filter(s => (s.name||'').toLowerCase().includes(q) || (s.desc||'').toLowerCase().includes(q) || (s.url||'').toLowerCase().includes(q));
-    }
-    return filtered;
-  }
-
-  function getAllCategories() {
-    const cats = new Set();
-    sites.forEach(s => cats.add(s.category||'其他'));
-    return ['all', ...Array.from(cats).sort()];
-  }
-
-  // 渲染
-  function renderFilterTags() {
-    const container = $('#filterTags');
-    const categories = getAllCategories();
-    container.innerHTML = categories.map(cat => {
-      const label = cat==='all'?'全部':escapeHtml(cat);
-      const active = cat===currentFilter?' active':'';
-      return `<span class="filter-tag${active}" data-category="${escapeHtml(cat)}">${label}</span>`;
-    }).join('');
-    const countEl = $('#filterCount');
-    const totalFiltered = getFilteredSites().length;
-    countEl.textContent = (searchQuery.trim()||currentFilter!=='all')?`找到 ${totalFiltered} 个书签`:`共 ${sites.length} 个书签`;
-    container.querySelectorAll('.filter-tag').forEach(tag => {
-      tag.addEventListener('click', () => { currentFilter = tag.dataset.category; renderFilterTags(); renderSites(); });
     });
-  }
+  })();
+}
 
-  function updateUIByRole() {
-    const greeting = $('#greetingText');
-    const loginBtn = $('#loginBtn');
-    const logoutBtn = $('#logoutBtn');
-    const adminBtn = $('#adminPanelBtn');
-    const adminPanel = $('#adminPanel');
-    const changeMyPassBtn = $('#changeMyPassBtn');
-    const applySiteBtn = $('#applySiteBtn');
-
-    // 删除申请 tab 和按钮
-    const deleteRequestTabBtn = document.querySelector('.tab-btn[data-tab="deleteRequestManage"]');
-    const deleteRequestTabContent = $('#deleteRequestManage');
-
-    if(currentUser) {
-      // 角色标签
-      const roleLabel = currentUser.role === 'owner' ? '👑 所有者' : (currentUser.role === 'admin' ? '🔰 管理员' : '📖 成员');
-      greeting.textContent = `${roleLabel} ${currentUser.username}`;
-      loginBtn.style.display = 'none';
-      logoutBtn.style.display = 'inline-block';
-      changeMyPassBtn.style.display = 'inline-block';
-      applySiteBtn.style.display = 'inline-block';
-
-      // 管理面板可见性：admin 及以上显示
-      if(isAdmin()) {
-        adminBtn.style.display = 'inline-block';
-        adminPanel.style.display = 'block';
-
-        // 删除申请 tab 仅 owner 可见
-        if (deleteRequestTabBtn) {
-          deleteRequestTabBtn.style.display = isOwner() ? 'inline-block' : 'none';
-          // 如果当前选中的是删除申请 tab 但用户不是 owner，切到网站管理
-          if (!isOwner() && deleteRequestTabContent && deleteRequestTabContent.classList.contains('active')) {
-            const siteTabBtn = document.querySelector('.tab-btn[data-tab="siteManage"]');
-            if (siteTabBtn) siteTabBtn.click();
-          }
-        }
-      } else {
-        adminBtn.style.display = 'none';
-        adminPanel.style.display = 'none';
-      }
-    } else {
-      greeting.textContent = '未登录·游客';
-      loginBtn.style.display = 'inline-block';
-      logoutBtn.style.display = 'none';
-      adminBtn.style.display = 'none';
-      adminPanel.style.display = 'none';
-      changeMyPassBtn.style.display = 'none';
-      applySiteBtn.style.display = 'none';
-      if (deleteRequestTabBtn) deleteRequestTabBtn.style.display = 'none';
-    }
-
-    renderSites();
-    renderFilterTags();
-    if(isAdmin()) renderAdminPanels();
-  }
-
-  function renderSites() {
-    const grid = $('#sitesGrid');
-    if(isLoading) {
-      grid.innerHTML = Array.from({length:6},()=>`<div class="skeleton-card"><div class="skeleton-seal"></div><div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>`).join('');
-      return;
-    }
-    const filtered = getFilteredSites();
-    if(filtered.length === 0) {
-      grid.innerHTML = `<div class="empty-state"><span class="empty-icon">📭</span><p>${searchQuery.trim()||currentFilter!=='all'?'未找到匹配的书签':'暂无书签，登录后可申请收录'}</p></div>`;
-      return;
-    }
-    grid.innerHTML = filtered.map((site) => {
-      const originalIndex = site._originalIndex !== undefined ? site._originalIndex : sites.indexOf(site);
-      const isStarred = starredSites.includes(originalIndex);
-      return `
-        <div class="site-card" data-index="${originalIndex}" data-url="${escapeHtml(site.url)}">
-          <div class="seal">${escapeHtml(site.seal||'🔗')}</div>
-          <div class="site-info">
-            <div class="site-name">${site._pinned?'📌 ':''}${escapeHtml(site.name)}</div>
-            <div class="site-desc">${escapeHtml(site.desc||'')}</div>
-            <div class="site-meta">
-              <span class="site-category">${escapeHtml(site.category||'其他')}</span>
-              <span>👁️ ${site.visits||0}</span>
-            </div>
-          </div>
-          <button class="star-btn ${isStarred?'starred':''}" data-star-index="${originalIndex}" title="收藏">${isStarred?'⭐':'☆'}</button>
-        </div>`;
-    }).join('');
-    grid.querySelectorAll('.site-card').forEach(card => {
-      card.addEventListener('click', function(e) {
-        if(e.target.closest('.star-btn')) return;
-        window.open(this.dataset.url, '_blank', 'noopener,noreferrer');
-        apiCall(`/api/sites/${this.dataset.index}/visit`,{method:'POST'},true).catch(()=>{});
-      });
-    });
-    grid.querySelectorAll('.star-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation(); e.preventDefault();
-        const idx = parseInt(this.dataset.starIndex);
-        if(starredSites.includes(idx)) {
-          starredSites = starredSites.filter(s => s!==idx);
-          this.classList.remove('starred'); this.textContent = '☆';
-        } else {
-          starredSites.push(idx);
-          this.classList.add('starred'); this.textContent = '⭐';
-          spawnStarBurst(e.clientX, e.clientY);
-        }
-        localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(starredSites));
-        renderSites();
-      });
-    });
-  }
-
-  function spawnStarBurst(x,y) {
-    for(let i=0;i<14;i++) {
-      const particle = document.createElement('div');
-      const angle = (Math.PI*2/14)*i;
-      const dist = 30+Math.random()*50;
-      const size = 3+Math.random()*7;
-      particle.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:#f0c840;border-radius:50%;pointer-events:none;z-index:9998;animation:starBurstParticle 0.8s cubic-bezier(0.25,0.46,0.45,0.94) forwards;--dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist}px;`;
-      document.body.appendChild(particle);
-      setTimeout(()=>particle.remove(),850);
-    }
-    if(!document.getElementById('starBurstStyle')) {
-      const style = document.createElement('style');
-      style.id='starBurstStyle';
-      style.textContent='@keyframes starBurstParticle{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0);}}';
-      document.head.appendChild(style);
-    }
-  }
-
-  // 🎉 管理员/所有者彩蛋
-  function spawnAdminEasterEgg() {
-    const colors = ['#f0c840','#c4a56a','#e8b830','#ffda60','#fff','#d4a030'];
-    for(let i=0;i<30;i++) {
-      const particle = document.createElement('div');
-      const angle = (Math.PI*2/30)*i;
-      const dist = 60+Math.random()*100;
-      const size = 4+Math.random()*8;
-      particle.style.cssText = `position:fixed;left:50%;top:50%;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:50%;pointer-events:none;z-index:9999;animation:adminBurst 1.2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;--dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist}px;`;
-      document.body.appendChild(particle);
-      setTimeout(()=>particle.remove(),1300);
-    }
-    if(!document.getElementById('adminBurstStyle')) {
-      const style = document.createElement('style');
-      style.id='adminBurstStyle';
-      style.textContent='@keyframes adminBurst{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.2) rotate(180deg);}}';
-      document.head.appendChild(style);
-    }
-    const msg = isOwner() ? '✨ 主公驾到，书斋蓬荜生辉！' : '🔰 管理员已上线';
-    showToast(msg, 'success');
-  }
-
-  // ========== 管理面板 ==========
-  function renderAdminPanels() {
-    renderSiteManage();
-    renderUserManage();
-    renderApplyManage();
-    if(isOwner()) renderDeleteRequests();
-  }
-
-  function renderSiteManage() {
-    const container = $('#siteListManage');
-    container.innerHTML = sites.map((s,i) => `
-      <div class="list-item">
-        <span>${escapeHtml(s.name)} - <small>${escapeHtml(s.url)}</small></span>
-        <div style="display:flex;gap:0.3rem;">
-          <button class="btn icon-btn pin-toggle-btn" data-index="${i}">${pinnedSites.includes(i)?'📌':'📍'}</button>
-          <button class="btn" data-del-site="${i}">删除</button>
-        </div>
-      </div>`).join('');
-    container.querySelectorAll('[data-del-site]').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        if(!confirm('确认删除？')) return;
-        try {
-          await apiCall(`/api/sites/${e.target.dataset.delSite}`,{method:'DELETE'});
-          const idx = parseInt(e.target.dataset.delSite);
-          pinnedSites = pinnedSites.filter(p=>p!==idx).map(p=>p>idx?p-1:p);
-          starredSites = starredSites.filter(s=>s!==idx).map(s=>s>idx?s-1:s);
-          localStorage.setItem(PINNED_STORAGE_KEY, JSON.stringify(pinnedSites));
-          localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(starredSites));
-          await refreshSites();
-          showToast('网站已删除','success');
-        } catch(err) { showToast('删除失败: '+err.message,'error'); }
-      });
-    });
-    container.querySelectorAll('.pin-toggle-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const idx = parseInt(e.target.dataset.index);
-        if(pinnedSites.includes(idx)) { pinnedSites = pinnedSites.filter(p=>p!==idx); showToast('已取消置顶','info'); }
-        else { pinnedSites.push(idx); showToast('已置顶','success'); }
-        localStorage.setItem(PINNED_STORAGE_KEY, JSON.stringify(pinnedSites));
-        renderSiteManage();
-        renderSites();
-      });
-    });
-  }
-
-  async function refreshSites() {
-    try { sites = await apiCall('/api/sites'); isLoading=false; renderSites(); renderFilterTags(); if(isAdmin()) renderSiteManage(); }
-    catch(e) { isLoading=false; renderSites(); renderFilterTags(); }
-  }
-
-  // ---------- 用户管理 ----------
-  async function refreshUsersAndRender() {
-    if(!isAdmin()) return;
-    try {
-      const users = await apiCall('/api/users');
-      renderUserList(users);
-    } catch(e) { console.error(e); }
-  }
-  function renderUserManage() { refreshUsersAndRender(); }
-
-  function renderUserList(users) {
-    const container = $('#userListManage');
-    const currentUsername = currentUser ? currentUser.username : '';
-    container.innerHTML = users.map(u => {
-      const roleText = u.role === 'owner' ? '👑所有者' : (u.role === 'admin' ? '🔰管理员' : '📖成员');
-      const isSelf = u.username === currentUsername;
-      const isOwnerUser = u.role === 'owner';
-      let buttons = '';
-
-      // 所有者可以改密和删除（不能删除自己和其他所有者）
-      if (isOwner()) {
-        // 改密按钮（所有者可改任何人）
-        buttons += `<button class="btn change-pass-btn" data-username="${escapeHtml(u.username)}">改密</button>`;
-        // 删除按钮：不能删自己和所有者
-        if (!isSelf && !isOwnerUser) {
-          buttons += `<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>`;
-        }
-      } else if (isAdmin()) {
-        // 管理员只能对成员用户操作
-        if (u.role === 'member') {
-          buttons += `<button class="btn request-delete-btn" data-username="${escapeHtml(u.username)}">申请删除</button>`;
-        }
-        // 管理员不能改他人密码，也不能删除
-      }
-      return `
-        <div class="list-item">
-          <span>${escapeHtml(u.username)} <small>(${roleText})</small></span>
-          <div style="display:flex;gap:0.3rem;">${buttons}</div>
-        </div>`;
-    }).join('');
-
-    // 绑定事件
-    container.querySelectorAll('.del-user-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        if(!confirm('确认直接删除该用户？')) return;
-        try {
-          await apiCall(`/api/users/${encodeURIComponent(e.target.dataset.username)}`,{method:'DELETE'});
-          refreshUsersAndRender();
-          showToast('用户已删除','success');
-        } catch(err) { showToast('删除失败: '+err.message,'error'); }
-      });
-    });
-    container.querySelectorAll('.change-pass-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => openChangePassModal(e.target.dataset.username));
-    });
-    container.querySelectorAll('.request-delete-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const username = e.target.dataset.username;
-        if(!confirm(`确定向所有者申请删除用户 ${username} 吗？`)) return;
-        try {
-          await apiCall('/api/delete-requests', {method:'POST', body:{username}});
-          showToast('删除申请已提交','success');
-        } catch(err) { showToast('申请失败: '+err.message,'error'); }
-      });
-    });
-  }
-
-  function openChangePassModal(username) {
-    if(!isOwner()) {
-      showToast('只有所有者才能修改他人密码','error');
-      return;
-    }
-    $('#changePassUser').value = username;
-    $('#changePassNew').value = '';
-    $('#changePassModal').classList.add('active');
-  }
-
-  // ---------- 删除申请管理（仅 owner）----------
-  async function fetchDeleteRequests() {
-    if(!isOwner()) return [];
-    try { return await apiCall('/api/delete-requests'); } catch { return []; }
-  }
-
-  async function renderDeleteRequests() {
-    const container = $('#deleteRequestList');
-    if(!container) return;
-    const requests = await fetchDeleteRequests();
-    if (!requests.length) {
-      container.innerHTML = '<p style="color:var(--text-muted);">暂无删除申请。</p>';
-      return;
-    }
-    container.innerHTML = requests.map(r => {
-      const statusText = r.status === 'pending' ? '⏳ 待处理' : (r.status === 'approved' ? '✅ 已批准' : '❌ 已拒绝');
-      return `
-        <div class="list-item">
-          <span>${escapeHtml(r.applicant)} 申请删除 ${escapeHtml(r.target)} <small>(${statusText})</small></span>
-          ${r.status === 'pending' ? `
-            <div style="display:flex;gap:0.3rem;">
-              <button class="btn approve-delete-btn" data-id="${r.id}">批准</button>
-              <button class="btn reject-delete-btn" data-id="${r.id}">拒绝</button>
-            </div>
-          ` : ''}
-        </div>`;
-    }).join('');
-
-    container.querySelectorAll('.approve-delete-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const id = e.target.dataset.id;
-        try {
-          await apiCall(`/api/delete-requests/${id}/approve`, {method:'POST'});
-          showToast('删除申请已批准','success');
-          renderDeleteRequests();
-          refreshUsersAndRender(); // 用户列表刷新
-        } catch(err) { showToast('批准失败: '+err.message,'error'); }
-      });
-    });
-    container.querySelectorAll('.reject-delete-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const id = e.target.dataset.id;
-        try {
-          await apiCall(`/api/delete-requests/${id}/reject`, {method:'POST'});
-          showToast('已拒绝申请','info');
-          renderDeleteRequests();
-        } catch(err) { showToast('操作失败: '+err.message,'error'); }
-      });
-    });
-  }
-
-  // ---------- 网站申请（本地存储）----------
-  function renderApplyManage() {
-    const container = $('#applyListManage');
-    if(!siteApplications.length) { container.innerHTML = '<p style="color:var(--text-muted);">暂无待审核的网站申请。</p>'; return; }
-    container.innerHTML = siteApplications.map((app,idx) => `
-      <div class="list-item"><span>${escapeHtml(app.name)} (${escapeHtml(app.url)})</span><div><button class="btn approve-site-btn" data-index="${idx}">通过</button><button class="btn reject-site-btn" data-index="${idx}">拒绝</button></div></div>`).join('');
-    container.querySelectorAll('.approve-site-btn').forEach(btn => { btn.addEventListener('click', async (e) => { const idx = e.target.dataset.index; const app = siteApplications[idx]; try { await apiCall('/api/sites',{method:'POST',body:{name:app.name,url:app.url,desc:app.desc||'',seal:app.seal||'🔗',category:app.category||'其他'}}); siteApplications.splice(idx,1); localStorage.setItem(APPLY_STORAGE_KEY,JSON.stringify(siteApplications)); await refreshSites(); renderApplyManage(); showToast('网站已添加','success'); } catch(err) { showToast('添加失败: '+err.message,'error'); } }); });
-    container.querySelectorAll('.reject-site-btn').forEach(btn => { btn.addEventListener('click', (e) => { const idx = e.target.dataset.index; if(confirm('拒绝该申请？')) { siteApplications.splice(idx,1); localStorage.setItem(APPLY_STORAGE_KEY,JSON.stringify(siteApplications)); renderApplyManage(); showToast('已拒绝','info'); } }); });
-  }
-
-  async function checkLoginStatus() {
-    const data = await apiCall('/api/me',{},true);
-    if(data?.username) currentUser = data;
-    else currentUser = null;
-    updateUIByRole();
-    if(isAdmin()) refreshUsersAndRender();
-    if(isOwner()) renderDeleteRequests(); // 初次加载也渲染删除申请
-  }
-
-  // 特效（保持不变）
-  function initStars() {
-    const container = $('#starsContainer');
-    const count = isMobile ? 15 : 30;
-    let html = '';
-    for(let i=0;i<count;i++) {
-      html += `<div class="star" style="left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s;"></div>`;
-    }
-    container.innerHTML = html;
-  }
-
-  function initClouds() {
-    const container = $('#cloudsContainer');
-    const count = isMobile ? 5 : 9;
-    for(let i=0;i<count;i++) {
-      const cloud = document.createElement('div');
-      cloud.className = 'cloud';
-      const size = 110+Math.random()*120;
-      cloud.style.width = size+'px';
-      cloud.style.height = size*0.6+'px';
-      cloud.style.top = (5+Math.random()*60)+'%';
-      cloud.style.animationDuration = (20+Math.random()*25)+'s';
-      cloud.style.animationDelay = Math.random()*10+'s';
-      container.appendChild(cloud);
-    }
-  }
-
-  function initPetals() {
-    const canvas = $('#petalCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    const petals = [];
-    const count = isMobile ? 6 : 14;
-    function resize() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; }
-    window.addEventListener('resize', resize); resize();
-    class Petal {
-      constructor() { this.reset(true); }
-      reset(initial=false) { this.x=Math.random()*width; this.y=initial?Math.random()*height:-25; this.size=6+Math.random()*10; this.speedY=0.6+Math.random()*1.8; this.speedX=0.1+Math.random()*0.5; this.rotation=Math.random()*Math.PI*2; this.rotSpeed=(Math.random()-0.5)*0.012; this.opacity=0.5+Math.random()*0.4; this.hue=330+Math.random()*25; }
-      update() { this.y+=this.speedY; this.x+=Math.sin(this.y*0.015)*this.speedX; this.rotation+=this.rotSpeed; if(this.y>height+30) this.reset(); }
-      draw(ctx) { ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.rotation); ctx.fillStyle=`hsla(${this.hue},40%,70%,${this.opacity})`; ctx.beginPath(); ctx.ellipse(0,0,this.size*0.5,this.size*0.25,0,0,Math.PI*2); ctx.fill(); ctx.restore(); }
-    }
-    for(let i=0;i<count;i++) petals.push(new Petal());
-    function animate() { ctx.clearRect(0,0,width,height); petals.forEach(p=>{p.update();p.draw(ctx);}); requestAnimationFrame(animate); }
-    animate();
-  }
-
-  function initPoems() {
-    const canvas = $('#poemCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    const poems = ['静','思','墨','韵','雅','书','画','禅','云','风','月','山','水','花','竹','兰','梅','清','幽','淡','远'];
-    const items = [];
-    const count = isMobile ? 4 : 12;
-    function resize() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; }
-    window.addEventListener('resize', resize); resize();
-    class PoemChar {
-      constructor() { this.reset(true); }
-      reset(initial=false) { this.x=Math.random()*width; this.y=initial?Math.random()*height:-40; this.char=poems[Math.floor(Math.random()*poems.length)]; this.size=14+Math.random()*18; this.speedY=0.2+Math.random()*0.6; this.speedX=(Math.random()-0.5)*0.25; this.opacity=0.3+Math.random()*0.4; this.wobble=Math.random()*Math.PI*2; this.wobbleSpeed=0.01+Math.random()*0.02; }
-      update() { this.y+=this.speedY; this.wobble+=this.wobbleSpeed; this.x+=Math.sin(this.wobble)*this.speedX; if(this.y>height+30) this.reset(); }
-      draw(ctx) { ctx.save(); ctx.font=`${this.size}px 'Ma Shan Zheng','KaiTi',serif`; ctx.fillStyle=`rgba(70,45,25,${this.opacity})`; if(document.documentElement.getAttribute('data-theme')==='dark') ctx.fillStyle=`rgba(200,180,150,${this.opacity})`; ctx.fillText(this.char, this.x, this.y); ctx.restore(); }
-    }
-    for(let i=0;i<count;i++) items.push(new PoemChar());
-    function animate() { ctx.clearRect(0,0,width,height); items.forEach(p=>{p.update();p.draw(ctx);}); requestAnimationFrame(animate); }
-    animate();
-  }
-
-  function initRipples() {
-    const canvas = $('#rippleCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    const ripples = [];
-    const maxRipples = 14;
-    function resize() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; }
-    window.addEventListener('resize', resize); resize();
-    function addRipple(x, y) {
-      ripples.push({ x, y, radius: 2, maxRadius: 35 + Math.random() * 75, opacity: 0.7, speed: 0.6 + Math.random() * 0.8, life: 1.0 });
-      if (ripples.length > maxRipples) ripples.shift();
-    }
-    window.addEventListener('click', (e) => addRipple(e.clientX, e.clientY));
-    window.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) addRipple(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: true });
-    function drawRipple(ctx, r) {
-      const gradient = ctx.createRadialGradient(r.x, r.y, r.radius * 0.1, r.x, r.y, r.radius);
-      gradient.addColorStop(0, `rgba(20, 15, 10, ${r.opacity * 0.95})`);
-      gradient.addColorStop(0.45, `rgba(50, 35, 20, ${r.opacity * 0.7})`);
-      gradient.addColorStop(0.85, `rgba(90, 65, 40, ${r.opacity * 0.25})`);
-      gradient.addColorStop(1, 'rgba(120, 90, 60, 0)');
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = `rgba(180, 150, 100, ${r.opacity * 0.45})`;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(r.x, r.y, r.radius * 0.88, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      for (let i = ripples.length - 1; i >= 0; i--) {
-        const r = ripples[i];
-        r.radius += r.speed;
-        r.opacity -= 0.0065;
-        r.life -= 0.007;
-        if (r.opacity <= 0 || r.radius > r.maxRadius || r.life <= 0) {
-          ripples.splice(i, 1);
-        } else {
-          drawRipple(ctx, r);
-        }
-      }
-      requestAnimationFrame(animate);
-    }
-    animate();
-  }
-
-  function initFireflies() {
-    const canvas = $('#fireflyCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    const fireflies = [];
-    const count = isMobile ? 8 : 20;
-    let mouseX = -200, mouseY = -200;
-    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
-    window.addEventListener('resize', resize); resize();
-    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
-    document.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1) { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; }
-    }, { passive: true });
-    class Firefly {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.targetX = this.x;
-        this.targetY = this.y;
-        this.size = 2 + Math.random() * 4;
-        this.glowSize = this.size * 4 + Math.random() * 10;
-        this.opacity = 0.4 + Math.random() * 0.5;
-        this.phase = Math.random() * Math.PI * 2;
-        this.speed = 0.4 + Math.random() * 0.6;
-        this.changeTargetTime = 0;
-        this.followMouse = Math.random() < 0.45;
-      }
-      update() {
-        this.changeTargetTime--;
-        if (this.changeTargetTime <= 0) {
-          if (this.followMouse && mouseX > 0 && Math.random() < 0.7) {
-            this.targetX = mouseX + (Math.random() - 0.5) * 70;
-            this.targetY = mouseY + (Math.random() - 0.5) * 60;
-          } else {
-            this.targetX = this.x + (Math.random() - 0.5) * 190;
-            this.targetY = this.y + (Math.random() - 0.5) * 150;
-          }
-          this.targetX = Math.max(10, Math.min(width - 10, this.targetX));
-          this.targetY = Math.max(10, Math.min(height - 10, this.targetY));
-          this.changeTargetTime = 40 + Math.random() * 80;
-        }
-        this.x += (this.targetX - this.x) * 0.028 * this.speed;
-        this.y += (this.targetY - this.y) * 0.028 * this.speed;
-        this.phase += 0.04;
-        this.opacity = 0.4 + Math.sin(this.phase) * 0.38;
-      }
-      draw(ctx) {
-        const glow = ctx.createRadialGradient(this.x, this.y, this.size * 0.2, this.x, this.y, this.glowSize);
-        glow.addColorStop(0, `rgba(255, 230, 150, ${this.opacity})`);
-        glow.addColorStop(0.3, `rgba(240, 200, 100, ${this.opacity * 0.8})`);
-        glow.addColorStop(0.7, `rgba(200, 160, 60, ${this.opacity * 0.3})`);
-        glow.addColorStop(1, 'rgba(180, 140, 50, 0)');
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.glowSize, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = `rgba(255, 255, 220, ${this.opacity + 0.2})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * 0.65, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    for (let i = 0; i < count; i++) fireflies.push(new Firefly());
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      fireflies.forEach(f => { f.update(); f.draw(ctx); });
-      requestAnimationFrame(animate);
-    }
-    animate();
-  }
-
-  function initBackToTop() {
-    const btn = $('#backToTop');
-    window.addEventListener('scroll', () => { btn.classList.toggle('visible', window.scrollY > 400); }, { passive: true });
-    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-  }
-
-  // 事件绑定
-  function bindEvents() {
-    $('#themeToggle').addEventListener('click', toggleTheme);
-    const searchInput = $('#searchInput');
-    const searchClear = $('#searchClear');
-    let searchDebounce;
-    searchInput.addEventListener('input', () => {
-      clearTimeout(searchDebounce);
-      searchDebounce = setTimeout(() => {
-        searchQuery = searchInput.value;
-        searchClear.classList.toggle('visible', !!searchQuery.trim());
-        renderFilterTags(); renderSites();
-      }, 200);
-    });
-    searchClear.addEventListener('click', () => { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); renderFilterTags(); renderSites(); searchInput.focus(); });
-    document.addEventListener('keydown', (e) => {
-      if((e.ctrlKey||e.metaKey) && e.key==='k') { e.preventDefault(); searchInput.focus(); searchInput.select(); }
-      if(e.key==='Escape' && document.activeElement===searchInput) { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); renderFilterTags(); renderSites(); searchInput.blur(); }
-      if(e.key==='/' && !e.target.closest('input,textarea')) { e.preventDefault(); searchInput.focus(); }
-    });
-
-    // 登录
-    $('#loginBtn').addEventListener('click', () => $('#loginModal').classList.add('active'));
-    $('#closeLoginModal').addEventListener('click', () => $('#loginModal').classList.remove('active'));
-    $('#submitLogin').addEventListener('click', async () => {
-      const u = $('#loginUsername').value.trim(), p = $('#loginPassword').value;
-      if(!u||!p) return showToast('请输入账号和密码','error');
-      try {
-        const data = await apiCall('/api/login',{method:'POST',body:{username:u,password:p}});
-        currentUser = {username:data.username, role:data.role};
-        $('#loginModal').classList.remove('active');
-        updateUIByRole();
-        if(isAdmin()) {
-          refreshUsersAndRender();
-          spawnAdminEasterEgg();
-        }
-        showToast(`登录成功，欢迎 ${data.username}`,'success');
-      } catch(err) { showToast('登录失败: '+err.message,'error'); }
-    });
-    $('#logoutBtn').addEventListener('click', async () => {
-      await apiCall('/api/logout',{method:'POST'});
-      currentUser=null;
-      updateUIByRole();
-      showToast('已登出','info');
-    });
-
-    $('#adminPanelBtn').addEventListener('click', () => {
-      const panel = $('#adminPanel');
-      panel.style.display = panel.style.display==='none'?'block':'none';
-    });
-
-    // Tab 切换
-    $$('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        $$('.tab-btn').forEach(b=>b.classList.remove('active'));
-        this.classList.add('active');
-        $$('.tab-content').forEach(c=>c.classList.remove('active'));
-        const target = $('#' + this.dataset.tab);
-        if(target) target.classList.add('active');
-        // 如果切换到删除申请tab，刷新一下列表
-        if(this.dataset.tab === 'deleteRequestManage' && isOwner()) {
-          renderDeleteRequests();
-        }
-      });
-    });
-
-    // 添加网站
-    $('#addSiteBtn').addEventListener('click', async () => {
-      const name=$('#newSiteName').value.trim(), url=$('#newSiteUrl').value.trim();
-      if(!name||!url) return showToast('名称和网址必填','error');
-      try {
-        await apiCall('/api/sites',{method:'POST',body:{name,url,desc:$('#newSiteDesc').value.trim(),seal:$('#newSiteSeal').value.trim()||'🔗',category:$('#newSiteCat').value.trim()||'其他'}});
-        ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCat'].forEach(id=>$('#'+id).value='');
-        await refreshSites();
-        showToast('网站已添加','success');
-      } catch(err) { showToast(err.message,'error'); }
-    });
-
-    // 添加用户（支持角色选择）
-    $('#addUserBtn').addEventListener('click', async () => {
-      const u=$('#newUsername').value.trim(), p=$('#newUserPass').value;
-      if(!u||!p) return showToast('用户名和密码不能为空','error');
-      const roleSelect = $('#newUserRole');
-      const role = roleSelect ? roleSelect.value : 'member';
-      try {
-        await apiCall('/api/users',{method:'POST',body:{username:u,password:p,role}});
-        $('#newUsername').value='';
-        $('#newUserPass').value='';
-        refreshUsersAndRender();
-        showToast('用户已添加','success');
-      } catch(err) { showToast(err.message,'error'); }
-    });
-
-    // 角色下拉框控制：admin 不能选 owner/admin
-    const roleSelect = $('#newUserRole');
-    if (roleSelect) {
-      // 初始化时禁用非member选项（根据当前用户角色）
-      function updateRoleSelect() {
-        if (!isOwner()) {
-          roleSelect.querySelector('option[value="admin"]').disabled = true;
-          roleSelect.querySelector('option[value="owner"]').disabled = true;
-          if (roleSelect.value !== 'member') roleSelect.value = 'member';
-        } else {
-          roleSelect.querySelector('option[value="admin"]').disabled = false;
-          roleSelect.querySelector('option[value="owner"]').disabled = false;
-        }
-      }
-      // 每当管理面板打开或用户变化时调用
-      const observer = new MutationObserver(() => {
-        if ($('#adminPanel').style.display !== 'none') updateRoleSelect();
-      });
-      observer.observe($('#adminPanel'), { attributes: true, attributeFilter: ['style'] });
-      updateRoleSelect();
-    }
-
-    // 修改他人密码提交
-    $('#submitChangePass').addEventListener('click', async () => {
-      const username = $('#changePassUser').value, newPass = $('#changePassNew').value;
-      if (!newPass) return showToast('请输入新密码', 'error');
-      if (newPass.length < 6) return showToast('密码长度至少6位', 'error');
-      try {
-        await apiCall(`/api/users/${encodeURIComponent(username)}/password`, { method: 'PUT', body: { newPassword: newPass } });
-        showToast('密码修改成功', 'success');
-        $('#changePassModal').classList.remove('active');
-        refreshUsersAndRender();
-      } catch (err) { showToast('密码修改失败: ' + err.message, 'error'); }
-    });
-    $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
-
-    // 自助改密
-    $('#changeMyPassBtn').addEventListener('click', () => {
-      $('#selfOldPass').value='';
-      $('#selfNewPass').value='';
-      $('#selfChangePassModal').classList.add('active');
-    });
-    $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList.remove('active'));
-    $('#submitSelfChangePass').addEventListener('click', async () => {
-      const op=$('#selfOldPass').value, np=$('#selfNewPass').value;
-      if(!op||!np) return showToast('请输入旧密码和新密码','error');
-      if(np.length<6) return showToast('新密码长度至少6位','error');
-      try {
-        await apiCall('/api/me/password',{method:'PUT',body:{oldPassword:op,newPassword:np}});
-        showToast('密码修改成功','success');
-        $('#selfChangePassModal').classList.remove('active');
-      } catch(err) { showToast('修改失败: '+err.message,'error'); }
-    });
-
-    // 申请网站
-    $('#applySiteBtn').addEventListener('click', () => {
-      $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value=''; $('#applySeal').value=''; $('#applyCat').value='';
-      $('#applyModal').classList.add('active');
-    });
-    $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
-    $('#submitApply').addEventListener('click', () => {
-      const name=$('#applyName').value.trim(), url=$('#applyUrl').value.trim();
-      if(!name||!url) return showToast('网站名称和网址为必填项','error');
-      siteApplications.push({name,url,desc:$('#applyDesc').value.trim(),seal:$('#applySeal').value.trim()||'🔗',category:$('#applyCat').value.trim()||'其他'});
-      localStorage.setItem(APPLY_STORAGE_KEY,JSON.stringify(siteApplications));
-      showToast('申请已提交','success');
-      $('#applyModal').classList.remove('active');
-    });
-
-    window.addEventListener('click', (e) => {
-      if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
-    });
-  }
-
-  async function init() {
-    initTheme();
-    initStars();
-    initClouds();
-    initPetals();
-    initPoems();
-    initRipples();
-    initFireflies();
-    initBackToTop();
-    bindEvents();
-
-    try { sites = await apiCall('/api/sites'); isLoading=false; } catch(e) { sites=[]; isLoading=false; }
-    await checkLoginStatus();
-    renderSites();
-    renderFilterTags();
-
-    // 手动触发一次角色选择状态更新
-    const roleSelect = $('#newUserRole');
-    if (roleSelect) {
-      if (!isOwner()) {
-        roleSelect.querySelector('option[value="admin"]').disabled = true;
-        roleSelect.querySelector('option[value="owner"]').disabled = true;
-        if (roleSelect.value !== 'member') roleSelect.value = 'member';
-      }
-    }
-  }
-  init();
-})();
+// 异常处理
+process.on('uncaughtException', (err) => {
+  console.error('❌ 未捕获异常:', err);
+});
