@@ -61,6 +61,7 @@
         <button class="btn tab-btn active" data-tab="siteManage">网站管理</button>
         <button class="btn tab-btn" data-tab="userManage">用户管理</button>
         <button class="btn tab-btn" data-tab="applyManage">待审核网站</button>
+        <button class="btn tab-btn" data-tab="deleteRequestManage">删除申请</button>
       </div>
       <div class="tab-content active" id="siteManage">
         <form onsubmit="return false" style="margin-bottom:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
@@ -77,6 +78,11 @@
         <form onsubmit="return false" style="margin-bottom:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
           <input type="text" id="newUsername" placeholder="新用户名" class="input-group input" autocomplete="off">
           <input type="password" id="newUserPass" placeholder="密码" class="input-group input" autocomplete="new-password">
+          <select id="newUserRole" class="input-group input" style="flex:1 1 120px; min-width:100px;">
+            <option value="member">成员</option>
+            <option value="admin">管理员</option>
+            <option value="owner">所有者</option>
+          </select>
           <button class="btn" id="addUserBtn">添加用户</button>
         </form>
         <div id="userListManage"></div>
@@ -84,6 +90,9 @@
       </div>
       <div class="tab-content" id="applyManage">
         <div id="applyListManage"></div>
+      </div>
+      <div class="tab-content" id="deleteRequestManage">
+        <div id="deleteRequestList"></div>
       </div>
     </div>
   </div>
