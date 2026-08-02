@@ -47,6 +47,11 @@
     } catch(e) { if(silent) return null; throw e; }
   }
 
+  // 辅助角色判断
+  function isOwner() { return currentUser && currentUser.role === 'owner'; }
+  function isAdmin() { return currentUser && (currentUser.role === 'owner' || currentUser.role === 'admin'); }
+  function isLoggedIn() { return !!currentUser; }
+
   // 主题
   function initTheme() {
     const saved = localStorage.getItem(THEME_STORAGE_KEY);
@@ -127,14 +132,38 @@
     const adminPanel = $('#adminPanel');
     const changeMyPassBtn = $('#changeMyPassBtn');
     const applySiteBtn = $('#applySiteBtn');
+
+    // 删除申请 tab 和按钮
+    const deleteRequestTabBtn = document.querySelector('.tab-btn[data-tab="deleteRequestManage"]');
+    const deleteRequestTabContent = $('#deleteRequestManage');
+
     if(currentUser) {
-      greeting.textContent = `${currentUser.role==='admin'?'🔰':'📖'} ${currentUser.username}`;
+      // 角色标签
+      const roleLabel = currentUser.role === 'owner' ? '👑 所有者' : (currentUser.role === 'admin' ? '🔰 管理员' : '📖 成员');
+      greeting.textContent = `${roleLabel} ${currentUser.username}`;
       loginBtn.style.display = 'none';
       logoutBtn.style.display = 'inline-block';
       changeMyPassBtn.style.display = 'inline-block';
       applySiteBtn.style.display = 'inline-block';
-      if(currentUser.role === 'admin') { adminBtn.style.display='inline-block'; adminPanel.style.display='block'; }
-      else { adminBtn.style.display='none'; adminPanel.style.display='none'; }
+
+      // 管理面板可见性：admin 及以上显示
+      if(isAdmin()) {
+        adminBtn.style.display = 'inline-block';
+        adminPanel.style.display = 'block';
+
+        // 删除申请 tab 仅 owner 可见
+        if (deleteRequestTabBtn) {
+          deleteRequestTabBtn.style.display = isOwner() ? 'inline-block' : 'none';
+          // 如果当前选中的是删除申请 tab 但用户不是 owner，切到网站管理
+          if (!isOwner() && deleteRequestTabContent && deleteRequestTabContent.classList.contains('active')) {
+            const siteTabBtn = document.querySelector('.tab-btn[data-tab="siteManage"]');
+            if (siteTabBtn) siteTabBtn.click();
+          }
+        }
+      } else {
+        adminBtn.style.display = 'none';
+        adminPanel.style.display = 'none';
+      }
     } else {
       greeting.textContent = '未登录·游客';
       loginBtn.style.display = 'inline-block';
@@ -143,9 +172,12 @@
       adminPanel.style.display = 'none';
       changeMyPassBtn.style.display = 'none';
       applySiteBtn.style.display = 'none';
+      if (deleteRequestTabBtn) deleteRequestTabBtn.style.display = 'none';
     }
-    renderSites(); renderFilterTags();
-    if(currentUser?.role==='admin') renderAdminPanels();
+
+    renderSites();
+    renderFilterTags();
+    if(isAdmin()) renderAdminPanels();
   }
 
   function renderSites() {
@@ -219,7 +251,7 @@
     }
   }
 
-  // 🎉 管理员彩蛋
+  // 🎉 管理员/所有者彩蛋
   function spawnAdminEasterEgg() {
     const colors = ['#f0c840','#c4a56a','#e8b830','#ffda60','#fff','#d4a030'];
     for(let i=0;i<30;i++) {
@@ -237,11 +269,18 @@
       style.textContent='@keyframes adminBurst{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.2) rotate(180deg);}}';
       document.head.appendChild(style);
     }
-    showToast('✨ 主公驾到，书斋蓬荜生辉！', 'success');
+    const msg = isOwner() ? '✨ 主公驾到，书斋蓬荜生辉！' : '🔰 管理员已上线';
+    showToast(msg, 'success');
   }
 
-  // 管理面板
-  function renderAdminPanels() { renderSiteManage(); renderUserManage(); renderApplyManage(); }
+  // ========== 管理面板 ==========
+  function renderAdminPanels() {
+    renderSiteManage();
+    renderUserManage();
+    renderApplyManage();
+    if(isOwner()) renderDeleteRequests();
+  }
+
   function renderSiteManage() {
     const container = $('#siteListManage');
     container.innerHTML = sites.map((s,i) => `
@@ -262,7 +301,8 @@
           starredSites = starredSites.filter(s=>s!==idx).map(s=>s>idx?s-1:s);
           localStorage.setItem(PINNED_STORAGE_KEY, JSON.stringify(pinnedSites));
           localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(starredSites));
-          await refreshSites(); showToast('网站已删除','success');
+          await refreshSites();
+          showToast('网站已删除','success');
         } catch(err) { showToast('删除失败: '+err.message,'error'); }
       });
     });
@@ -272,30 +312,146 @@
         if(pinnedSites.includes(idx)) { pinnedSites = pinnedSites.filter(p=>p!==idx); showToast('已取消置顶','info'); }
         else { pinnedSites.push(idx); showToast('已置顶','success'); }
         localStorage.setItem(PINNED_STORAGE_KEY, JSON.stringify(pinnedSites));
-        renderSiteManage(); renderSites();
+        renderSiteManage();
+        renderSites();
       });
     });
   }
 
   async function refreshSites() {
-    try { sites = await apiCall('/api/sites'); isLoading=false; renderSites(); renderFilterTags(); if(currentUser?.role==='admin') renderSiteManage(); }
+    try { sites = await apiCall('/api/sites'); isLoading=false; renderSites(); renderFilterTags(); if(isAdmin()) renderSiteManage(); }
     catch(e) { isLoading=false; renderSites(); renderFilterTags(); }
   }
 
+  // ---------- 用户管理 ----------
   async function refreshUsersAndRender() {
-    if(!currentUser||currentUser.role!=='admin') return;
-    try { const users = await apiCall('/api/users'); renderUserList(users); } catch(e) {}
+    if(!isAdmin()) return;
+    try {
+      const users = await apiCall('/api/users');
+      renderUserList(users);
+    } catch(e) { console.error(e); }
   }
   function renderUserManage() { refreshUsersAndRender(); }
+
   function renderUserList(users) {
     const container = $('#userListManage');
-    container.innerHTML = users.map(u => `
-      <div class="list-item"><span>${escapeHtml(u.username)}</span><div style="display:flex;gap:0.3rem;"><button class="btn change-pass-btn" data-username="${escapeHtml(u.username)}">改密</button>${u.username!=='zlm'?`<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>`:''}</div></div>`).join('');
-    container.querySelectorAll('.del-user-btn').forEach(btn => { btn.addEventListener('click', async (e) => { if(!confirm('删除用户？')) return; try { await apiCall(`/api/users/${encodeURIComponent(e.target.dataset.username)}`,{method:'DELETE'}); refreshUsersAndRender(); showToast('用户已删除','success'); } catch(err) { showToast('删除失败: '+err.message,'error'); } }); });
-    container.querySelectorAll('.change-pass-btn').forEach(btn => { btn.addEventListener('click', (e) => openChangePassModal(e.target.dataset.username)); });
+    const currentUsername = currentUser ? currentUser.username : '';
+    container.innerHTML = users.map(u => {
+      const roleText = u.role === 'owner' ? '👑所有者' : (u.role === 'admin' ? '🔰管理员' : '📖成员');
+      const isSelf = u.username === currentUsername;
+      const isOwnerUser = u.role === 'owner';
+      let buttons = '';
+
+      // 所有者可以改密和删除（不能删除自己和其他所有者）
+      if (isOwner()) {
+        // 改密按钮（所有者可改任何人）
+        buttons += `<button class="btn change-pass-btn" data-username="${escapeHtml(u.username)}">改密</button>`;
+        // 删除按钮：不能删自己和所有者
+        if (!isSelf && !isOwnerUser) {
+          buttons += `<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>`;
+        }
+      } else if (isAdmin()) {
+        // 管理员只能对成员用户操作
+        if (u.role === 'member') {
+          buttons += `<button class="btn request-delete-btn" data-username="${escapeHtml(u.username)}">申请删除</button>`;
+        }
+        // 管理员不能改他人密码，也不能删除
+      }
+      return `
+        <div class="list-item">
+          <span>${escapeHtml(u.username)} <small>(${roleText})</small></span>
+          <div style="display:flex;gap:0.3rem;">${buttons}</div>
+        </div>`;
+    }).join('');
+
+    // 绑定事件
+    container.querySelectorAll('.del-user-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if(!confirm('确认直接删除该用户？')) return;
+        try {
+          await apiCall(`/api/users/${encodeURIComponent(e.target.dataset.username)}`,{method:'DELETE'});
+          refreshUsersAndRender();
+          showToast('用户已删除','success');
+        } catch(err) { showToast('删除失败: '+err.message,'error'); }
+      });
+    });
+    container.querySelectorAll('.change-pass-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => openChangePassModal(e.target.dataset.username));
+    });
+    container.querySelectorAll('.request-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const username = e.target.dataset.username;
+        if(!confirm(`确定向所有者申请删除用户 ${username} 吗？`)) return;
+        try {
+          await apiCall('/api/delete-requests', {method:'POST', body:{username}});
+          showToast('删除申请已提交','success');
+        } catch(err) { showToast('申请失败: '+err.message,'error'); }
+      });
+    });
   }
 
-  function openChangePassModal(username) { $('#changePassUser').value = username; $('#changePassNew').value = ''; $('#changePassModal').classList.add('active'); }
+  function openChangePassModal(username) {
+    if(!isOwner()) {
+      showToast('只有所有者才能修改他人密码','error');
+      return;
+    }
+    $('#changePassUser').value = username;
+    $('#changePassNew').value = '';
+    $('#changePassModal').classList.add('active');
+  }
+
+  // ---------- 删除申请管理（仅 owner）----------
+  async function fetchDeleteRequests() {
+    if(!isOwner()) return [];
+    try { return await apiCall('/api/delete-requests'); } catch { return []; }
+  }
+
+  async function renderDeleteRequests() {
+    const container = $('#deleteRequestList');
+    if(!container) return;
+    const requests = await fetchDeleteRequests();
+    if (!requests.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);">暂无删除申请。</p>';
+      return;
+    }
+    container.innerHTML = requests.map(r => {
+      const statusText = r.status === 'pending' ? '⏳ 待处理' : (r.status === 'approved' ? '✅ 已批准' : '❌ 已拒绝');
+      return `
+        <div class="list-item">
+          <span>${escapeHtml(r.applicant)} 申请删除 ${escapeHtml(r.target)} <small>(${statusText})</small></span>
+          ${r.status === 'pending' ? `
+            <div style="display:flex;gap:0.3rem;">
+              <button class="btn approve-delete-btn" data-id="${r.id}">批准</button>
+              <button class="btn reject-delete-btn" data-id="${r.id}">拒绝</button>
+            </div>
+          ` : ''}
+        </div>`;
+    }).join('');
+
+    container.querySelectorAll('.approve-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        try {
+          await apiCall(`/api/delete-requests/${id}/approve`, {method:'POST'});
+          showToast('删除申请已批准','success');
+          renderDeleteRequests();
+          refreshUsersAndRender(); // 用户列表刷新
+        } catch(err) { showToast('批准失败: '+err.message,'error'); }
+      });
+    });
+    container.querySelectorAll('.reject-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        try {
+          await apiCall(`/api/delete-requests/${id}/reject`, {method:'POST'});
+          showToast('已拒绝申请','info');
+          renderDeleteRequests();
+        } catch(err) { showToast('操作失败: '+err.message,'error'); }
+      });
+    });
+  }
+
+  // ---------- 网站申请（本地存储）----------
   function renderApplyManage() {
     const container = $('#applyListManage');
     if(!siteApplications.length) { container.innerHTML = '<p style="color:var(--text-muted);">暂无待审核的网站申请。</p>'; return; }
@@ -310,10 +466,11 @@
     if(data?.username) currentUser = data;
     else currentUser = null;
     updateUIByRole();
-    if(currentUser?.role==='admin') refreshUsersAndRender();
+    if(isAdmin()) refreshUsersAndRender();
+    if(isOwner()) renderDeleteRequests(); // 初次加载也渲染删除申请
   }
 
-  // 特效
+  // 特效（保持不变）
   function initStars() {
     const container = $('#starsContainer');
     const count = isMobile ? 15 : 30;
@@ -388,14 +545,7 @@
     function resize() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; }
     window.addEventListener('resize', resize); resize();
     function addRipple(x, y) {
-      ripples.push({
-        x, y,
-        radius: 2,
-        maxRadius: 35 + Math.random() * 75,
-        opacity: 0.7,
-        speed: 0.6 + Math.random() * 0.8,
-        life: 1.0
-      });
+      ripples.push({ x, y, radius: 2, maxRadius: 35 + Math.random() * 75, opacity: 0.7, speed: 0.6 + Math.random() * 0.8, life: 1.0 });
       if (ripples.length > maxRipples) ripples.shift();
     }
     window.addEventListener('click', (e) => addRipple(e.clientX, e.clientY));
@@ -412,7 +562,6 @@
       ctx.beginPath();
       ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
       ctx.fill();
-      // 金色光圈
       ctx.strokeStyle = `rgba(180, 150, 100, ${r.opacity * 0.45})`;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -547,28 +696,90 @@
         currentUser = {username:data.username, role:data.role};
         $('#loginModal').classList.remove('active');
         updateUIByRole();
-        if(currentUser.role==='admin') {
+        if(isAdmin()) {
           refreshUsersAndRender();
-          spawnAdminEasterEgg(); // 🎉 触发彩蛋
+          spawnAdminEasterEgg();
         }
         showToast(`登录成功，欢迎 ${data.username}`,'success');
       } catch(err) { showToast('登录失败: '+err.message,'error'); }
     });
-    $('#logoutBtn').addEventListener('click', async () => { await apiCall('/api/logout',{method:'POST'}); currentUser=null; updateUIByRole(); showToast('已登出','info'); });
-    $('#adminPanelBtn').addEventListener('click', () => { $('#adminPanel').style.display = $('#adminPanel').style.display==='none'?'block':'none'; });
-    $$('.tab-btn').forEach(btn => { btn.addEventListener('click', function() { $$('.tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); $$('.tab-content').forEach(c=>c.classList.remove('active')); $('#'+this.dataset.tab).classList.add('active'); }); });
+    $('#logoutBtn').addEventListener('click', async () => {
+      await apiCall('/api/logout',{method:'POST'});
+      currentUser=null;
+      updateUIByRole();
+      showToast('已登出','info');
+    });
 
+    $('#adminPanelBtn').addEventListener('click', () => {
+      const panel = $('#adminPanel');
+      panel.style.display = panel.style.display==='none'?'block':'none';
+    });
+
+    // Tab 切换
+    $$('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        $$('.tab-btn').forEach(b=>b.classList.remove('active'));
+        this.classList.add('active');
+        $$('.tab-content').forEach(c=>c.classList.remove('active'));
+        const target = $('#' + this.dataset.tab);
+        if(target) target.classList.add('active');
+        // 如果切换到删除申请tab，刷新一下列表
+        if(this.dataset.tab === 'deleteRequestManage' && isOwner()) {
+          renderDeleteRequests();
+        }
+      });
+    });
+
+    // 添加网站
     $('#addSiteBtn').addEventListener('click', async () => {
       const name=$('#newSiteName').value.trim(), url=$('#newSiteUrl').value.trim();
       if(!name||!url) return showToast('名称和网址必填','error');
-      try { await apiCall('/api/sites',{method:'POST',body:{name,url,desc:$('#newSiteDesc').value.trim(),seal:$('#newSiteSeal').value.trim()||'🔗',category:$('#newSiteCat').value.trim()||'其他'}}); ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCat'].forEach(id=>$('#'+id).value=''); await refreshSites(); showToast('网站已添加','success'); } catch(err) { showToast(err.message,'error'); }
+      try {
+        await apiCall('/api/sites',{method:'POST',body:{name,url,desc:$('#newSiteDesc').value.trim(),seal:$('#newSiteSeal').value.trim()||'🔗',category:$('#newSiteCat').value.trim()||'其他'}});
+        ['newSiteName','newSiteUrl','newSiteDesc','newSiteSeal','newSiteCat'].forEach(id=>$('#'+id).value='');
+        await refreshSites();
+        showToast('网站已添加','success');
+      } catch(err) { showToast(err.message,'error'); }
     });
+
+    // 添加用户（支持角色选择）
     $('#addUserBtn').addEventListener('click', async () => {
       const u=$('#newUsername').value.trim(), p=$('#newUserPass').value;
       if(!u||!p) return showToast('用户名和密码不能为空','error');
-      try { await apiCall('/api/users',{method:'POST',body:{username:u,password:p}}); $('#newUsername').value=''; $('#newUserPass').value=''; refreshUsersAndRender(); showToast('用户已添加','success'); } catch(err) { showToast(err.message,'error'); }
+      const roleSelect = $('#newUserRole');
+      const role = roleSelect ? roleSelect.value : 'member';
+      try {
+        await apiCall('/api/users',{method:'POST',body:{username:u,password:p,role}});
+        $('#newUsername').value='';
+        $('#newUserPass').value='';
+        refreshUsersAndRender();
+        showToast('用户已添加','success');
+      } catch(err) { showToast(err.message,'error'); }
     });
 
+    // 角色下拉框控制：admin 不能选 owner/admin
+    const roleSelect = $('#newUserRole');
+    if (roleSelect) {
+      // 初始化时禁用非member选项（根据当前用户角色）
+      function updateRoleSelect() {
+        if (!isOwner()) {
+          roleSelect.querySelector('option[value="admin"]').disabled = true;
+          roleSelect.querySelector('option[value="owner"]').disabled = true;
+          if (roleSelect.value !== 'member') roleSelect.value = 'member';
+        } else {
+          roleSelect.querySelector('option[value="admin"]').disabled = false;
+          roleSelect.querySelector('option[value="owner"]').disabled = false;
+        }
+      }
+      // 每当管理面板打开或用户变化时调用
+      const observer = new MutationObserver(() => {
+        if ($('#adminPanel').style.display !== 'none') updateRoleSelect();
+      });
+      observer.observe($('#adminPanel'), { attributes: true, attributeFilter: ['style'] });
+      updateRoleSelect();
+    }
+
+    // 修改他人密码提交
     $('#submitChangePass').addEventListener('click', async () => {
       const username = $('#changePassUser').value, newPass = $('#changePassNew').value;
       if (!newPass) return showToast('请输入新密码', 'error');
@@ -578,30 +789,46 @@
         showToast('密码修改成功', 'success');
         $('#changePassModal').classList.remove('active');
         refreshUsersAndRender();
-      } catch (err) { showToast('密码修改失败: ' + (err.message.includes('404') ? '后端接口未实现' : err.message), 'error'); }
+      } catch (err) { showToast('密码修改失败: ' + err.message, 'error'); }
     });
     $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
 
-    $('#changeMyPassBtn').addEventListener('click', () => { $('#selfOldPass').value=''; $('#selfNewPass').value=''; $('#selfChangePassModal').classList.add('active'); });
+    // 自助改密
+    $('#changeMyPassBtn').addEventListener('click', () => {
+      $('#selfOldPass').value='';
+      $('#selfNewPass').value='';
+      $('#selfChangePassModal').classList.add('active');
+    });
     $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList.remove('active'));
     $('#submitSelfChangePass').addEventListener('click', async () => {
       const op=$('#selfOldPass').value, np=$('#selfNewPass').value;
       if(!op||!np) return showToast('请输入旧密码和新密码','error');
       if(np.length<6) return showToast('新密码长度至少6位','error');
-      try { await apiCall('/api/me/password',{method:'PUT',body:{oldPassword:op,newPassword:np}}); showToast('密码修改成功','success'); $('#selfChangePassModal').classList.remove('active'); } catch(err) { showToast('修改失败: '+err.message,'error'); }
+      try {
+        await apiCall('/api/me/password',{method:'PUT',body:{oldPassword:op,newPassword:np}});
+        showToast('密码修改成功','success');
+        $('#selfChangePassModal').classList.remove('active');
+      } catch(err) { showToast('修改失败: '+err.message,'error'); }
     });
 
-    $('#applySiteBtn').addEventListener('click', () => { $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value=''; $('#applySeal').value=''; $('#applyCat').value=''; $('#applyModal').classList.add('active'); });
+    // 申请网站
+    $('#applySiteBtn').addEventListener('click', () => {
+      $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value=''; $('#applySeal').value=''; $('#applyCat').value='';
+      $('#applyModal').classList.add('active');
+    });
     $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
     $('#submitApply').addEventListener('click', () => {
       const name=$('#applyName').value.trim(), url=$('#applyUrl').value.trim();
       if(!name||!url) return showToast('网站名称和网址为必填项','error');
       siteApplications.push({name,url,desc:$('#applyDesc').value.trim(),seal:$('#applySeal').value.trim()||'🔗',category:$('#applyCat').value.trim()||'其他'});
       localStorage.setItem(APPLY_STORAGE_KEY,JSON.stringify(siteApplications));
-      showToast('申请已提交','success'); $('#applyModal').classList.remove('active');
+      showToast('申请已提交','success');
+      $('#applyModal').classList.remove('active');
     });
 
-    window.addEventListener('click', (e) => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); });
+    window.addEventListener('click', (e) => {
+      if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+    });
   }
 
   async function init() {
@@ -614,10 +841,21 @@
     initFireflies();
     initBackToTop();
     bindEvents();
+
     try { sites = await apiCall('/api/sites'); isLoading=false; } catch(e) { sites=[]; isLoading=false; }
     await checkLoginStatus();
     renderSites();
     renderFilterTags();
+
+    // 手动触发一次角色选择状态更新
+    const roleSelect = $('#newUserRole');
+    if (roleSelect) {
+      if (!isOwner()) {
+        roleSelect.querySelector('option[value="admin"]').disabled = true;
+        roleSelect.querySelector('option[value="owner"]').disabled = true;
+        if (roleSelect.value !== 'member') roleSelect.value = 'member';
+      }
+    }
   }
   init();
 })();
