@@ -106,7 +106,18 @@
     return ['all', ...Array.from(cats).sort()];
   }
 
-  // 渲染
+  // 渲染调度（合并多次调用）
+  let renderScheduled = false;
+  function scheduleRender() {
+    if (renderScheduled) return;
+    renderScheduled = true;
+    requestAnimationFrame(() => {
+      renderSites();
+      renderFilterTags();
+      renderScheduled = false;
+    });
+  }
+
   function renderFilterTags() {
     const container = $('#filterTags');
     const categories = getAllCategories();
@@ -119,7 +130,7 @@
     const totalFiltered = getFilteredSites().length;
     countEl.textContent = (searchQuery.trim()||currentFilter!=='all')?`找到 ${totalFiltered} 个书签`:`共 ${sites.length} 个书签`;
     container.querySelectorAll('.filter-tag').forEach(tag => {
-      tag.addEventListener('click', () => { currentFilter = tag.dataset.category; renderFilterTags(); renderSites(); });
+      tag.addEventListener('click', () => { currentFilter = tag.dataset.category; scheduleRender(); });
     });
   }
 
@@ -146,7 +157,6 @@
       if(isAdmin()) {
         adminBtn.style.display = 'inline-block';
         adminPanel.style.display = 'block';
-
         if (deleteRequestTabBtn) {
           deleteRequestTabBtn.style.display = isOwner() ? 'inline-block' : 'none';
           if (!isOwner() && deleteRequestTabContent && deleteRequestTabContent.classList.contains('active')) {
@@ -169,8 +179,7 @@
       if (deleteRequestTabBtn) deleteRequestTabBtn.style.display = 'none';
     }
 
-    renderSites();
-    renderFilterTags();
+    scheduleRender();
     if(isAdmin()) renderAdminPanels();
   }
 
@@ -311,16 +320,13 @@
 
   async function refreshSites() {
     try {
-      console.log('🔄 刷新网站列表...');
       sites = await apiCall('/api/sites');
-      console.log('✅ 网站列表已刷新，当前', sites.length, '条');
       isLoading = false;
-      renderSites(); renderFilterTags();
+      scheduleRender();
       if(isAdmin()) renderSiteManage();
     } catch(e) {
-      console.error('❌ 刷新网站列表失败：', e);
       isLoading = false;
-      renderSites(); renderFilterTags();
+      scheduleRender();
     }
   }
 
@@ -329,7 +335,7 @@
     try {
       const users = await apiCall('/api/users');
       renderUserList(users);
-    } catch(e) { console.error(e); }
+    } catch(e) {}
   }
 
   function renderUserManage() { refreshUsersAndRender(); }
@@ -440,7 +446,7 @@
     if(isOwner()) renderDeleteRequests();
   }
 
-  // 特效函数 (保持原样)
+  // 特效
   function initStars() {
     const container = $('#starsContainer');
     const count = isMobile ? 15 : 30;
@@ -645,13 +651,13 @@
       searchDebounce = setTimeout(() => {
         searchQuery = searchInput.value;
         searchClear.classList.toggle('visible', !!searchQuery.trim());
-        renderFilterTags(); renderSites();
+        scheduleRender();
       }, 200);
     });
-    searchClear.addEventListener('click', () => { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); renderFilterTags(); renderSites(); searchInput.focus(); });
+    searchClear.addEventListener('click', () => { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); scheduleRender(); searchInput.focus(); });
     document.addEventListener('keydown', (e) => {
       if((e.ctrlKey||e.metaKey) && e.key==='k') { e.preventDefault(); searchInput.focus(); searchInput.select(); }
-      if(e.key==='Escape' && document.activeElement===searchInput) { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); renderFilterTags(); renderSites(); searchInput.blur(); }
+      if(e.key==='Escape' && document.activeElement===searchInput) { searchInput.value=''; searchQuery=''; searchClear.classList.remove('visible'); scheduleRender(); searchInput.blur(); }
       if(e.key==='/' && !e.target.closest('input,textarea')) { e.preventDefault(); searchInput.focus(); }
     });
 
@@ -708,7 +714,6 @@
       } catch(err) { showToast(err.message,'error'); }
     });
 
-    // 修复空指针：安全更新角色下拉框
     const roleSelect = $('#newUserRole');
     function updateRoleSelect() {
       if (!roleSelect) return;
@@ -723,14 +728,12 @@
         if (ownerOption) ownerOption.disabled = false;
       }
     }
-    // 立即调用一次，并监听管理面板显示变化
     updateRoleSelect();
     const observer = new MutationObserver(() => {
       if ($('#adminPanel').style.display !== 'none') updateRoleSelect();
     });
     observer.observe($('#adminPanel'), { attributes: true, attributeFilter: ['style'] });
 
-    // 修改他人密码
     $('#submitChangePass').addEventListener('click', async () => {
       const username = $('#changePassUser').value, newPass = $('#changePassNew').value;
       if (!newPass) return showToast('请输入新密码', 'error');
@@ -744,7 +747,6 @@
     });
     $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
 
-    // 自助改密
     $('#changeMyPassBtn').addEventListener('click', () => { $('#selfOldPass').value=''; $('#selfNewPass').value=''; $('#selfChangePassModal').classList.add('active'); });
     $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList.remove('active'));
     $('#submitSelfChangePass').addEventListener('click', async () => {
@@ -758,7 +760,6 @@
       } catch(err) { showToast('修改失败: '+err.message,'error'); }
     });
 
-    // 申请网站
     $('#applySiteBtn').addEventListener('click', () => { $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value=''; $('#applySeal').value=''; $('#applyCat').value=''; $('#applyModal').classList.add('active'); });
     $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
     $('#submitApply').addEventListener('click', () => {
@@ -778,30 +779,23 @@
     initStars(); initClouds(); initPetals(); initPoems(); initRipples(); initFireflies(); initBackToTop();
     bindEvents();
 
-    console.log('🔍 正在从服务器获取书签数据...');
     try {
       sites = await apiCall('/api/sites');
-      console.log('✅ 书签数据加载成功，共', sites.length, '条');
-    } catch(err) {
-      console.error('❌ 书签数据加载失败：', err);
+    } catch(e) {
       showToast('书签数据加载失败，请检查网络或刷新重试', 'error');
     } finally {
       isLoading = false;
       await checkLoginStatus();
-      renderSites();
-      renderFilterTags();
+      scheduleRender();
     }
 
-    // 最后再调整一次角色下拉框
     const roleSelect = $('#newUserRole');
-    if (roleSelect) {
+    if (roleSelect && !isOwner()) {
       const adminOption = roleSelect.querySelector('option[value="admin"]');
       const ownerOption = roleSelect.querySelector('option[value="owner"]');
-      if (!isOwner()) {
-        if (adminOption) adminOption.disabled = true;
-        if (ownerOption) ownerOption.disabled = true;
-        if (roleSelect.value !== 'member') roleSelect.value = 'member';
-      }
+      if (adminOption) adminOption.disabled = true;
+      if (ownerOption) ownerOption.disabled = true;
+      if (roleSelect.value !== 'member') roleSelect.value = 'member';
     }
   }
   init();
