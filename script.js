@@ -47,7 +47,6 @@
     } catch(e) { if(silent) return null; throw e; }
   }
 
-  // 角色辅助
   function isOwner() { return currentUser && currentUser.role === 'owner'; }
   function isAdmin() { return currentUser && (currentUser.role === 'owner' || currentUser.role === 'admin'); }
   function isLoggedIn() { return !!currentUser; }
@@ -246,7 +245,6 @@
     }
   }
 
-  // 管理员彩蛋
   function spawnAdminEasterEgg() {
     const colors = ['#f0c840','#c4a56a','#e8b830','#ffda60','#fff','#d4a030'];
     for(let i=0;i<30;i++) {
@@ -264,8 +262,7 @@
       style.textContent='@keyframes adminBurst{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.2) rotate(180deg);}}';
       document.head.appendChild(style);
     }
-    const msg = isOwner() ? '✨ 主公驾到，书斋蓬荜生辉！' : '🔰 管理员已上线';
-    showToast(msg, 'success');
+    showToast(isOwner() ? '✨ 主公驾到，书斋蓬荜生辉！' : '🔰 管理员已上线', 'success');
   }
 
   // 管理面板
@@ -307,8 +304,7 @@
         if(pinnedSites.includes(idx)) { pinnedSites = pinnedSites.filter(p=>p!==idx); showToast('已取消置顶','info'); }
         else { pinnedSites.push(idx); showToast('已置顶','success'); }
         localStorage.setItem(PINNED_STORAGE_KEY, JSON.stringify(pinnedSites));
-        renderSiteManage();
-        renderSites();
+        renderSiteManage(); renderSites();
       });
     });
   }
@@ -319,14 +315,12 @@
       sites = await apiCall('/api/sites');
       console.log('✅ 网站列表已刷新，当前', sites.length, '条');
       isLoading = false;
-      renderSites();
-      renderFilterTags();
+      renderSites(); renderFilterTags();
       if(isAdmin()) renderSiteManage();
     } catch(e) {
       console.error('❌ 刷新网站列表失败：', e);
       isLoading = false;
-      renderSites();
-      renderFilterTags();
+      renderSites(); renderFilterTags();
     }
   }
 
@@ -348,22 +342,13 @@
       const isSelf = u.username === currentUsername;
       const isOwnerUser = u.role === 'owner';
       let buttons = '';
-
       if (isOwner()) {
         buttons += `<button class="btn change-pass-btn" data-username="${escapeHtml(u.username)}">改密</button>`;
-        if (!isSelf && !isOwnerUser) {
-          buttons += `<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>`;
-        }
+        if (!isSelf && !isOwnerUser) buttons += `<button class="btn del-user-btn" data-username="${escapeHtml(u.username)}">删除</button>`;
       } else if (isAdmin()) {
-        if (u.role === 'member') {
-          buttons += `<button class="btn request-delete-btn" data-username="${escapeHtml(u.username)}">申请删除</button>`;
-        }
+        if (u.role === 'member') buttons += `<button class="btn request-delete-btn" data-username="${escapeHtml(u.username)}">申请删除</button>`;
       }
-      return `
-        <div class="list-item">
-          <span>${escapeHtml(u.username)} <small>(${roleText})</small></span>
-          <div style="display:flex;gap:0.3rem;">${buttons}</div>
-        </div>`;
+      return `<div class="list-item"><span>${escapeHtml(u.username)} <small>(${roleText})</small></span><div style="display:flex;gap:0.3rem;">${buttons}</div></div>`;
     }).join('');
 
     container.querySelectorAll('.del-user-btn').forEach(btn => {
@@ -392,10 +377,7 @@
   }
 
   function openChangePassModal(username) {
-    if(!isOwner()) {
-      showToast('只有所有者才能修改他人密码','error');
-      return;
-    }
+    if(!isOwner()) { showToast('只有所有者才能修改他人密码','error'); return; }
     $('#changePassUser').value = username;
     $('#changePassNew').value = '';
     $('#changePassModal').classList.add('active');
@@ -410,10 +392,7 @@
     const container = $('#deleteRequestList');
     if(!container) return;
     const requests = await fetchDeleteRequests();
-    if (!requests.length) {
-      container.innerHTML = '<p style="color:var(--text-muted);">暂无删除申请。</p>';
-      return;
-    }
+    if (!requests.length) { container.innerHTML = '<p style="color:var(--text-muted);">暂无删除申请。</p>'; return; }
     container.innerHTML = requests.map(r => {
       const statusText = r.status === 'pending' ? '⏳ 待处理' : (r.status === 'approved' ? '✅ 已批准' : '❌ 已拒绝');
       return `
@@ -427,26 +406,18 @@
           ` : ''}
         </div>`;
     }).join('');
-
     container.querySelectorAll('.approve-delete-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const id = e.target.dataset.id;
-        try {
-          await apiCall(`/api/delete-requests/${id}/approve`, {method:'POST'});
-          showToast('删除申请已批准','success');
-          renderDeleteRequests();
-          refreshUsersAndRender();
-        } catch(err) { showToast('批准失败: '+err.message,'error'); }
+        try { await apiCall(`/api/delete-requests/${id}/approve`, {method:'POST'}); showToast('删除申请已批准','success'); renderDeleteRequests(); refreshUsersAndRender(); }
+        catch(err) { showToast('批准失败: '+err.message,'error'); }
       });
     });
     container.querySelectorAll('.reject-delete-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const id = e.target.dataset.id;
-        try {
-          await apiCall(`/api/delete-requests/${id}/reject`, {method:'POST'});
-          showToast('已拒绝申请','info');
-          renderDeleteRequests();
-        } catch(err) { showToast('操作失败: '+err.message,'error'); }
+        try { await apiCall(`/api/delete-requests/${id}/reject`, {method:'POST'}); showToast('已拒绝申请','info'); renderDeleteRequests(); }
+        catch(err) { showToast('操作失败: '+err.message,'error'); }
       });
     });
   }
@@ -469,7 +440,7 @@
     if(isOwner()) renderDeleteRequests();
   }
 
-  // 特效（保持不变）
+  // 特效函数 (保持原样)
   function initStars() {
     const container = $('#starsContainer');
     const count = isMobile ? 15 : 30;
@@ -684,7 +655,6 @@
       if(e.key==='/' && !e.target.closest('input,textarea')) { e.preventDefault(); searchInput.focus(); }
     });
 
-    // 登录
     $('#loginBtn').addEventListener('click', () => $('#loginModal').classList.add('active'));
     $('#closeLoginModal').addEventListener('click', () => $('#loginModal').classList.remove('active'));
     $('#submitLogin').addEventListener('click', async () => {
@@ -695,26 +665,14 @@
         currentUser = {username:data.username, role:data.role};
         $('#loginModal').classList.remove('active');
         updateUIByRole();
-        if(isAdmin()) {
-          refreshUsersAndRender();
-          spawnAdminEasterEgg();
-        }
+        if(isAdmin()) { refreshUsersAndRender(); spawnAdminEasterEgg(); }
         showToast(`登录成功，欢迎 ${data.username}`,'success');
       } catch(err) { showToast('登录失败: '+err.message,'error'); }
     });
-    $('#logoutBtn').addEventListener('click', async () => {
-      await apiCall('/api/logout',{method:'POST'});
-      currentUser=null;
-      updateUIByRole();
-      showToast('已登出','info');
-    });
+    $('#logoutBtn').addEventListener('click', async () => { await apiCall('/api/logout',{method:'POST'}); currentUser=null; updateUIByRole(); showToast('已登出','info'); });
 
-    $('#adminPanelBtn').addEventListener('click', () => {
-      const panel = $('#adminPanel');
-      panel.style.display = panel.style.display==='none'?'block':'none';
-    });
+    $('#adminPanelBtn').addEventListener('click', () => { const panel = $('#adminPanel'); panel.style.display = panel.style.display==='none'?'block':'none'; });
 
-    // Tab 切换
     $$('.tab-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         $$('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -722,13 +680,10 @@
         $$('.tab-content').forEach(c=>c.classList.remove('active'));
         const target = $('#' + this.dataset.tab);
         if(target) target.classList.add('active');
-        if(this.dataset.tab === 'deleteRequestManage' && isOwner()) {
-          renderDeleteRequests();
-        }
+        if(this.dataset.tab === 'deleteRequestManage' && isOwner()) renderDeleteRequests();
       });
     });
 
-    // 添加网站
     $('#addSiteBtn').addEventListener('click', async () => {
       const name=$('#newSiteName').value.trim(), url=$('#newSiteUrl').value.trim();
       if(!name||!url) return showToast('名称和网址必填','error');
@@ -740,7 +695,6 @@
       } catch(err) { showToast(err.message,'error'); }
     });
 
-    // 添加用户
     $('#addUserBtn').addEventListener('click', async () => {
       const u=$('#newUsername').value.trim(), p=$('#newUserPass').value;
       if(!u||!p) return showToast('用户名和密码不能为空','error');
@@ -748,36 +702,33 @@
       const role = roleSelect ? roleSelect.value : 'member';
       try {
         await apiCall('/api/users',{method:'POST',body:{username:u,password:p,role}});
-        $('#newUsername').value='';
-        $('#newUserPass').value='';
+        $('#newUsername').value=''; $('#newUserPass').value='';
         refreshUsersAndRender();
         showToast('用户已添加','success');
       } catch(err) { showToast(err.message,'error'); }
     });
 
-    // 角色下拉框控制（修复空指针）
+    // 修复空指针：安全更新角色下拉框
     const roleSelect = $('#newUserRole');
-    if (roleSelect) {
-      function updateRoleSelect() {
-        const adminOption = roleSelect.querySelector('option[value="admin"]');
-        const ownerOption = roleSelect.querySelector('option[value="owner"]');
-        if (!isOwner()) {
-          if (adminOption) adminOption.disabled = true;
-          if (ownerOption) ownerOption.disabled = true;
-          if (roleSelect.value !== 'member') roleSelect.value = 'member';
-        } else {
-          if (adminOption) adminOption.disabled = false;
-          if (ownerOption) ownerOption.disabled = false;
-        }
+    function updateRoleSelect() {
+      if (!roleSelect) return;
+      const adminOption = roleSelect.querySelector('option[value="admin"]');
+      const ownerOption = roleSelect.querySelector('option[value="owner"]');
+      if (!isOwner()) {
+        if (adminOption) adminOption.disabled = true;
+        if (ownerOption) ownerOption.disabled = true;
+        if (roleSelect.value !== 'member') roleSelect.value = 'member';
+      } else {
+        if (adminOption) adminOption.disabled = false;
+        if (ownerOption) ownerOption.disabled = false;
       }
-      // 首次调用
-      updateRoleSelect();
-      // 监听管理面板显示变化（因为角色选择框在管理面板内）
-      const observer = new MutationObserver(() => {
-        if ($('#adminPanel').style.display !== 'none') updateRoleSelect();
-      });
-      observer.observe($('#adminPanel'), { attributes: true, attributeFilter: ['style'] });
     }
+    // 立即调用一次，并监听管理面板显示变化
+    updateRoleSelect();
+    const observer = new MutationObserver(() => {
+      if ($('#adminPanel').style.display !== 'none') updateRoleSelect();
+    });
+    observer.observe($('#adminPanel'), { attributes: true, attributeFilter: ['style'] });
 
     // 修改他人密码
     $('#submitChangePass').addEventListener('click', async () => {
@@ -794,11 +745,7 @@
     $('#closeChangePassModal').addEventListener('click', () => $('#changePassModal').classList.remove('active'));
 
     // 自助改密
-    $('#changeMyPassBtn').addEventListener('click', () => {
-      $('#selfOldPass').value='';
-      $('#selfNewPass').value='';
-      $('#selfChangePassModal').classList.add('active');
-    });
+    $('#changeMyPassBtn').addEventListener('click', () => { $('#selfOldPass').value=''; $('#selfNewPass').value=''; $('#selfChangePassModal').classList.add('active'); });
     $('#closeSelfChangePassModal').addEventListener('click', () => $('#selfChangePassModal').classList.remove('active'));
     $('#submitSelfChangePass').addEventListener('click', async () => {
       const op=$('#selfOldPass').value, np=$('#selfNewPass').value;
@@ -812,10 +759,7 @@
     });
 
     // 申请网站
-    $('#applySiteBtn').addEventListener('click', () => {
-      $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value=''; $('#applySeal').value=''; $('#applyCat').value='';
-      $('#applyModal').classList.add('active');
-    });
+    $('#applySiteBtn').addEventListener('click', () => { $('#applyName').value=''; $('#applyUrl').value=''; $('#applyDesc').value=''; $('#applySeal').value=''; $('#applyCat').value=''; $('#applyModal').classList.add('active'); });
     $('#closeApplyModal').addEventListener('click', () => $('#applyModal').classList.remove('active'));
     $('#submitApply').addEventListener('click', () => {
       const name=$('#applyName').value.trim(), url=$('#applyUrl').value.trim();
@@ -826,42 +770,31 @@
       $('#applyModal').classList.remove('active');
     });
 
-    window.addEventListener('click', (e) => {
-      if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
-    });
+    window.addEventListener('click', (e) => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); });
   }
 
   async function init() {
     initTheme();
-    initStars();
-    initClouds();
-    initPetals();
-    initPoems();
-    initRipples();
-    initFireflies();
-    initBackToTop();
+    initStars(); initClouds(); initPetals(); initPoems(); initRipples(); initFireflies(); initBackToTop();
     bindEvents();
 
     console.log('🔍 正在从服务器获取书签数据...');
     try {
       sites = await apiCall('/api/sites');
       console.log('✅ 书签数据加载成功，共', sites.length, '条');
-      isLoading = false;
     } catch(err) {
       console.error('❌ 书签数据加载失败：', err);
-      sites = [];
-      isLoading = false;
       showToast('书签数据加载失败，请检查网络或刷新重试', 'error');
+    } finally {
+      isLoading = false;
+      await checkLoginStatus();
+      renderSites();
+      renderFilterTags();
     }
 
-    await checkLoginStatus();
-    renderSites();
-    renderFilterTags();
-
-    // 最终调整角色下拉框状态（确保管理面板未显示时也不会出错）
+    // 最后再调整一次角色下拉框
     const roleSelect = $('#newUserRole');
     if (roleSelect) {
-      // 已经在 bindEvents 中初始化过，这里再强制调用一次以防万一
       const adminOption = roleSelect.querySelector('option[value="admin"]');
       const ownerOption = roleSelect.querySelector('option[value="owner"]');
       if (!isOwner()) {
