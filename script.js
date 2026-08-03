@@ -755,24 +755,28 @@
       } catch(err) { showToast(err.message,'error'); }
     });
 
-    // 角色下拉框控制
+    // 角色下拉框控制（修复空指针）
     const roleSelect = $('#newUserRole');
     if (roleSelect) {
       function updateRoleSelect() {
+        const adminOption = roleSelect.querySelector('option[value="admin"]');
+        const ownerOption = roleSelect.querySelector('option[value="owner"]');
         if (!isOwner()) {
-          roleSelect.querySelector('option[value="admin"]').disabled = true;
-          roleSelect.querySelector('option[value="owner"]').disabled = true;
+          if (adminOption) adminOption.disabled = true;
+          if (ownerOption) ownerOption.disabled = true;
           if (roleSelect.value !== 'member') roleSelect.value = 'member';
         } else {
-          roleSelect.querySelector('option[value="admin"]').disabled = false;
-          roleSelect.querySelector('option[value="owner"]').disabled = false;
+          if (adminOption) adminOption.disabled = false;
+          if (ownerOption) ownerOption.disabled = false;
         }
       }
+      // 首次调用
+      updateRoleSelect();
+      // 监听管理面板显示变化（因为角色选择框在管理面板内）
       const observer = new MutationObserver(() => {
         if ($('#adminPanel').style.display !== 'none') updateRoleSelect();
       });
       observer.observe($('#adminPanel'), { attributes: true, attributeFilter: ['style'] });
-      updateRoleSelect();
     }
 
     // 修改他人密码
@@ -854,11 +858,15 @@
     renderSites();
     renderFilterTags();
 
+    // 最终调整角色下拉框状态（确保管理面板未显示时也不会出错）
     const roleSelect = $('#newUserRole');
     if (roleSelect) {
+      // 已经在 bindEvents 中初始化过，这里再强制调用一次以防万一
+      const adminOption = roleSelect.querySelector('option[value="admin"]');
+      const ownerOption = roleSelect.querySelector('option[value="owner"]');
       if (!isOwner()) {
-        roleSelect.querySelector('option[value="admin"]').disabled = true;
-        roleSelect.querySelector('option[value="owner"]').disabled = true;
+        if (adminOption) adminOption.disabled = true;
+        if (ownerOption) ownerOption.disabled = true;
         if (roleSelect.value !== 'member') roleSelect.value = 'member';
       }
     }
