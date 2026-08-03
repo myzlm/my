@@ -246,7 +246,7 @@
     }
   }
 
-  // 管理员/所有者彩蛋
+  // 管理员彩蛋
   function spawnAdminEasterEgg() {
     const colors = ['#f0c840','#c4a56a','#e8b830','#ffda60','#fff','#d4a030'];
     for(let i=0;i<30;i++) {
@@ -314,8 +314,20 @@
   }
 
   async function refreshSites() {
-    try { sites = await apiCall('/api/sites'); isLoading=false; renderSites(); renderFilterTags(); if(isAdmin()) renderSiteManage(); }
-    catch(e) { isLoading=false; renderSites(); renderFilterTags(); }
+    try {
+      console.log('🔄 刷新网站列表...');
+      sites = await apiCall('/api/sites');
+      console.log('✅ 网站列表已刷新，当前', sites.length, '条');
+      isLoading = false;
+      renderSites();
+      renderFilterTags();
+      if(isAdmin()) renderSiteManage();
+    } catch(e) {
+      console.error('❌ 刷新网站列表失败：', e);
+      isLoading = false;
+      renderSites();
+      renderFilterTags();
+    }
   }
 
   async function refreshUsersAndRender() {
@@ -728,7 +740,7 @@
       } catch(err) { showToast(err.message,'error'); }
     });
 
-    // 添加用户（支持角色选择）
+    // 添加用户
     $('#addUserBtn').addEventListener('click', async () => {
       const u=$('#newUsername').value.trim(), p=$('#newUserPass').value;
       if(!u||!p) return showToast('用户名和密码不能为空','error');
@@ -743,7 +755,7 @@
       } catch(err) { showToast(err.message,'error'); }
     });
 
-    // 角色下拉框控制：admin 不能选 owner/admin
+    // 角色下拉框控制
     const roleSelect = $('#newUserRole');
     if (roleSelect) {
       function updateRoleSelect() {
@@ -763,7 +775,7 @@
       updateRoleSelect();
     }
 
-    // 修改他人密码提交
+    // 修改他人密码
     $('#submitChangePass').addEventListener('click', async () => {
       const username = $('#changePassUser').value, newPass = $('#changePassNew').value;
       if (!newPass) return showToast('请输入新密码', 'error');
@@ -826,7 +838,18 @@
     initBackToTop();
     bindEvents();
 
-    try { sites = await apiCall('/api/sites'); isLoading=false; } catch(e) { sites=[]; isLoading=false; }
+    console.log('🔍 正在从服务器获取书签数据...');
+    try {
+      sites = await apiCall('/api/sites');
+      console.log('✅ 书签数据加载成功，共', sites.length, '条');
+      isLoading = false;
+    } catch(err) {
+      console.error('❌ 书签数据加载失败：', err);
+      sites = [];
+      isLoading = false;
+      showToast('书签数据加载失败，请检查网络或刷新重试', 'error');
+    }
+
     await checkLoginStatus();
     renderSites();
     renderFilterTags();
