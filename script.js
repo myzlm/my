@@ -1,5 +1,5 @@
 (function() {
-  const API_BASE = 'https://ae7a2eda1e7be7.lhr.life';
+  const API_BASE = 'https://myzlm.serveousercontent.com';
   const APPLY_STORAGE_KEY = 'ink_nav_site_applications';
   const THEME_STORAGE_KEY = 'ink_nav_theme';
   const PINNED_STORAGE_KEY = 'ink_nav_pinned';
